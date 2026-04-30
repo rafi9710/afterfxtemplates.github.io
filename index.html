@@ -393,20 +393,9 @@ function detectCat(t){
 }
 
 async function fetchVideos(){
-  try{
-    const r=await fetch(PROXY+encodeURIComponent(RSS));
-    const d=await r.json();
-    const xml=new DOMParser().parseFromString(d.contents,'text/xml');
-    const entries=xml.querySelectorAll('entry');
-    const vids=[];
-    entries.forEach(e=>{
-      const idEl=e.querySelector('videoId');
-      const vid=idEl?.textContent||e.querySelector('[rel="alternate"]')?.getAttribute('href')?.split('v=')[1];
-      const title=e.querySelector('title')?.textContent||'';
-      if(vid&&title) vids.push({id:vid,title,thumb:`https://i.ytimg.com/vi/${vid}/mqdefault.jpg`,url:`https://www.youtube.com/watch?v=${vid}`,cat:detectCat(title),price:200});
-    });
-    return applyCustomizations(vids);
-  }catch(e){return[];}
+  // ADMIN-ONLY MODE: YouTube auto-fetch disabled
+  // All templates managed via admin.html panel
+  return applyCustomizations([]);
 }
 
 function applyCustomizations(vids){
@@ -556,8 +545,8 @@ renderPricing();updateCount();
   videos=await fetchVideos();
   if(videos.length){renderTabs();renderGrid();}
   else{
-    document.getElementById('vgrid').innerHTML=`<div style="color:var(--mt);text-align:center;padding:48px;grid-column:1/-1;font-size:14px;"><div style="font-size:34px;margin-bottom:12px">📺</div><div style="margin-bottom:14px">Watch all templates on our YouTube channel</div><a href="https://youtube.com/@afterfxtemplates" target="_blank" class="bg" style="display:inline-flex">▶ Open YouTube Channel</a></div>`;
-    document.getElementById('tabs').innerHTML=CATS.map(c=>`<button class="tab ${c.id==='all'?'on':''}">${c.label}</button>`).join('');
+    document.getElementById('vgrid').innerHTML=`<div style="color:var(--mt);text-align:center;padding:48px;grid-column:1/-1;font-size:14px;"><div style="font-size:34px;margin-bottom:12px">📦</div><div style="margin-bottom:14px">Templates coming soon!</div><a href="https://youtube.com/@afterfxtemplates" target="_blank" class="bg" style="display:inline-flex">▶ Watch on YouTube</a></div>`;
+    document.getElementById('tabs').innerHTML='';
   }
 })();
 </script>
