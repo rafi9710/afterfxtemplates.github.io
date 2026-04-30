@@ -196,6 +196,7 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
     <a class="nl" href="#name-reveal">Name Reveal</a>
     <a class="nl" href="#pricing">Pricing</a>
     <a class="nl" href="#contact">Contact</a>
+    <a class="nl" href="admin.html" title="Admin Panel" style="opacity:.4;font-size:10px;">⚙</a>
     <button class="cart-btn" onclick="openCart()">🛒 Cart <span class="cnum" id="cnum">0</span></button>
   </div>
 </nav>
@@ -404,8 +405,26 @@ async function fetchVideos(){
       const title=e.querySelector('title')?.textContent||'';
       if(vid&&title) vids.push({id:vid,title,thumb:`https://i.ytimg.com/vi/${vid}/mqdefault.jpg`,url:`https://www.youtube.com/watch?v=${vid}`,cat:detectCat(title),price:200});
     });
-    return vids;
+    return applyCustomizations(vids);
   }catch(e){return[];}
+}
+
+function applyCustomizations(vids){
+  const custom=JSON.parse(localStorage.getItem('afx_custom')||'{}');
+  const hidden=JSON.parse(localStorage.getItem('afx_hidden')||'[]');
+  const extras=JSON.parse(localStorage.getItem('afx_extras')||'[]');
+  let result=vids.filter(v=>!hidden.includes(v.id));
+  result=result.map(v=>{
+    const c=custom[v.id];
+    if(!c) return v;
+    return {...v,
+      title:c.title||v.title,
+      thumb:c.thumb||v.thumb,
+      cat:c.cat||v.cat,
+      price:c.price!=null?c.price:v.price
+    };
+  });
+  return [...extras,...result];
 }
 
 function renderTabs(){
