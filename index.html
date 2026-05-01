@@ -396,8 +396,21 @@ function detectCat(t){
 }
 
 async function fetchVideos(){
-  // ADMIN-ONLY MODE: YouTube auto-fetch disabled
-  // All templates managed via admin.html panel
+  // FETCH FROM templates.json (live data for all visitors)
+  // Falls back to localStorage if file not found (for admin preview)
+  try{
+    const r=await fetch('templates.json?t='+Date.now(),{cache:'no-store'});
+    if(r.ok){
+      const data=await r.json();
+      // Save to localStorage so admin panel stays in sync if opened later
+      if(data.custom) localStorage.setItem('afx_custom',JSON.stringify(data.custom));
+      if(data.hidden) localStorage.setItem('afx_hidden',JSON.stringify(data.hidden));
+      if(data.extras) localStorage.setItem('afx_extras',JSON.stringify(data.extras));
+    }
+  }catch(e){
+    // templates.json not yet uploaded - falls back to localStorage
+    console.log('templates.json not found, using local data');
+  }
   return applyCustomizations([]);
 }
 
