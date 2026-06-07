@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "exportedAt": "2026-06-07T07:47:17.305Z",
+  "exportedAt": "2026-06-07T14:53:13.397Z",
   "templates": [
     {
       "id": "U9idBPmfWc0",
@@ -112,7 +112,8 @@
       "thumb": "https://i.ytimg.com/vi/4guDnu13QPQ/mqdefault.jpg",
       "cat": "cradle",
       "price": 200,
-      "url": "https://www.youtube.com/watch?v=4guDnu13QPQ"
+      "url": "https://www.youtube.com/watch?v=4guDnu13QPQ",
+      "customizeOnly": true
     },
     {
       "id": "dYp4okFgLDE",
