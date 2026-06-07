@@ -640,7 +640,7 @@ function renderCart(){
 function checkout(){
   const base=cartBase(), total=cartTotal(), save=base-total, q=cartQty();
   const oid='AFX-'+Date.now().toString().slice(-6);
-  const items=cart.map((c,i)=>`${i+1}. ${c.title}\n   ₹${c.price} x ${c.qty} = ₹${c.price*c.qty}\n   Link: ${c.url||'N/A'}`).join('\n\n');
+  const items=cart.map((c,i)=>`${i+1}. ${c.title}\n   ₹${c.price} x ${c.qty} = ₹${c.price*c.qty}\n   Link: ${c.url||('https://www.youtube.com/watch?v='+c.id)}`).join('\n\n');
   const priceBlock = save>0
     ? `Subtotal: ₹${base}\nBundle Discount (${q} projects): -₹${save}\nTotal: ₹${total}`
     : `Total: ₹${total}`;
