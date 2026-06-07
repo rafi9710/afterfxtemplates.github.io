@@ -278,6 +278,13 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
           <div class="empty">Preview will appear here</div>
         </div>
       </div>
+
+      <div class="field">
+        <label style="display:flex;align-items:center;gap:9px;cursor:pointer;">
+          <input type="checkbox" id="fCustOnly" style="width:auto;margin:0;"> Customize Only (not for direct sale)
+        </label>
+        <div class="hint">If ON: customers see a "Customize / Enquire" button instead of Add to Cart, and no price.</div>
+      </div>
     </div>
     <div class="modal-foot">
       <button class="btn-cancel" onclick="closeModal()">Cancel</button>
@@ -367,6 +374,10 @@ async function fetchVideos(){
     if(r.ok){
       const j=await r.json();
       if(j && Array.isArray(j.templates) && j.templates.length){
+        // seed customize-only flags from published file (first load only, so manual toggles aren't overwritten)
+        if(localStorage.getItem('afx_co')===null){
+          setCustOnly(j.templates.filter(t=>t.customizeOnly).map(t=>t.id));
+        }
         return j.templates.map(t=>({
           id:t.id,
           title:t.title,
@@ -407,6 +418,8 @@ function getHidden(){return JSON.parse(localStorage.getItem('afx_hidden')||'[]')
 function setHidden(a){localStorage.setItem('afx_hidden',JSON.stringify(a));}
 function getExtras(){return JSON.parse(localStorage.getItem('afx_extras')||'[]');}
 function setExtras(a){localStorage.setItem('afx_extras',JSON.stringify(a));}
+function getCustOnly(){return JSON.parse(localStorage.getItem('afx_co')||'[]');}
+function setCustOnly(a){localStorage.setItem('afx_co',JSON.stringify(a));}
 
 /* STATS */
 function renderStats(){
@@ -429,7 +442,7 @@ function setTab(t){
 }
 
 function getMergedList(){
-  const custom=getCustom(), extras=getExtras();
+  const custom=getCustom(), extras=getExtras(), co=getCustOnly();
   const merged=allVideos.map(v=>{
     const c=custom[v.id]||{};
     return {
@@ -441,6 +454,7 @@ function getMergedList(){
       defaultCat:v.defaultCat,
       price:c.price!=null?c.price:(v.defaultPrice!=null?v.defaultPrice:200),
       url:v.url,
+      customizeOnly:co.includes(v.id),
       isCustomized:!!custom[v.id],
       isExtra:false
     };
@@ -448,7 +462,7 @@ function getMergedList(){
   const baseIds=new Set(allVideos.map(v=>v.id));
   // skip any custom-added entry whose id already exists in the base list (avoids duplicates after a round-trip)
   const cleanExtras=extras.filter(e=>!baseIds.has(e.id));
-  return [...cleanExtras.map(e=>({...e,isExtra:true,isCustomized:false})),...merged];
+  return [...cleanExtras.map(e=>({...e,customizeOnly:co.includes(e.id),isExtra:true,isCustomized:false})),...merged];
 }
 
 /* EXPORT FOR WEBSITE — builds the full catalog templates.json the live site reads (v2 format) */
@@ -460,7 +474,11 @@ function exportForWebsite(){
   const hidden=getHidden();
   const list=getMergedList()
     .filter(t=>!hidden.includes(t.id))
-    .map(t=>({id:t.id,title:t.title,thumb:t.thumb,cat:t.cat,price:t.price,url:t.url}));
+    .map(t=>{
+      const o={id:t.id,title:t.title,thumb:t.thumb,cat:t.cat,price:t.price,url:t.url};
+      if(t.customizeOnly) o.customizeOnly=true;
+      return o;
+    });
   const data={version:2,exportedAt:new Date().toISOString(),templates:list};
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const a=document.createElement('a');
@@ -494,6 +512,7 @@ function renderList(){
     if(t.isExtra) badges.push('<div class="badge green">CUSTOM</div>');
     else if(t.isCustomized) badges.push('<div class="badge green">EDITED</div>');
     if(isHidden) badges.push('<div class="badge red" style="left:auto;right:8px;">HIDDEN</div>');
+    if(t.customizeOnly) badges.push('<div class="badge" style="top:auto;bottom:8px;background:var(--gold);color:#000;">CUSTOMIZE ONLY</div>');
 
     return `<div class="${cardClass}">
       <div class="tpl-thumb">
@@ -504,7 +523,7 @@ function renderList(){
         <div class="tpl-title">${t.title}</div>
         <div class="tpl-meta">
           <span class="tpl-cat">${t.cat}</span>
-          <span class="tpl-price">₹${t.price}</span>
+          <span class="tpl-price">${t.customizeOnly?'Customize Only':'₹'+t.price}</span>
         </div>
         <div class="tpl-actions">
           <button class="act-btn" onclick="openEditModal('${t.id}',${t.isExtra})">✏️ Edit</button>
@@ -540,6 +559,7 @@ function openEditModal(id,isExtra){
   currentThumb=t.thumb;
   setThumbTab('upload');
   updatePreviewImg(t.thumb);
+  document.getElementById('fCustOnly').checked=getCustOnly().includes(id);
   document.getElementById('editModal').classList.add('on');
 }
 
@@ -559,6 +579,7 @@ function openAddModal(){
   currentThumb='';
   setThumbTab('upload');
   updatePreviewImg('');
+  document.getElementById('fCustOnly').checked=false;
   document.getElementById('editModal').classList.add('on');
 }
 
@@ -614,6 +635,7 @@ function saveTemplate(){
     thumb='';
   }
 
+  let savedId=editingId;
   if(isExtra){
     const ytUrl=document.getElementById('fYtUrl').value.trim();
     const extras=getExtras();
@@ -624,6 +646,7 @@ function saveTemplate(){
       }
     }else{
       const newId='custom_'+Date.now();
+      savedId=newId;
       extras.unshift({id:newId,title,cat,price,url:ytUrl||'#',thumb:thumb||'https://via.placeholder.com/480x270/14141F/C9A84C?text='+encodeURIComponent(title)});
     }
     setExtras(extras);
@@ -642,6 +665,14 @@ function saveTemplate(){
     if(Object.keys(data).length){custom[editingId]=data;}
     else{delete custom[editingId];}
     setCustom(custom);
+  }
+
+  // persist Customize-Only flag
+  if(savedId){
+    const coChecked=document.getElementById('fCustOnly').checked;
+    let co=getCustOnly().filter(x=>x!==savedId);
+    if(coChecked) co.push(savedId);
+    setCustOnly(co);
   }
 
   closeModal();
