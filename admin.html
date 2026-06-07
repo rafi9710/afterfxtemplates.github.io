@@ -197,6 +197,7 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
         <input type="text" id="searchAdmin" placeholder="Search templates..." oninput="renderList()">
       </div>
       <button class="btn-add" onclick="openAddModal()">➕ Add Custom Template</button>
+      <button class="btn-add" style="background:transparent;border:1px solid var(--gold);color:var(--gold);" onclick="openBulkModal()">📋 Bulk Import</button>
       <button class="btn-secondary" onclick="confirmReset()">🔄 Reset All</button>
     </div>
 
@@ -294,6 +295,27 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
 </div>
 
 <!-- CONFIRM MODAL -->
+<div class="modal" id="bulkModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h2>📋 Bulk Import Templates</h2>
+      <button class="modal-close" onclick="closeBulkModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label>Paste your videos — one per line</label>
+        <div class="hint" style="margin-bottom:8px;">Format: <b>Title | YouTube URL</b> &nbsp;(category &amp; price optional)<br>Example:<br><code style="font-size:11px;color:var(--gold);">Wedding Invitation Telugu | https://youtube.com/watch?v=abc123</code><br><code style="font-size:11px;color:var(--gold);">Cradle Ceremony Video | https://youtu.be/xyz789 | cradle | 200</code></div>
+        <textarea id="bulkText" rows="10" style="width:100%;background:var(--bg);border:1px solid var(--gb);border-radius:4px;color:var(--tx);padding:12px;font-family:monospace;font-size:12px;line-height:1.6;resize:vertical;" placeholder="Title 1 | https://youtube.com/watch?v=...&#10;Title 2 | https://youtu.be/...&#10;Title 3 | https://youtube.com/watch?v=... | wedding | 200"></textarea>
+        <div class="hint">Thumbnail auto-loads from each YouTube video. Price defaults to ₹200. Duplicates are skipped.</div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-cancel" onclick="closeBulkModal()">Cancel</button>
+      <button class="btn-save" onclick="doBulkImport()">📥 Import Videos</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal" id="confirmModal">
   <div class="confirm-bx">
     <h3 id="confirmTitle">Are you sure?</h3>
@@ -328,6 +350,42 @@ function detectCat(t){
   const tl=t.toLowerCase();
   for(const[c,kws] of Object.entries(KW)) if(kws.some(k=>tl.includes(k))) return c;
   return 'wedding';
+}
+
+/* ===== BULK IMPORT ===== */
+function ytId(url){
+  const m=url.match(/(?:v=|youtu\.be\/|shorts\/|embed\/)([A-Za-z0-9_-]{11})/);
+  return m?m[1]:null;
+}
+function openBulkModal(){document.getElementById('bulkText').value='';document.getElementById('bulkModal').classList.add('on');}
+function closeBulkModal(){document.getElementById('bulkModal').classList.remove('on');}
+function doBulkImport(){
+  const raw=document.getElementById('bulkText').value.trim();
+  if(!raw){showToast('Paste at least one line','err');return;}
+  const extras=getExtras();
+  const existing=new Set([...allVideos.map(v=>v.id),...extras.map(e=>e.id)]);
+  let added=0,skipped=0;
+  raw.split('\n').forEach(line=>{
+    line=line.trim();
+    if(!line)return;
+    const parts=line.split('|').map(p=>p.trim());
+    const title=parts[0];
+    const url=parts[1]||'';
+    if(!title||!url){skipped++;return;}
+    const vid=ytId(url);
+    const id=vid||('custom_'+Date.now()+'_'+added);
+    if(existing.has(id)){skipped++;return;}
+    existing.add(id);
+    const cat=parts[2]||detectCat(title);
+    const price=parts[3]?(parseInt(parts[3])||200):200;
+    const thumb=vid?`https://i.ytimg.com/vi/${vid}/mqdefault.jpg`:'https://via.placeholder.com/480x270/14141F/C9A84C?text='+encodeURIComponent(title);
+    extras.push({id,title,cat,price,url:vid?`https://www.youtube.com/watch?v=${vid}`:url,thumb});
+    added++;
+  });
+  setExtras(extras);
+  closeBulkModal();
+  renderStats();renderList();
+  showToast(`✅ Imported ${added} · skipped ${skipped}`);
 }
 
 /* AUTH */
@@ -420,6 +478,8 @@ function getExtras(){return JSON.parse(localStorage.getItem('afx_extras')||'[]')
 function setExtras(a){localStorage.setItem('afx_extras',JSON.stringify(a));}
 function getCustOnly(){return JSON.parse(localStorage.getItem('afx_co')||'[]');}
 function setCustOnly(a){localStorage.setItem('afx_co',JSON.stringify(a));}
+function getOrder(){return JSON.parse(localStorage.getItem('afx_order')||'[]');}
+function setOrder(a){localStorage.setItem('afx_order',JSON.stringify(a));}
 
 /* STATS */
 function renderStats(){
@@ -462,7 +522,40 @@ function getMergedList(){
   const baseIds=new Set(allVideos.map(v=>v.id));
   // skip any custom-added entry whose id already exists in the base list (avoids duplicates after a round-trip)
   const cleanExtras=extras.filter(e=>!baseIds.has(e.id));
-  return [...cleanExtras.map(e=>({...e,customizeOnly:co.includes(e.id),isExtra:true,isCustomized:false})),...merged];
+  const combined=[...cleanExtras.map(e=>({...e,customizeOnly:co.includes(e.id),isExtra:true,isCustomized:false})),...merged];
+
+  // apply saved display order (seed from current order on first run; new items fall to the end)
+  let order=getOrder();
+  if(!order.length){ order=combined.map(t=>t.id); setOrder(order); }
+  const byId={}; combined.forEach(t=>byId[t.id]=t);
+  const ordered=[];
+  order.forEach(id=>{ if(byId[id]){ ordered.push(byId[id]); delete byId[id]; } });
+  Object.keys(byId).forEach(id=>ordered.push(byId[id])); // any new/unordered items go last
+  return ordered;
+}
+
+/* REORDER — move a template to top or bottom of display order */
+function moveTop(id){
+  const o=getMergedList().map(t=>t.id);
+  setOrder([id,...o.filter(x=>x!==id)]);
+  renderList();
+  showToast('Moved to top');
+}
+function moveBottom(id){
+  const o=getMergedList().map(t=>t.id);
+  setOrder([...o.filter(x=>x!==id),id]);
+  renderList();
+  showToast('Moved to bottom');
+}
+function moveUp(id){
+  const o=getMergedList().map(t=>t.id);
+  const i=o.indexOf(id);
+  if(i>0){ [o[i-1],o[i]]=[o[i],o[i-1]]; setOrder(o); renderList(); }
+}
+function moveDown(id){
+  const o=getMergedList().map(t=>t.id);
+  const i=o.indexOf(id);
+  if(i>=0 && i<o.length-1){ [o[i+1],o[i]]=[o[i],o[i+1]]; setOrder(o); renderList(); }
 }
 
 /* EXPORT FOR WEBSITE — builds the full catalog templates.json the live site reads (v2 format) */
@@ -505,6 +598,7 @@ function renderList(){
     return;
   }
 
+  const canReorder = currentTab==='all' && !search;
   el.innerHTML='<div class="tpl-grid">'+list.map(t=>{
     const isHidden=hidden.includes(t.id);
     const cardClass='tpl-card'+(isHidden?' hidden':'')+(t.isCustomized?' custom':'');
@@ -513,6 +607,15 @@ function renderList(){
     else if(t.isCustomized) badges.push('<div class="badge green">EDITED</div>');
     if(isHidden) badges.push('<div class="badge red" style="left:auto;right:8px;">HIDDEN</div>');
     if(t.customizeOnly) badges.push('<div class="badge" style="top:auto;bottom:8px;background:var(--gold);color:#000;">CUSTOMIZE ONLY</div>');
+
+    const reorderRow = canReorder
+      ? `<div class="tpl-actions" style="margin-top:6px;">
+           <button class="act-btn" title="Move to top" onclick="moveTop('${t.id}')">⤒ Top</button>
+           <button class="act-btn" title="Move up" onclick="moveUp('${t.id}')">↑</button>
+           <button class="act-btn" title="Move down" onclick="moveDown('${t.id}')">↓</button>
+           <button class="act-btn" title="Move to bottom" onclick="moveBottom('${t.id}')">⤓ Bottom</button>
+         </div>`
+      : '';
 
     return `<div class="${cardClass}">
       <div class="tpl-thumb">
@@ -530,6 +633,7 @@ function renderList(){
           <button class="act-btn" onclick="toggleHide('${t.id}')">${isHidden?'👁 Show':'🚫 Hide'}</button>
           ${t.isExtra?`<button class="act-btn del" onclick="confirmDeleteExtra('${t.id}')">🗑</button>`:''}
         </div>
+        ${reorderRow}
       </div>
     </div>`;
   }).join('')+'</div>';
@@ -708,6 +812,8 @@ function confirmReset(){
     localStorage.removeItem('afx_custom');
     localStorage.removeItem('afx_hidden');
     localStorage.removeItem('afx_extras');
+    localStorage.removeItem('afx_co');
+    localStorage.removeItem('afx_order');
     renderStats();
     renderList();
     showToast('✓ All customizations reset');
