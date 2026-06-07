@@ -15,7 +15,9 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;overf
 
 /* NAV */
 nav{position:fixed;top:0;left:0;right:0;z-index:500;height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:rgba(8,8,16,.93);backdrop-filter:blur(16px);border-bottom:1px solid var(--gb);}
-.logo{font-family:'Cinzel',serif;font-size:17px;font-weight:700;color:var(--gold);text-decoration:none;letter-spacing:1px;}
+.logo{font-family:'Cinzel',serif;font-size:17px;font-weight:700;color:var(--gold);text-decoration:none;letter-spacing:1px;display:flex;align-items:center;gap:10px;}
+.logo img{height:32px;width:auto;display:block;}
+.footer-logo{height:56px;width:auto;margin:0 auto 12px;display:block;}
 .logo em{color:var(--tx);font-style:normal;font-weight:400;}
 .nav-r{display:flex;align-items:center;gap:18px;}
 .nl{color:var(--mt);font-size:12px;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;font-weight:500;transition:color .2s;}
@@ -68,7 +70,7 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
 <body>
 
 <nav>
-  <a class="logo" href="index.html">AfterFX <em>Templates</em></a>
+  <a class="logo" href="index.html"><img src="logo.png" alt="AfterFX Templates logo">AfterFX <em>Templates</em></a>
   <div class="nav-r">
     <a class="nl" href="index.html#templates">Templates</a>
     <a class="nl" href="index.html#pricing">Pricing</a>
@@ -165,6 +167,7 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
 
 <!-- FOOTER -->
 <footer>
+  <img src="logo.png" alt="AfterFX Templates" class="footer-logo">
   <div class="flogo">AfterFX Templates</div>
   <p>by Mohammad Rafi · VFX &amp; Motion Graphics Artist · Bengaluru</p>
   <p style="margin-top:3px;">Wedding · Birthday · Half Saree · Cradle · Baby Name Reveal</p>
