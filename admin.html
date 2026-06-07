@@ -352,13 +352,34 @@ function showDash(){
 
 /* INIT */
 async function init(){
-  document.getElementById('tplList').innerHTML='<div class="empty-state"><div class="em">⏳</div><h3>Loading templates...</h3><p>Fetching from YouTube</p></div>';
+  document.getElementById('tplList').innerHTML='<div class="empty-state"><div class="em">⏳</div><h3>Loading templates...</h3><p>Reading published catalog</p></div>';
   allVideos=await fetchVideos();
   renderStats();
   renderList();
 }
 
+// Try the published templates.json (lives on GitHub, loads reliably). Fall back to YouTube RSS.
 async function fetchVideos(){
+  // 1) Preferred: read the catalog already published in templates.json
+  try{
+    const r=await fetch('templates.json?t='+Date.now());
+    if(r.ok){
+      const j=await r.json();
+      if(j && Array.isArray(j.templates) && j.templates.length){
+        return j.templates.map(t=>({
+          id:t.id,
+          title:t.title,
+          defaultThumb:t.thumb,
+          url:t.url,
+          defaultCat:t.cat,
+          defaultPrice:(t.price!=null?t.price:200),
+          isExtra:false
+        }));
+      }
+    }
+  }catch(e){ /* fall through to YouTube */ }
+
+  // 2) Fallback: fetch live from YouTube RSS (only used if templates.json missing/empty)
   try{
     const r=await fetch(PROXY+encodeURIComponent(RSS));
     const d=await r.json();
@@ -369,11 +390,11 @@ async function fetchVideos(){
       const idEl=e.querySelector('videoId');
       const vid=idEl?.textContent||e.querySelector('[rel="alternate"]')?.getAttribute('href')?.split('v=')[1];
       const title=e.querySelector('title')?.textContent||'';
-      if(vid&&title) vids.push({id:vid,title,defaultThumb:`https://i.ytimg.com/vi/${vid}/mqdefault.jpg`,url:`https://www.youtube.com/watch?v=${vid}`,defaultCat:detectCat(title),isExtra:false});
+      if(vid&&title) vids.push({id:vid,title,defaultThumb:`https://i.ytimg.com/vi/${vid}/mqdefault.jpg`,url:`https://www.youtube.com/watch?v=${vid}`,defaultCat:detectCat(title),defaultPrice:200,isExtra:false});
     });
     return vids;
   }catch(e){
-    showToast('Failed to fetch videos. Check connection.','err');
+    showToast('Failed to load templates. Check connection.','err');
     return[];
   }
 }
@@ -417,13 +438,16 @@ function getMergedList(){
       defaultThumb:v.defaultThumb,
       cat:c.cat||v.defaultCat,
       defaultCat:v.defaultCat,
-      price:c.price!=null?c.price:200,
+      price:c.price!=null?c.price:(v.defaultPrice!=null?v.defaultPrice:200),
       url:v.url,
       isCustomized:!!custom[v.id],
       isExtra:false
     };
   });
-  return [...extras.map(e=>({...e,isExtra:true,isCustomized:false})),...merged];
+  const baseIds=new Set(allVideos.map(v=>v.id));
+  // skip any custom-added entry whose id already exists in the base list (avoids duplicates after a round-trip)
+  const cleanExtras=extras.filter(e=>!baseIds.has(e.id));
+  return [...cleanExtras.map(e=>({...e,isExtra:true,isCustomized:false})),...merged];
 }
 
 /* EXPORT FOR WEBSITE — builds the full catalog templates.json the live site reads (v2 format) */
