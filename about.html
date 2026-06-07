@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — AfterFX Templates by Mohammad Rafi</title>
+<meta name="description" content="About Mohammad Rafi — VFX & Motion Graphics Artist from Bengaluru creating premium After Effects templates for South Indian celebrations. Telugu + English support.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#C9A84C;--gold-l:#E8C96A;--gold-dim:rgba(201,168,76,.13);--gb:rgba(201,168,76,.22);--gbh:rgba(201,168,76,.55);--bg:#080810;--bg2:#0E0E18;--bg3:#14141F;--bg4:#1A1A28;--tx:#EDE8DF;--mt:#7A7468;--mt2:#3A3830;--green:#3DBD72;}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;overflow-x:hidden;}
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:3px;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:500;height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:rgba(8,8,16,.93);backdrop-filter:blur(16px);border-bottom:1px solid var(--gb);}
+.logo{font-family:'Cinzel',serif;font-size:17px;font-weight:700;color:var(--gold);text-decoration:none;letter-spacing:1px;}
+.logo em{color:var(--tx);font-style:normal;font-weight:400;}
+.nav-r{display:flex;align-items:center;gap:18px;}
+.nl{color:var(--mt);font-size:12px;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;font-weight:500;transition:color .2s;}
+.nl:hover,.nl.on{color:var(--gold);}
+
+/* HERO */
+.hero{min-height:62vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 24px 60px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;width:800px;height:800px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,.05) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;}
+.ho{font-family:'Cinzel',serif;font-size:11px;letter-spacing:5px;color:var(--gold);text-transform:uppercase;margin-bottom:24px;opacity:.75;}
+.hero h1{font-family:'Cinzel',serif;font-size:clamp(32px,5.5vw,62px);font-weight:900;line-height:1.08;color:#fff;margin-bottom:14px;}
+.hero h1 .g{color:var(--gold);}
+.hd{max-width:560px;font-size:14px;color:var(--mt);line-height:1.8;}
+
+/* DIVIDER */
+.dv{display:flex;align-items:center;gap:14px;padding:0 28px;color:var(--mt2);font-size:10px;letter-spacing:4px;text-transform:uppercase;font-family:'Cinzel',serif;}
+.dv::before,.dv::after{content:'';flex:1;height:1px;background:var(--gb);}
+
+/* SECTION */
+.sec{padding:68px 28px;max-width:1080px;margin:0 auto;}
+.sl{font-size:10px;letter-spacing:4px;color:var(--gold);text-transform:uppercase;font-weight:600;margin-bottom:8px;}
+.st{font-family:'Cinzel',serif;font-size:clamp(22px,3vw,32px);font-weight:700;color:#fff;}
+.ss{font-size:13px;color:var(--mt);margin-top:6px;}
+
+/* STORY */
+.story{max-width:760px;margin:30px auto 0;}
+.story p{font-size:15px;color:var(--tx);line-height:1.9;margin-bottom:18px;opacity:.92;}
+.story p .g{color:var(--gold);font-weight:600;}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;}
+.tool{border:1px solid var(--gb);color:var(--mt);padding:7px 16px;border-radius:3px;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;}
+
+/* SERVICES GRID */
+.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(245px,1fr));gap:16px;margin-top:30px;}
+.scard{background:var(--bg2);border:1px solid var(--gb);border-radius:6px;padding:24px 22px;transition:all .25s;}
+.scard:hover{border-color:var(--gbh);transform:translateY(-3px);background:var(--bg3);}
+.scard .ic{font-size:26px;margin-bottom:12px;}
+.scard h3{font-family:'Cinzel',serif;font-size:16px;color:#fff;margin-bottom:7px;}
+.scard p{font-size:13px;color:var(--mt);line-height:1.65;}
+
+/* STATS */
+.statrow{display:flex;gap:46px;justify-content:center;flex-wrap:wrap;margin-top:34px;}
+.stat .n{font-family:'Cinzel',serif;font-size:32px;font-weight:700;color:var(--gold);text-align:center;}
+.stat .l{font-size:11px;color:var(--mt);letter-spacing:2px;text-transform:uppercase;margin-top:3px;text-align:center;}
+
+/* CONTACT */
+.contact-wrap{text-align:center;}
+.cbtns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:26px;}
+.bg{background:var(--gold);color:#000;padding:13px 30px;border-radius:3px;font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase;text-decoration:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;display:inline-flex;align-items:center;gap:8px;}
+.bg:hover{background:var(--gold-l);transform:translateY(-2px);}
+.bo{border:1px solid var(--gbh);color:var(--gold);padding:13px 30px;border-radius:3px;font-weight:600;font-size:13px;letter-spacing:1px;text-transform:uppercase;text-decoration:none;font-family:'DM Sans',sans-serif;transition:all .2s;display:inline-flex;align-items:center;gap:8px;}
+.bo:hover{background:var(--gold-dim);transform:translateY(-2px);}
+.cnote{font-size:12px;color:var(--mt2);margin-top:20px;letter-spacing:.5px;}
+
+/* FOOTER */
+footer{border-top:1px solid var(--gb);padding:34px 28px;text-align:center;}
+.flogo{font-family:'Cinzel',serif;font-size:19px;color:var(--gold);font-weight:700;margin-bottom:7px;}
+footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
+.flinks{display:flex;justify-content:center;gap:18px;margin-top:14px;flex-wrap:wrap;}
+.flinks a{color:var(--mt);font-size:12px;text-decoration:none;letter-spacing:1px;transition:color .2s;}
+.flinks a:hover{color:var(--gold);}
+
+@media(max-width:600px){.nav-r{gap:12px;}.nl{font-size:11px;letter-spacing:1px;}.statrow{gap:30px;}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="index.html">AfterFX <em>Templates</em></a>
+  <div class="nav-r">
+    <a class="nl" href="index.html#templates">Templates</a>
+    <a class="nl" href="index.html#name-reveal">Name Reveal</a>
+    <a class="nl" href="index.html#pricing">Pricing</a>
+    <a class="nl on" href="about.html">About</a>
+    <a class="nl" href="index.html#contact">Contact</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="ho">✦ About The Studio ✦</div>
+  <h1>Crafted with <span class="g">Love</span> & Hard Work</h1>
+  <p class="hd">Premium After Effects templates for South Indian celebrations — designed by a working VFX artist, made for everyone from beginners to professionals.</p>
+</div>
+
+<div class="dv">✦ Who I Am ✦</div>
+
+<!-- STORY -->
+<div class="sec">
+  <div style="text-align:center;">
+    <div class="sl">The Artist</div>
+    <div class="st">Hi, I'm Mohammad Rafi</div>
+    <div class="ss">VFX &amp; Motion Graphics Artist · Bengaluru, India</div>
+  </div>
+  <div class="story">
+    <p>I'm a <span class="g">VFX &amp; Motion Graphics Artist</span> based in Bengaluru, and I've spent years bringing celebrations to life through motion. What started as a love for Adobe After Effects turned into a full studio dedicated to one thing — making your special moments unforgettable.</p>
+    <p>I specialise in <span class="g">South Indian celebration videos</span> — baby name reveals, cradle &amp; naming ceremonies, wedding invitations, half saree functions and more, with full support for both <span class="g">Telugu and English</span>. Every project is built with attention to detail, cinematic quality, and a personal touch.</p>
+    <p>Through my YouTube channel and this site, I share ready-to-use After Effects project files so creators at every level — beginners to professionals — can craft beautiful invitations of their own. Each template is made with care, so it feels personal, not generic.</p>
+    <div class="tools">
+      <span class="tool">After Effects</span>
+      <span class="tool">Photoshop</span>
+      <span class="tool">Premiere Pro</span>
+    </div>
+  </div>
+</div>
+
+<div class="dv">✦ What I Offer ✦</div>
+
+<!-- SERVICES -->
+<div class="sec">
+  <div style="text-align:center;">
+    <div class="sl">Services</div>
+    <div class="st">What I Create</div>
+    <div class="ss">Ready-made templates &amp; fully personalised celebration videos</div>
+  </div>
+  <div class="sgrid">
+    <div class="scard">
+      <div class="ic">👶</div>
+      <h3>Baby Name Reveals</h3>
+      <p>Cinematic personalised name reveal videos for your little one's special day.</p>
+    </div>
+    <div class="scard">
+      <div class="ic">🪔</div>
+      <h3>Cradle &amp; Naming</h3>
+      <p>Barasaala &amp; naming ceremony invitations in Telugu and English.</p>
+    </div>
+    <div class="scard">
+      <div class="ic">💍</div>
+      <h3>Wedding Invitations</h3>
+      <p>Luxury wedding &amp; engagement invitation videos with elegant motion design.</p>
+    </div>
+    <div class="scard">
+      <div class="ic">🌸</div>
+      <h3>Half Saree &amp; Dhoti</h3>
+      <p>Beautiful half saree, dhoti and traditional ceremony invitation templates.</p>
+    </div>
+    <div class="scard">
+      <div class="ic">🎂</div>
+      <h3>Birthday Invitations</h3>
+      <p>Fun, themed birthday invitation videos — from first birthdays to big celebrations.</p>
+    </div>
+    <div class="scard">
+      <div class="ic">🎬</div>
+      <h3>Custom Projects</h3>
+      <p>Personalised, made-to-order videos tailored exactly to your event and style.</p>
+    </div>
+  </div>
+  <div class="statrow">
+    <div class="stat"><div class="n">100+</div><div class="l">Templates</div></div>
+    <div class="stat"><div class="n">Telugu</div><div class="l">+ English</div></div>
+    <div class="stat"><div class="n">4K</div><div class="l">Quality</div></div>
+    <div class="stat"><div class="n">₹200</div><div class="l">Starting</div></div>
+  </div>
+</div>
+
+<div class="dv">✦ Get In Touch ✦</div>
+
+<!-- CONTACT -->
+<div class="sec contact-wrap">
+  <div class="sl">Contact</div>
+  <div class="st">Let's Work Together</div>
+  <div class="ss">Have a question or a custom project in mind? Reach out anytime.</div>
+  <div class="cbtns">
+    <a class="bg" href="https://wa.me/919739909710?text=Hi%20Mohammad%20bhai!%20I%27m%20interested%20in%20AfterFX%20Templates." target="_blank">💬 WhatsApp · +91 97399 09710</a>
+    <a class="bo" href="mailto:rafikarim143@gmail.com">✉ rafikarim143@gmail.com</a>
+  </div>
+  <p class="cnote">Based in Bengaluru, India · Available for custom celebration videos</p>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="flogo">AfterFX Templates</div>
+  <p>by Mohammad Rafi · VFX &amp; Motion Graphics Artist · Bengaluru</p>
+  <p style="margin-top:3px;">Wedding · Birthday · Half Saree · Cradle · Baby Name Reveal</p>
+  <div class="flinks">
+    <a href="https://youtube.com/@afterfxtemplates" target="_blank">YouTube</a>
+    <a href="https://wa.me/919739909710" target="_blank">WhatsApp</a>
+    <a href="mailto:rafikarim143@gmail.com">Email</a>
+    <a href="index.html#templates">Templates</a>
+    <a href="index.html#pricing">Pricing</a>
+  </div>
+  <p style="margin-top:18px;font-size:11px;color:var(--mt2);">© 2025 AfterFX Templates · All Rights Reserved</p>
+</footer>
+
+</body>
+</html>
