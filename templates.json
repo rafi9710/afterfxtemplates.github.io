@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "exportedAt": "2026-06-07T15:12:34.092Z",
+  "exportedAt": "2026-06-07T16:39:07.188Z",
   "templates": [
     {
       "id": "custom_1780845113032",
@@ -139,6 +139,46 @@
       "cat": "wedding",
       "price": 200,
       "url": "https://www.youtube.com/watch?v=dYp4okFgLDE"
+    },
+    {
+      "id": "SlFiGhBa2is",
+      "title": "Wedding",
+      "thumb": "https://i.ytimg.com/vi/SlFiGhBa2is/mqdefault.jpg",
+      "cat": "wedding",
+      "price": 200,
+      "url": "https://www.youtube.com/watch?v=SlFiGhBa2is"
+    },
+    {
+      "id": "naHuirSoYUk",
+      "title": "Name Reveal",
+      "thumb": "https://i.ytimg.com/vi/naHuirSoYUk/mqdefault.jpg",
+      "cat": "wedding",
+      "price": 200,
+      "url": "https://www.youtube.com/watch?v=naHuirSoYUk"
+    },
+    {
+      "id": "b4xKUacw2us",
+      "title": "Housewarming",
+      "thumb": "https://i.ytimg.com/vi/b4xKUacw2us/mqdefault.jpg",
+      "cat": "wedding",
+      "price": 200,
+      "url": "https://www.youtube.com/watch?v=b4xKUacw2us"
+    },
+    {
+      "id": "JiJczWEPaCo",
+      "title": "Wedding",
+      "thumb": "https://i.ytimg.com/vi/JiJczWEPaCo/mqdefault.jpg",
+      "cat": "wedding",
+      "price": 200,
+      "url": "https://www.youtube.com/watch?v=JiJczWEPaCo"
+    },
+    {
+      "id": "VI0qoBhbjjE",
+      "title": "Wedding",
+      "thumb": "https://i.ytimg.com/vi/VI0qoBhbjjE/mqdefault.jpg",
+      "cat": "wedding",
+      "price": 200,
+      "url": "https://www.youtube.com/watch?v=VI0qoBhbjjE"
     }
   ]
 }
