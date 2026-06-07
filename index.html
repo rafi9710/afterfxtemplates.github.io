@@ -395,20 +395,16 @@ function detectCat(t){
   return 'wedding';
 }
 
-// Load the published customizations from templates.json (same file admin exports).
-// Falls back to empty overrides if the file is missing/empty.
-async function loadOverrides(){
+// Load templates.json once. May be either:
+//  v2 (preferred): { templates:[ {id,title,thumb,cat,price,url}, ... ] }  ← full catalog, no proxy needed
+//  v1 (old):       { custom:{}, hidden:[], extras:[] }                     ← deltas only, needs RSS for base
+async function loadJson(){
   try{
     const r=await fetch('templates.json?t='+Date.now()); // cache-bust so updates show fast
     if(!r.ok) throw 0;
-    const j=await r.json();
-    return {
-      custom:j.custom||{},
-      hidden:j.hidden||[],
-      extras:j.extras||[]
-    };
+    return await r.json();
   }catch(e){
-    return {custom:{},hidden:[],extras:[]};
+    return null;
   }
 }
 
@@ -458,7 +454,20 @@ async function fetchBase(){
 }
 
 async function fetchVideos(){
-  const [base, ov] = await Promise.all([fetchBase(), loadOverrides()]);
+  const json = await loadJson();
+
+  // PREFERRED: templates.json carries the full catalog → render directly, no proxy/YouTube needed.
+  if(json && Array.isArray(json.templates) && json.templates.length){
+    return json.templates;
+  }
+
+  // FALLBACK: old delta-only file (or missing) → pull base list from YouTube RSS via proxy and overlay deltas.
+  const ov = {
+    custom: json?.custom || {},
+    hidden: json?.hidden || [],
+    extras: json?.extras || []
+  };
+  const base = await fetchBase();
   return applyCustomizations(base, ov);
 }
 
