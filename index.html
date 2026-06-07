@@ -191,6 +191,16 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
   .pgrid{grid-template-columns:repeat(2,1fr);}
   .cpanel{width:100vw;}.hstats{gap:22px;}
 }
+.bgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px;margin-top:34px;}
+.bcard{background:var(--bg2);border:1px solid var(--gb);border-radius:8px;padding:26px 22px;transition:all .25s;}
+.bcard:hover{border-color:var(--gbh);transform:translateY(-4px);background:var(--bg3);}
+.bcard .bic{width:46px;height:46px;border-radius:8px;background:var(--gold-dim);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:14px;}
+.bcard h3{font-family:'Cinzel',serif;font-size:15px;color:#fff;margin-bottom:8px;}
+.bcard p{font-size:13px;color:var(--mt);line-height:1.65;}
+.incl{margin-top:30px;background:var(--bg2);border:1px solid var(--gbh);border-radius:10px;padding:34px 30px;}
+.incl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px 26px;margin:24px auto 0;max-width:760px;}
+.incl-i{display:flex;align-items:center;gap:11px;font-size:14px;color:var(--tx);}
+.incl-i span{width:22px;height:22px;border-radius:50%;background:var(--gold);color:#000;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;}
 </style>
 </head>
 <body>
@@ -201,6 +211,7 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
     <a class="nl" href="#templates">Templates</a>
     <a class="nl" href="#name-reveal">Name Reveal</a>
     <a class="nl" href="#pricing">Pricing</a>
+    <a class="nl" href="#benefits">Why Us</a>
     <a class="nl" href="about.html">About</a>
     <a class="nl" href="#contact">Contact</a>
     <a class="nl" href="admin.html" title="Admin Panel" style="opacity:.4;font-size:10px;">⚙</a>
@@ -300,6 +311,43 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
     <div class="pgrid" id="pgrid"></div>
   </div>
 </div>
+
+<div class="dv">✦ Why Choose Us ✦</div>
+
+<!-- BENEFITS -->
+<section class="sec" id="benefits">
+  <div style="text-align:center;">
+    <div class="sl">Why Choose Us</div>
+    <div class="st">Benefits We Provide</div>
+    <div class="ss">Everything you need for a beautiful, stress-free celebration video</div>
+  </div>
+  <div class="bgrid">
+    <div class="bcard"><div class="bic">🌐</div><h3>Telugu + English Support</h3><p>Every template comes with full Telugu and English text support for your audience.</p></div>
+    <div class="bcard"><div class="bic">🎬</div><h3>4K / HD Quality</h3><p>Crisp, cinematic 4K and HD output that looks stunning on any screen.</p></div>
+    <div class="bcard"><div class="bic">💰</div><h3>Affordable Pricing</h3><p>Premium designs starting at just ₹200 — top quality without the heavy price.</p></div>
+    <div class="bcard"><div class="bic">⚡</div><h3>Fast Delivery</h3><p>Your files are delivered quickly straight to your WhatsApp once confirmed.</p></div>
+    <div class="bcard"><div class="bic">✏️</div><h3>Easy Customization</h3><p>Simple to personalise with your own names, dates, and photos.</p></div>
+    <div class="bcard"><div class="bic">🛡️</div><h3>Copyright Safe</h3><p>Original, 100% copyright-safe designs you can use with complete peace of mind.</p></div>
+    <div class="bcard"><div class="bic">♾️</div><h3>Lifetime Usable</h3><p>Once a file is yours, it's yours forever — use it whenever you need.</p></div>
+    <div class="bcard"><div class="bic">🤝</div><h3>Personal Support</h3><p>Direct, friendly support from the artist himself for any help you need.</p></div>
+  </div>
+
+  <div class="incl">
+    <div style="text-align:center;">
+      <div class="sl">What's Included</div>
+      <div class="st" style="font-size:clamp(19px,2.6vw,27px);">Complete Project Files</div>
+      <div class="ss">We provide each and every asset used in the template — nothing held back.</div>
+    </div>
+    <div class="incl-grid">
+      <div class="incl-i"><span>✓</span> Ready-to-use project files</div>
+      <div class="incl-i"><span>✓</span> Fonts used in the design</div>
+      <div class="incl-i"><span>✓</span> PNG footages</div>
+      <div class="incl-i"><span>✓</span> Audio / music files</div>
+      <div class="incl-i"><span>✓</span> Telugu &amp; English PSD files</div>
+      <div class="incl-i"><span>✓</span> All design assets</div>
+    </div>
+  </div>
+</section>
 
 <div class="dv">✦ Get In Touch ✦</div>
 
