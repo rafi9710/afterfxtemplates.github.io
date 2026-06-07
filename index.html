@@ -395,29 +395,56 @@ function detectCat(t){
   return 'wedding';
 }
 
-async function fetchVideos(){
-  // FETCH FROM templates.json (live data for all visitors)
-  // Falls back to localStorage if file not found (for admin preview)
+// Load the published customizations from templates.json (same file admin exports).
+// Falls back to empty overrides if the file is missing/empty.
+async function loadOverrides(){
   try{
-    const r=await fetch('templates.json?t='+Date.now(),{cache:'no-store'});
-    if(r.ok){
-      const data=await r.json();
-      // Save to localStorage so admin panel stays in sync if opened later
-      if(data.custom) localStorage.setItem('afx_custom',JSON.stringify(data.custom));
-      if(data.hidden) localStorage.setItem('afx_hidden',JSON.stringify(data.hidden));
-      if(data.extras) localStorage.setItem('afx_extras',JSON.stringify(data.extras));
-    }
+    const r=await fetch('templates.json?t='+Date.now()); // cache-bust so updates show fast
+    if(!r.ok) throw 0;
+    const j=await r.json();
+    return {
+      custom:j.custom||{},
+      hidden:j.hidden||[],
+      extras:j.extras||[]
+    };
   }catch(e){
-    // templates.json not yet uploaded - falls back to localStorage
-    console.log('templates.json not found, using local data');
+    return {custom:{},hidden:[],extras:[]};
   }
-  return applyCustomizations([]);
 }
 
-function applyCustomizations(vids){
-  const custom=JSON.parse(localStorage.getItem('afx_custom')||'{}');
-  const hidden=JSON.parse(localStorage.getItem('afx_hidden')||'[]');
-  const extras=JSON.parse(localStorage.getItem('afx_extras')||'[]');
+// Pull the base template list live from the YouTube channel RSS (same source as admin).
+async function fetchBase(){
+  try{
+    const r=await fetch(PROXY+encodeURIComponent(RSS));
+    const d=await r.json();
+    const xml=new DOMParser().parseFromString(d.contents,'text/xml');
+    const out=[];
+    xml.querySelectorAll('entry').forEach(e=>{
+      const vid=e.querySelector('videoId')?.textContent
+        || e.querySelector('[rel="alternate"]')?.getAttribute('href')?.split('v=')[1];
+      const title=e.querySelector('title')?.textContent||'';
+      if(vid&&title) out.push({
+        id:vid,
+        title,
+        thumb:`https://i.ytimg.com/vi/${vid}/mqdefault.jpg`,
+        cat:detectCat(title),
+        price:200,
+        url:`https://www.youtube.com/watch?v=${vid}`
+      });
+    });
+    return out;
+  }catch(e){
+    return [];
+  }
+}
+
+async function fetchVideos(){
+  const [base, ov] = await Promise.all([fetchBase(), loadOverrides()]);
+  return applyCustomizations(base, ov);
+}
+
+function applyCustomizations(vids, ov){
+  const {custom, hidden, extras} = ov;
   let result=vids.filter(v=>!hidden.includes(v.id));
   result=result.map(v=>{
     const c=custom[v.id];
