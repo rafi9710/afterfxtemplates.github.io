@@ -312,7 +312,7 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
       <div class="ic">💬</div>
       <h3>WhatsApp</h3>
       <p>Order templates, request customization, or ask anything. Fastest response here.</p>
-      <a href="https://wa.me/919739909710?text=Hi%20Mohammad%20bhai!%20I%27m%20interested%20in%20AfterFX%20Templates." target="_blank">
+      <a href="https://wa.me/919739909710?text=Hi%20AfterFX%20Templates!%20I%27m%20interested%20in%20AfterFX%20Templates." target="_blank">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
         +91 97399 09710
       </a>
@@ -528,7 +528,7 @@ function renderGrid(){
         <div class="vtitle">${v.title}</div>
         <div class="vmeta"><span class="vprice">₹${v.price}</span><span style="font-size:10px;color:var(--mt)">AE Project File</span></div>
         <div class="vacts">
-          <button class="badd ${inc?'done':''}" onclick="addCart('${v.id}','${v.title.replace(/'/g,"\\'")}','${v.thumb}',${v.price})" id="ab${v.id}">${inc?'✓ Added':'+ Add to Cart'}</button>
+          <button class="badd ${inc?'done':''}" onclick="addCart('${v.id}','${v.title.replace(/'/g,"\\'")}','${v.thumb}',${v.price},'${v.url}')" id="ab${v.id}">${inc?'✓ Added':'+ Add to Cart'}</button>
           <button class="bwatch" onclick="window.open('${v.url}','_blank')">▶ Watch</button>
         </div>
       </div>
@@ -549,25 +549,55 @@ function renderPricing(){
 }
 
 function bundleOrder(qty,price){
-  const msg=`Hi Mohammad bhai! Bundle order karna chahta hu:\n\n📦 Bundle: ${qty} Templates\n💰 Price: ₹${price.toLocaleString('en-IN')}\n\nKripya guide karein!`;
+  const msg=`Hi AfterFX Templates! I would like to order a bundle:\n\nBundle: ${qty} Templates\nPrice: ₹${price.toLocaleString('en-IN')}\n\nPlease guide me. Thank you!`;
   window.open(`https://wa.me/919739909710?text=${encodeURIComponent(msg)}`,'_blank');
 }
 
 function saveCart(){localStorage.setItem('afx_c',JSON.stringify(cart));}
 function updateCount(){document.getElementById('cnum').textContent=cart.reduce((s,c)=>s+c.qty,0);}
 
-function addCart(id,title,thumb,price){
+/* ===== BULK PRICING ===== */
+const MAX_CART=20;                 // max templates a customer can self-checkout
+const STD_PRICE=200;               // standard per-template price
+// per-unit rate by total standard-template quantity (hits exact bundle prices: 5=600,10=1170,20=2250)
+function tierRate(q){
+  if(q>=20) return 112.5;
+  if(q>=10) return 117;
+  if(q>=5)  return 120;
+  return STD_PRICE;
+}
+function cartQty(){return cart.reduce((s,c)=>s+c.qty,0);}            // all items
+function splitCart(){
+  let stdQty=0,premium=0;
+  cart.forEach(c=>{ if(c.price===STD_PRICE) stdQty+=c.qty; else premium+=c.price*c.qty; });
+  return {stdQty,premium};
+}
+function cartBase(){return cart.reduce((s,c)=>s+c.price*c.qty,0);}    // before discount
+function cartTotal(){
+  const {stdQty,premium}=splitCart();
+  return Math.round(stdQty*tierRate(stdQty))+premium;                 // discount only on std ₹200 items
+}
+
+function addCart(id,title,thumb,price,url){
   if(cart.find(c=>c.id===id))return;
-  cart.push({id,title,thumb,price,qty:1});
+  if(cartQty()>=MAX_CART){bigOrderNotice();return;}
+  cart.push({id,title,thumb,price,url,qty:1});
   saveCart();updateCount();
   const btn=document.getElementById('ab'+id);
   if(btn){btn.textContent='✓ Added';btn.classList.add('done');}
   showToast('Added to cart! 🛒');
 }
 
+function bigOrderNotice(){
+  showToast('Max 20 per order — contact us for bigger bundles');
+  const msg=`Hi AfterFX Templates! I want to order more than 20 templates (bulk deal). Please guide me on pricing. Thank you!`;
+  window.open(`https://wa.me/919739909710?text=${encodeURIComponent(msg)}`,'_blank');
+}
+
 function changeQty(id,d){
   const item=cart.find(c=>c.id===id);
   if(!item)return;
+  if(d>0 && cartQty()>=MAX_CART){bigOrderNotice();return;}
   item.qty=Math.max(0,item.qty+d);
   if(item.qty===0)cart=cart.filter(c=>c.id!==id);
   saveCart();updateCount();renderCart();renderGrid();
@@ -583,7 +613,7 @@ function renderCart(){
     b.innerHTML=`<div class="emp"><div class="ei">🛒</div><p>Cart is empty.<br>Add templates above!</p></div>`;
     f.innerHTML='';return;
   }
-  const total=cart.reduce((s,c)=>s+c.price*c.qty,0);
+  const base=cartBase(), total=cartTotal(), save=base-total, q=cartQty();
   b.innerHTML=cart.map(c=>`
     <div class="cpi">
       <img class="cpit" src="${c.thumb}" onerror="this.style.display='none'">
@@ -594,8 +624,12 @@ function renderCart(){
         <button class="qb" onclick="changeQty('${c.id}',1)">+</button>
       </div>
     </div>`).join('');
+  const discRow = save>0
+    ? `<div style="display:flex;justify-content:space-between;align-items:center;background:var(--gold-dim);border:1px solid var(--gb);border-radius:4px;padding:9px 12px;margin-bottom:10px;"><span style="font-size:12px;color:var(--gold);font-weight:600;">🔥 ${q}-Project Bundle</span><span style="font-size:12px;color:var(--gold);font-weight:700;">You save ₹${save}</span></div>`
+    : '';
   f.innerHTML=`<div class="cpf">
-    <div class="cptot"><span>Total</span><span class="am">₹${total}</span></div>
+    ${discRow}
+    <div class="cptot"><span>Total</span><span class="am">${save>0?`<span style="text-decoration:line-through;color:var(--mt);font-size:13px;margin-right:8px;font-weight:400;">₹${base}</span>`:''}₹${total}</span></div>
     <button class="chk" onclick="checkout()">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
       Checkout via WhatsApp
@@ -604,16 +638,19 @@ function renderCart(){
 }
 
 function checkout(){
-  const total=cart.reduce((s,c)=>s+c.price*c.qty,0);
+  const base=cartBase(), total=cartTotal(), save=base-total, q=cartQty();
   const oid='AFX-'+Date.now().toString().slice(-6);
-  const items=cart.map(c=>`• ${c.title} ×${c.qty} = ₹${c.price*c.qty}`).join('\n');
-  const msg=`Hi Mohammad bhai! Mera order:\n\n🆔 Order ID: ${oid}\n\n${items}\n\n──────────\n💰 Total: ₹${total}\n\nPlease confirm!`;
+  const items=cart.map((c,i)=>`${i+1}. ${c.title}\n   ₹${c.price} x ${c.qty} = ₹${c.price*c.qty}\n   Link: ${c.url||'N/A'}`).join('\n\n');
+  const priceBlock = save>0
+    ? `Subtotal: ₹${base}\nBundle Discount (${q} projects): -₹${save}\nTotal: ₹${total}`
+    : `Total: ₹${total}`;
+  const msg=`Hi AfterFX Templates! I would like to place an order:\n\nOrder ID: ${oid}\n\n${items}\n\n----------\n${priceBlock}\n\nPlease confirm. Thank you!`;
   window.open(`https://wa.me/919739909710?text=${encodeURIComponent(msg)}`,'_blank');
   cart=[];saveCart();updateCount();closeCart();renderGrid();
 }
 
 function nrWA(){
-  const msg=`Hi Mohammad bhai! Baby Name Reveal video chahiye.\n\nBaby ka naam: \nTheme preference: \n\nPlease guide karein!`;
+  const msg=`Hi AfterFX Templates! I would like a Baby Name Reveal video.\n\nBaby's name: \nTheme preference: \n\nPlease guide me. Thank you!`;
   window.open(`https://wa.me/919739909710?text=${encodeURIComponent(msg)}`,'_blank');
 }
 
