@@ -412,30 +412,49 @@ async function loadOverrides(){
   }
 }
 
+// Multiple CORS proxies — tried in order until one works (free proxies are flaky).
+const PROXIES = [
+  u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
+  u => `https://corsproxy.io/?url=${encodeURIComponent(u)}`,
+  u => `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(u)}`,
+  u => `https://api.allorigins.win/get?url=${encodeURIComponent(u)}`,
+];
+
+function parseFeed(xmlText){
+  const xml=new DOMParser().parseFromString(xmlText,'text/xml');
+  const out=[];
+  xml.querySelectorAll('entry').forEach(e=>{
+    const vid=e.querySelector('videoId')?.textContent
+      || e.querySelector('[rel="alternate"]')?.getAttribute('href')?.split('v=')[1];
+    const title=e.querySelector('title')?.textContent||'';
+    if(vid&&title) out.push({
+      id:vid,
+      title,
+      thumb:`https://i.ytimg.com/vi/${vid}/mqdefault.jpg`,
+      cat:detectCat(title),
+      price:200,
+      url:`https://www.youtube.com/watch?v=${vid}`
+    });
+  });
+  return out;
+}
+
 // Pull the base template list live from the YouTube channel RSS (same source as admin).
 async function fetchBase(){
-  try{
-    const r=await fetch(PROXY+encodeURIComponent(RSS));
-    const d=await r.json();
-    const xml=new DOMParser().parseFromString(d.contents,'text/xml');
-    const out=[];
-    xml.querySelectorAll('entry').forEach(e=>{
-      const vid=e.querySelector('videoId')?.textContent
-        || e.querySelector('[rel="alternate"]')?.getAttribute('href')?.split('v=')[1];
-      const title=e.querySelector('title')?.textContent||'';
-      if(vid&&title) out.push({
-        id:vid,
-        title,
-        thumb:`https://i.ytimg.com/vi/${vid}/mqdefault.jpg`,
-        cat:detectCat(title),
-        price:200,
-        url:`https://www.youtube.com/watch?v=${vid}`
-      });
-    });
-    return out;
-  }catch(e){
-    return [];
+  for(const makeUrl of PROXIES){
+    try{
+      const r=await fetch(makeUrl(RSS));
+      if(!r.ok) continue;
+      let text=await r.text();
+      // allorigins /get wraps the content in JSON {contents:"..."}
+      if(text.trim().startsWith('{')){
+        try{ const j=JSON.parse(text); if(j.contents) text=j.contents; }catch(_){}
+      }
+      const vids=parseFeed(text);
+      if(vids.length) return vids;   // success — stop trying other proxies
+    }catch(e){ /* try next proxy */ }
   }
+  return []; // all proxies failed
 }
 
 async function fetchVideos(){
