@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "exportedAt": "2026-06-08T16:06:47.798Z",
+  "exportedAt": "2026-06-08T17:01:15.575Z",
   "templates": [
     {
       "id": "U9idBPmfWc0",
@@ -195,7 +195,8 @@
       "thumb": "https://i.ytimg.com/vi/ZaLzceqLM5s/mqdefault.jpg",
       "cat": "namereveal",
       "price": 200,
-      "url": "https://www.youtube.com/watch?v=ZaLzceqLM5s"
+      "url": "https://www.youtube.com/watch?v=ZaLzceqLM5s",
+      "customizeOnly": true
     },
     {
       "id": "6swtlOCuzrs",
@@ -243,7 +244,8 @@
       "thumb": "https://i.ytimg.com/vi/PfSw6Gqc3HM/mqdefault.jpg",
       "cat": "namereveal",
       "price": 200,
-      "url": "https://www.youtube.com/watch?v=PfSw6Gqc3HM"
+      "url": "https://www.youtube.com/watch?v=PfSw6Gqc3HM",
+      "customizeOnly": true
     },
     {
       "id": "fj7iQFUOWPY",
@@ -251,7 +253,8 @@
       "thumb": "https://i.ytimg.com/vi/fj7iQFUOWPY/mqdefault.jpg",
       "cat": "wedding",
       "price": 200,
-      "url": "https://www.youtube.com/watch?v=fj7iQFUOWPY"
+      "url": "https://www.youtube.com/watch?v=fj7iQFUOWPY",
+      "customizeOnly": true
     },
     {
       "id": "1w5GNjujv0w",
@@ -267,7 +270,8 @@
       "thumb": "https://i.ytimg.com/vi/8auYrUOcZII/mqdefault.jpg",
       "cat": "namereveal",
       "price": 200,
-      "url": "https://www.youtube.com/watch?v=8auYrUOcZII"
+      "url": "https://www.youtube.com/watch?v=8auYrUOcZII",
+      "customizeOnly": true
     },
     {
       "id": "H-STIJcPkdw",
@@ -403,7 +407,8 @@
       "thumb": "https://i.ytimg.com/vi/pIScMR6tT08/mqdefault.jpg",
       "cat": "namereveal",
       "price": 200,
-      "url": "https://www.youtube.com/watch?v=pIScMR6tT08"
+      "url": "https://www.youtube.com/watch?v=pIScMR6tT08",
+      "customizeOnly": true
     },
     {
       "id": "BZfXaJNtdEw",
@@ -459,7 +464,8 @@
       "thumb": "https://i.ytimg.com/vi/sHGOlz5nXdI/mqdefault.jpg",
       "cat": "namereveal",
       "price": 200,
-      "url": "https://www.youtube.com/watch?v=sHGOlz5nXdI"
+      "url": "https://www.youtube.com/watch?v=sHGOlz5nXdI",
+      "customizeOnly": true
     },
     {
       "id": "bf3k-vTdGf4",
