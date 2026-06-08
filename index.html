@@ -290,6 +290,10 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
     <div class="skc"><div class="skt sk"></div><div class="skb"><div class="skl sk"></div><div class="skl s sk"></div></div></div>
     <div class="skc"><div class="skt sk"></div><div class="skb"><div class="skl sk"></div><div class="skl s sk"></div></div></div>
   </div>
+  <div id="loadmore-wrap" style="text-align:center;margin-top:34px;display:none;">
+    <button id="loadmore-btn" onclick="loadMore()" style="background:transparent;border:1px solid var(--gold);color:var(--gold);font-family:'DM Sans',sans-serif;font-weight:600;letter-spacing:1px;padding:13px 40px;border-radius:4px;cursor:pointer;font-size:13px;text-transform:uppercase;transition:.2s;" onmouseover="this.style.background='var(--gold)';this.style.color='#080810'" onmouseout="this.style.background='transparent';this.style.color='var(--gold)'">Load More Templates</button>
+    <div id="loadmore-count" style="color:var(--mt);font-size:12px;margin-top:12px;"></div>
+  </div>
 </section>
 
 <div class="dv">✦ Name Reveal ✦</div>
@@ -463,6 +467,7 @@ const CATS = [
   {id:'saree',label:'Saree'},
   {id:'namereveal',label:'Name Reveal'},
   {id:'babyshower',label:'Baby Shower'},
+  {id:'housewarming',label:'House Warming'},
   {id:'others',label:'Others'},
 ];
 
@@ -472,6 +477,8 @@ const KW = {
   halfsaree: ['half saree','halfsaree','langa','half-saree','langa voni'],
   cradle:    ['cradle','naming','namakarana','barashala','baarashala'],
   saree:     ['saree ceremony','saree function','saree project','silk saree'],
+  babyshower:['seemantham','seemandham','seemaantham','baby shower','babyshower','shrimantham','srimantham','godh bharai','valaikappu'],
+  housewarming:['house warming','housewarming','gruhapravesam','gruha pravesam','grihapravesam','griha pravesh','gruhapravesh','new house'],
 };
 
 const PRICING = [
@@ -592,16 +599,24 @@ function renderTabs(){
   ).join('');
 }
 
-function setFilter(f){filter=f;renderTabs();renderGrid();}
+function setFilter(f){filter=f;shown=PAGE_SIZE;renderTabs();renderGrid();}
+
+const PAGE_SIZE=12;
+let shown=PAGE_SIZE;
+
+function loadMore(){shown+=PAGE_SIZE;renderGrid();}
 
 function renderGrid(){
   const list=filter==='all'?videos:videos.filter(v=>v.cat===filter);
   const el=document.getElementById('vgrid');
+  const wrap=document.getElementById('loadmore-wrap');
   if(!list.length){
     el.innerHTML=`<div style="color:var(--mt);text-align:center;padding:40px;grid-column:1/-1;font-size:14px;"><div style="font-size:30px;margin-bottom:10px">📺</div>No templates in this category yet.<br><a href="https://youtube.com/@afterfxtemplates" target="_blank" style="color:var(--gold);text-decoration:none;font-size:13px;margin-top:8px;display:inline-block;">▶ View on YouTube</a></div>`;
+    if(wrap)wrap.style.display='none';
     return;
   }
-  el.innerHTML=list.map(v=>{
+  const visible=list.slice(0,shown);
+  el.innerHTML=visible.map(v=>{
     const inc=cart.find(c=>c.id===v.id);
     const co=v.customizeOnly;
     return`<div class="vc">
@@ -625,6 +640,14 @@ function renderGrid(){
       </div>
     </div>`;
   }).join('');
+  if(wrap){
+    if(list.length>shown){
+      wrap.style.display='block';
+      document.getElementById('loadmore-count').textContent=`Showing ${visible.length} of ${list.length} templates`;
+    }else{
+      wrap.style.display='none';
+    }
+  }
 }
 
 function renderPricing(){
