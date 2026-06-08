@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Make Test Sender — AfterFX</title>
+<style>
+  body{font-family:system-ui,Arial,sans-serif;background:#0d0d16;color:#eee;
+       max-width:520px;margin:40px auto;padding:0 18px;line-height:1.5}
+  h1{color:#C9A84C;font-size:22px}
+  p{color:#9a978f;font-size:14px}
+  label{display:block;font-size:13px;color:#9a978f;margin:12px 0 4px}
+  input{width:100%;padding:11px;border-radius:9px;border:1px solid #C9A84C44;
+        background:#14141f;color:#eee;font-size:15px}
+  button{width:100%;margin-top:22px;padding:16px;border:none;border-radius:11px;
+         background:linear-gradient(135deg,#C9A84C,#a6852f);color:#0a0a12;
+         font-weight:700;font-size:17px;cursor:pointer}
+  .ok{margin-top:18px;padding:14px;border-radius:10px;background:#163b29;color:#7fe0a8;
+      display:none;font-size:14px}
+</style>
+</head>
+<body>
+  <h1>Make Test Sender</h1>
+  <p>Ye sample order data seedha aapke Make webhook ko bhejega. Razorpay ki zaroorat nahi.
+     Email apna daal sakte ho taaki Make me dikhe.</p>
+
+  <!-- Real form POST = no CORS issues, Make receives flat fields -->
+  <form id="f" action="https://hook.us2.make.com/ti2j0g88lgefw0szoldin3lrhbw1a07s" method="POST" target="resp">
+    <label>event</label>
+    <input name="event" value="payment.captured">
+
+    <label>payment_id</label>
+    <input name="payment_id" value="pay_TEST12345">
+
+    <label>customer_name</label>
+    <input name="customer_name" value="Ramesh Kumar">
+
+    <label>customer_email</label>
+    <input name="customer_email" value="test@gmail.com">
+
+    <label>template_ids</label>
+    <input name="template_ids" value="t1,t3">
+
+    <label>templates</label>
+    <input name="templates" value="Telugu Wedding Invitation x1, Half Saree Function x1">
+
+    <label>qty</label>
+    <input name="qty" value="2">
+
+    <label>total (₹)</label>
+    <input name="total" value="400">
+
+    <button type="submit">Send Test Data to Make &rarr;</button>
+  </form>
+
+  <div class="ok" id="ok">Bhej diya! Ab Make tab me HISTORY refresh karo (F5) — ek naya execution aana chahiye.</div>
+
+  <!-- response loads here so page doesn't fully navigate away -->
+  <iframe name="resp" style="display:none"></iframe>
+
+<script>
+  document.getElementById('f').addEventListener('submit', function(){
+    setTimeout(function(){ document.getElementById('ok').style.display='block'; }, 300);
+  });
+</script>
+</body>
+</html>
