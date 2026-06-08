@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Razorpay Test Checkout — AfterFX Templates</title>
+
+<!-- ===== Razorpay Checkout script (loads the payment popup) ===== -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --gold:#C9A84C;
+    --gold-soft:#e7cd7e;
+    --bg:#080810;
+    --card:#11111d;
+    --line:rgba(201,168,76,.22);
+    --text:#ece9e0;
+    --muted:#8f8c84;
+    --green:#3fbf7f;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(201,168,76,.10), transparent 60%),
+      var(--bg);
+    color:var(--text);
+    font-family:'DM Sans',sans-serif;
+    min-height:100vh;
+    padding:28px 16px 60px;
+  }
+  .wrap{max-width:560px;margin:0 auto}
+  .badge{
+    display:inline-block;font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--bg);background:var(--gold);padding:5px 12px;border-radius:999px;font-weight:700;
+  }
+  h1{font-family:'Cinzel',serif;font-size:26px;color:var(--gold-soft);margin:14px 0 4px;letter-spacing:.02em}
+  .sub{color:var(--muted);font-size:14px;margin-bottom:24px}
+
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:18px;margin-bottom:16px;
+  }
+  .item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px dashed rgba(255,255,255,.06)}
+  .item:last-child{border-bottom:none}
+  .item .name{font-weight:500}
+  .item .price{color:var(--muted);font-size:13px}
+  .qty{display:flex;align-items:center;gap:10px}
+  .qty button{
+    width:30px;height:30px;border-radius:8px;border:1px solid var(--line);
+    background:transparent;color:var(--gold);font-size:18px;cursor:pointer;line-height:1;
+  }
+  .qty button:active{transform:scale(.92)}
+  .qty span{min-width:22px;text-align:center;font-weight:700}
+
+  .summary{font-size:14px;color:var(--muted)}
+  .summary .row{display:flex;justify-content:space-between;padding:4px 0}
+  .summary .total{
+    color:var(--text);font-weight:700;font-size:18px;border-top:1px solid var(--line);
+    margin-top:8px;padding-top:12px;
+  }
+  .total .amt{color:var(--gold-soft);font-family:'Cinzel',serif}
+
+  .pay{
+    width:100%;margin-top:6px;padding:15px;border:none;border-radius:12px;cursor:pointer;
+    background:linear-gradient(135deg,var(--gold),#a6852f);color:#0a0a12;
+    font-family:'DM Sans',sans-serif;font-weight:700;font-size:16px;letter-spacing:.02em;
+  }
+  .pay:disabled{opacity:.5;cursor:not-allowed}
+
+  .note{font-size:12.5px;line-height:1.6;color:var(--muted)}
+  .note b{color:var(--gold-soft)}
+  .note code{background:rgba(201,168,76,.12);color:var(--gold-soft);padding:1px 6px;border-radius:5px;font-size:12px}
+  .tip{border-left:3px solid var(--gold);padding-left:12px}
+
+  .ok{display:none;text-align:center;padding:8px 0}
+  .ok .tick{color:var(--green);font-size:40px}
+  .ok h2{font-family:'Cinzel',serif;color:var(--green);font-size:20px;margin:8px 0 4px}
+  .ok p{color:var(--muted);font-size:13px}
+  .ok .pid{color:var(--gold-soft);font-size:12px;word-break:break-all;margin-top:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <span class="badge">Test Mode</span>
+  <h1>AfterFX Templates</h1>
+  <p class="sub">Razorpay test checkout — no real money is charged.</p>
+
+  <!-- ===== Demo cart (mirrors your real bulk-discount pricing) ===== -->
+  <div class="card" id="cartCard">
+    <div class="item" data-id="t1">
+      <div>
+        <div class="name">Telugu Wedding Invitation</div>
+        <div class="price">₹200 base</div>
+      </div>
+      <div class="qty">
+        <button onclick="step('t1',-1)">−</button>
+        <span id="q-t1">1</span>
+        <button onclick="step('t1',1)">+</button>
+      </div>
+    </div>
+    <div class="item" data-id="t2">
+      <div>
+        <div class="name">Baby Name Reveal (Barasala)</div>
+        <div class="price">₹200 base</div>
+      </div>
+      <div class="qty">
+        <button onclick="step('t2',-1)">−</button>
+        <span id="q-t2">0</span>
+        <button onclick="step('t2',1)">+</button>
+      </div>
+    </div>
+    <div class="item" data-id="t3">
+      <div>
+        <div class="name">Half Saree Function</div>
+        <div class="price">₹200 base</div>
+      </div>
+      <div class="qty">
+        <button onclick="step('t3',-1)">−</button>
+        <span id="q-t3">0</span>
+        <button onclick="step('t3',1)">+</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="summary">
+      <div class="row"><span>Items</span><span id="sumQty">1</span></div>
+      <div class="row"><span>Per unit (after bulk discount)</span><span id="sumUnit">₹200</span></div>
+      <div class="row total"><span>Total</span><span class="amt" id="sumTotal">₹200</span></div>
+    </div>
+    <button class="pay" id="payBtn" onclick="payNow()">Pay with Razorpay</button>
+
+    <!-- success view -->
+    <div class="ok" id="okBox">
+      <div class="tick">✓</div>
+      <h2>Test Payment Successful</h2>
+      <p>WhatsApp khul jaayega delivery details ke saath.</p>
+      <div class="pid" id="okPid"></div>
+    </div>
+  </div>
+
+  <div class="card note">
+    <p class="tip"><b>Setup (1 step):</b> Niche script me <code>rzp_test_XXXXXXXX</code> ko apne Razorpay <b>Test Key ID</b> se replace karo. (Dashboard → Test Mode → Account &amp; Settings → API Keys → Generate Test Key)</p>
+    <br>
+    <p><b>Test card:</b> <code>4111 1111 1111 1111</code> · expiry koi bhi future date · CVV koi bhi 3 digit · OTP page pe <b>Success</b> dabao.</p>
+    <br>
+    <p><b>Test UPI:</b> <code>success@razorpay</code> (success) / <code>failure@razorpay</code> (fail).</p>
+    <br>
+    <p>KYC approve hone ke baad bas <code>rzp_test_</code> key ko <code>rzp_live_</code> key se badal dena — baaki sab same.</p>
+  </div>
+
+</div>
+
+<script>
+/* =================================================================
+   STEP 1 — apna Razorpay TEST Key ID yahan daalo (rzp_test_ se shuru)
+   Yeh key client-side me daalna safe hai (secret/key-secret NAHI daalna)
+   ================================================================= */
+const RAZORPAY_KEY = "rzp_test_SyzK8Dxa40xcIl";
+
+/* Your WhatsApp number for delivery (same as your site) */
+const WHATSAPP = "919739909710";
+
+/* ---- cart state ---- */
+const NAMES = { t1:"Telugu Wedding Invitation", t2:"Baby Name Reveal (Barasala)", t3:"Half Saree Function" };
+const qty = { t1:1, t2:0, t3:0 };
+
+/* per-unit price by total quantity — same tiers as your site */
+function unitPrice(n){
+  if(n>=20) return 112.5;
+  if(n>=10) return 117;
+  if(n>=5)  return 120;
+  return 200;
+}
+
+function totalQty(){ return qty.t1+qty.t2+qty.t3; }
+
+function step(id, d){
+  const next = qty[id] + d;
+  if(next < 0) return;
+  if(totalQty() + d > 20){ alert("Max 20 items. Isse zyada ke liye WhatsApp pe order karein."); return; }
+  qty[id] = next;
+  document.getElementById("q-"+id).textContent = qty[id];
+  render();
+}
+
+function render(){
+  const n = totalQty();
+  const u = unitPrice(n);
+  const total = +(n * u).toFixed(2);
+  document.getElementById("sumQty").textContent = n;
+  document.getElementById("sumUnit").textContent = "₹" + u;
+  document.getElementById("sumTotal").textContent = "₹" + total;
+  document.getElementById("payBtn").disabled = (n === 0);
+}
+
+function payNow(){
+  const n = totalQty();
+  if(n === 0) return;
+
+  if(RAZORPAY_KEY === "rzp_test_XXXXXXXX"){
+    alert("Pehle script me apna Razorpay Test Key ID daalo (rzp_test_...).");
+    return;
+  }
+
+  const u = unitPrice(n);
+  const total = +(n * u).toFixed(2);
+
+  const options = {
+    key: RAZORPAY_KEY,
+    amount: Math.round(total * 100),   // amount in paise
+    currency: "INR",
+    name: "AfterFX Templates",
+    description: n + " template(s) · Test order",
+    image: "https://afterfxtemplates.com/logo.png",
+    handler: function(response){
+      // payment success -> show confirmation + open WhatsApp for delivery
+      onSuccess(response.razorpay_payment_id, total, u, n);
+    },
+    theme: { color: "#C9A84C" },
+    modal: { ondismiss: function(){ /* user closed popup */ } }
+  };
+
+  const rzp = new Razorpay(options);
+  rzp.on('payment.failed', function(resp){
+    alert("Payment failed (test): " + resp.error.description);
+  });
+  rzp.open();
+}
+
+function onSuccess(paymentId, total, unit, n){
+  document.getElementById("payBtn").style.display = "none";
+  const ok = document.getElementById("okBox");
+  ok.style.display = "block";
+  document.getElementById("okPid").textContent = "Payment ID: " + paymentId;
+
+  // build WhatsApp delivery message (same idea as your current flow)
+  let lines = ["*New Order — AfterFX Templates*", ""];
+  for(const id in qty){
+    if(qty[id] > 0) lines.push("• " + NAMES[id] + " × " + qty[id]);
+  }
+  lines.push("");
+  lines.push("Items: " + n + " · Per unit: ₹" + unit);
+  lines.push("Total Paid: ₹" + total);
+  lines.push("Payment ID: " + paymentId);
+
+  const url = "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(lines.join("\n"));
+  setTimeout(function(){ window.open(url, "_blank"); }, 1200);
+}
+
+render();
+</script>
+</body>
+</html>
