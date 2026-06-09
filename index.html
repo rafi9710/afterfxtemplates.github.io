@@ -92,6 +92,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:60px;display:flex;ali
 .vc:hover .pb{opacity:1;}
 .pi{width:44px;height:44px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;padding-left:3px;}
 .vb2{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.75);color:var(--gold);font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:3px 10px;border-radius:2px;font-weight:600;backdrop-filter:blur(4px);}
+.vb-new{position:absolute;top:8px;right:8px;background:var(--gold);color:#000;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;padding:3px 9px;border-radius:2px;font-weight:800;box-shadow:0 0 0 0 rgba(201,168,76,.6);animation:newpulse 2s infinite;}
+@keyframes newpulse{0%{box-shadow:0 0 0 0 rgba(201,168,76,.55);}70%{box-shadow:0 0 0 7px rgba(201,168,76,0);}100%{box-shadow:0 0 0 0 rgba(201,168,76,0);}}
 .vbody{padding:14px 16px;}
 .vtitle{font-size:13px;font-weight:600;color:#fff;line-height:1.4;margin-bottom:6px;}
 .vmeta{font-size:11px;color:var(--mt);display:flex;align-items:center;justify-content:space-between;}
@@ -642,6 +644,14 @@ let shown=PAGE_SIZE;
 
 function loadMore(){shown+=PAGE_SIZE;renderGrid();}
 
+const NEW_DAYS=15;  // template shows NEW badge for this many days after it's added
+function isNew(v){
+  if(!v.addedAt) return false;
+  const t=Date.parse(v.addedAt);
+  if(isNaN(t)) return false;
+  return (Date.now()-t) <= NEW_DAYS*86400000;
+}
+
 function renderGrid(){
   const q=search.trim().toLowerCase();
   const list = q
@@ -668,6 +678,7 @@ function renderGrid(){
         <img src="${v.thumb}" alt="${v.title}" loading="lazy" onerror="this.parentElement.style.background='var(--bg4)'">
         <div class="pb"><div class="pi">▶</div></div>
         <div class="vb2">${v.cat.charAt(0).toUpperCase()+v.cat.slice(1)}</div>
+        ${isNew(v)?'<div class="vb-new">★ New</div>':''}
         ${co?'<div class="vb-co">Customize Only</div>':''}
       </div>
       <div class="vbody">

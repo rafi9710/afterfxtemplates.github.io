@@ -382,7 +382,7 @@ function doBulkImport(){
     const cat=parts[2]||detectCat(title);
     const price=parts[3]?(parseInt(parts[3])||200):200;
     const thumb=vid?`https://i.ytimg.com/vi/${vid}/mqdefault.jpg`:'https://via.placeholder.com/480x270/14141F/C9A84C?text='+encodeURIComponent(title);
-    extras.push({id,title,cat,price,url:vid?`https://www.youtube.com/watch?v=${vid}`:url,thumb});
+    extras.push({id,title,cat,price,url:vid?`https://www.youtube.com/watch?v=${vid}`:url,thumb,addedAt:new Date().toISOString().slice(0,10)});
     added++;
   });
   setExtras(extras);
@@ -446,6 +446,7 @@ async function fetchVideos(){
           url:t.url,
           defaultCat:t.cat,
           defaultPrice:(t.price!=null?t.price:200),
+          addedAt:t.addedAt,
           isExtra:false
         }));
       }
@@ -517,6 +518,7 @@ function getMergedList(){
       defaultCat:v.defaultCat,
       price:c.price!=null?c.price:(v.defaultPrice!=null?v.defaultPrice:200),
       url:v.url,
+      addedAt:v.addedAt,
       customizeOnly:co.includes(v.id),
       isCustomized:!!custom[v.id],
       isExtra:false
@@ -573,6 +575,7 @@ function exportForWebsite(){
     .map(t=>{
       const o={id:t.id,title:t.title,thumb:t.thumb,cat:t.cat,price:t.price,url:t.url};
       if(t.customizeOnly) o.customizeOnly=true;
+      if(t.addedAt) o.addedAt=t.addedAt;
       return o;
     });
   const data={version:2,exportedAt:new Date().toISOString(),templates:list};
@@ -754,7 +757,7 @@ function saveTemplate(){
     }else{
       const newId='custom_'+Date.now();
       savedId=newId;
-      extras.unshift({id:newId,title,cat,price,url:ytUrl||'#',thumb:thumb||'https://via.placeholder.com/480x270/14141F/C9A84C?text='+encodeURIComponent(title)});
+      extras.unshift({id:newId,title,cat,price,url:ytUrl||'#',thumb:thumb||'https://via.placeholder.com/480x270/14141F/C9A84C?text='+encodeURIComponent(title),addedAt:new Date().toISOString().slice(0,10)});
     }
     setExtras(extras);
   }else{
