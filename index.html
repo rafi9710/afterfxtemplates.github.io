@@ -212,6 +212,10 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
 .tcrow input{margin-top:2px;width:15px;height:15px;accent-color:var(--gold);flex-shrink:0;cursor:pointer;}
 .tcrow a{color:var(--gold);text-decoration:none;}
 .tcrow a:hover{text-decoration:underline;}
+.cowarn{background:rgba(179,69,74,.12);border:1px solid rgba(179,69,74,.42);border-radius:6px;padding:11px 13px;margin-bottom:13px;}
+.cowarn-h{color:#e88a8f;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+.cowarn p{font-size:11.5px;color:#cdbcbc;line-height:1.55;margin:0;}
+.cowarn b{color:#f2c4c4;}
 
 /* TOAST */
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--gold);color:#000;padding:9px 22px;border-radius:3px;font-size:12px;font-weight:700;z-index:700;transition:transform .3s;pointer-events:none;letter-spacing:.5px;}
@@ -823,7 +827,12 @@ function renderCart(){
   f.innerHTML=`<div class="cpf">
     ${discRow}
     <div class="cptot"><span>Total</span><span class="am">${save>0?`<span style="text-decoration:line-through;color:var(--mt);font-size:13px;margin-right:8px;font-weight:400;">₹${base}</span>`:''}₹${total}</span></div>
-    <label class="tcrow"><input type="checkbox" id="tcChk" ${tcAccepted?'checked':''} onchange="onTc(this.checked)"><span>I have read and accept the <a href="terms.html" target="_blank">Terms &amp; Conditions</a> — files are for personal use only and must not be shared or resold.</span></label>
+    <div class="cowarn">
+      <div class="cowarn-h">⚠ Read before you buy</div>
+      <p>These templates are licensed for your <b>personal event only</b>. You may share your own invitation — but you may <b>NOT</b> re-post our template or demo videos, take custom orders, sell invitation-making services, or present our designs as your own work.</p>
+      <p style="margin-top:6px;">Buy only if you agree. Any violation will lead to <b>immediate copyright strikes and legal action — without any prior notice.</b></p>
+    </div>
+    <label class="tcrow"><input type="checkbox" id="tcChk" ${tcAccepted?'checked':''} onchange="onTc(this.checked)"><span>I have read and accept the <a href="terms.html" target="_blank">Terms &amp; Conditions</a>. These files are for my personal use only — I will not resell, re-post, or present them as my own work.</span></label>
     <button class="chk" id="chkBtn" ${tcAccepted?'':'disabled'} onclick="checkout()">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
       Checkout via WhatsApp
