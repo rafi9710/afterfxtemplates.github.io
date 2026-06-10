@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AfterFX Templates — Wedding, Naming Ceremony & Baby Name Reveal Invitation Videos</title>
-<meta name="description" content="Premium After Effects invitation video templates for Telugu weddings, naming ceremony (Barasala), baby name reveals, half saree, cradle & birthday celebrations across India. Telugu + English. Starting at ₹200.">
+<meta name="description" content="Premium After Effects invitation video templates for Telugu weddings, naming ceremony (Barasala), baby name reveals, half saree, cradle & birthday celebrations across India. Telugu + English. Starting at ₹300.">
 <meta name="keywords" content="Telugu wedding invitation video, naming ceremony invitation, Barasala invitation, baby name reveal Telugu, half saree invitation, cradle ceremony invitation, After Effects templates Telugu, Andhra wedding invitation, Telangana wedding invitation, Telugu invitation video maker">
 <meta name="author" content="Mohammad Rafi">
 <meta name="robots" content="index, follow">
@@ -12,12 +12,12 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="AfterFX Templates">
 <meta property="og:title" content="AfterFX Templates — Wedding & Invitation Video Templates">
-<meta property="og:description" content="Premium After Effects invitation video templates for Telugu weddings, naming ceremony (Barasala), baby name reveals, half saree, cradle & birthday celebrations across India. Telugu + English. Starting at ₹200.">
+<meta property="og:description" content="Premium After Effects invitation video templates for Telugu weddings, naming ceremony (Barasala), baby name reveals, half saree, cradle & birthday celebrations across India. Telugu + English. Starting at ₹300.">
 <meta property="og:url" content="https://afterfxtemplates.com/">
 <meta property="og:image" content="https://afterfxtemplates.com/logo.png">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="AfterFX Templates — Wedding & Invitation Video Templates">
-<meta name="twitter:description" content="Premium After Effects invitation video templates for Telugu weddings, naming ceremony (Barasala), baby name reveals, half saree, cradle & birthday celebrations across India. Telugu + English. Starting at ₹200.">
+<meta name="twitter:description" content="Premium After Effects invitation video templates for Telugu weddings, naming ceremony (Barasala), baby name reveals, half saree, cradle & birthday celebrations across India. Telugu + English. Starting at ₹300.">
 <meta name="twitter:image" content="https://afterfxtemplates.com/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -304,7 +304,7 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
     <div class="hs"><div class="n">1M+</div><div class="l">Video Views</div></div>
     <div class="hs"><div class="n">100+</div><div class="l">Templates</div></div>
     <div class="hs"><div class="n">Telugu</div><div class="l">+ English</div></div>
-    <div class="hs"><div class="n">₹200</div><div class="l">Starting</div></div>
+    <div class="hs"><div class="n">₹300</div><div class="l">Starting</div></div>
   </div>
 </div>
 
@@ -403,7 +403,7 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
   <div class="bgrid">
     <div class="bcard"><div class="bic">🌐</div><h3>Telugu + English Support</h3><p>Every template comes with full Telugu and English text support for your audience.</p></div>
     <div class="bcard"><div class="bic">🎬</div><h3>4K / HD Quality</h3><p>Crisp, cinematic 4K and HD output that looks stunning on any screen.</p></div>
-    <div class="bcard"><div class="bic">💰</div><h3>Affordable Pricing</h3><p>Premium designs starting at just ₹200 — top quality without the heavy price.</p></div>
+    <div class="bcard"><div class="bic">💰</div><h3>Affordable Pricing</h3><p>Premium designs starting at just ₹300 — top quality without the heavy price.</p></div>
     <div class="bcard"><div class="bic">⚡</div><h3>Fast Delivery</h3><p>Your files are delivered quickly straight to your WhatsApp once confirmed.</p></div>
     <div class="bcard"><div class="bic">✏️</div><h3>Easy Customization</h3><p>Simple to personalise with your own names, dates, and photos.</p></div>
     <div class="bcard"><div class="bic">🛡️</div><h3>Copyright Safe</h3><p>Original, 100% copyright-safe designs you can use with complete peace of mind.</p></div>
@@ -521,14 +521,10 @@ const KW = {
 };
 
 const PRICING = [
-  {qty:1,price:200,off:'',best:false},
-  {qty:5,price:600,off:'20% OFF',best:false},
-  {qty:10,price:1170,off:'22% OFF',best:false},
-  {qty:20,price:2250,off:'25% OFF',best:false},
-  {qty:30,price:3285,off:'27% OFF',best:false},
-  {qty:40,price:4200,off:'30% OFF',best:false},
-  {qty:50,price:4875,off:'35% OFF',best:false},
-  {qty:100,price:8250,off:'45% OFF 🔥',best:true},
+  {qty:1,price:300,off:'',best:false},
+  {qty:5,price:1000,off:'33% OFF',best:false},
+  {qty:10,price:1750,off:'42% OFF',best:false},
+  {qty:20,price:3000,off:'50% OFF 🔥',best:true},
 ];
 
 let videos=[], filter='all', search='', cart=JSON.parse(localStorage.getItem('afx_c')||'[]'), tcAccepted=false;
@@ -572,7 +568,7 @@ function parseFeed(xmlText){
       title,
       thumb:`https://i.ytimg.com/vi/${vid}/mqdefault.jpg`,
       cat:detectCat(title),
-      price:200,
+      price:300,
       url:`https://www.youtube.com/watch?v=${vid}`
     });
   });
@@ -750,12 +746,12 @@ function updateCount(){document.getElementById('cnum').textContent=cart.reduce((
 
 /* ===== BULK PRICING ===== */
 const MAX_CART=20;                 // max templates a customer can self-checkout
-const STD_PRICE=200;               // standard per-template price
-// per-unit rate by total standard-template quantity (hits exact bundle prices: 5=600,10=1170,20=2250)
+const STD_PRICE=300;               // standard per-template price
+// per-unit rate by total standard-template quantity (5=₹1000, 10=₹1750, 20=₹3000)
 function tierRate(q){
-  if(q>=20) return 112.5;
-  if(q>=10) return 117;
-  if(q>=5)  return 120;
+  if(q>=20) return 150;
+  if(q>=10) return 175;
+  if(q>=5)  return 200;
   return STD_PRICE;
 }
 function cartQty(){return cart.reduce((s,c)=>s+c.qty,0);}            // all items
