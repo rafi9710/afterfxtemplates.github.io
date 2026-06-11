@@ -934,7 +934,29 @@ function onPaySuccess(paymentId, o){
   // cart clear + confirmation
   cart=[];tcAccepted=false;saveCart();updateCount();closeCart();renderGrid();
   showToast('✓ Payment successful! Check your email shortly.');
-  alert('Payment successful!\n\nPayment ID: '+paymentId+'\n\nYour template download link will arrive at:\n'+o.email+'\n\n(Check spam too.)');
+  showPaySuccess(o, paymentId);
+}
+
+function showPaySuccess(o, paymentId){
+  const wa='https://wa.me/919739909710?text='+encodeURIComponent('Hi AfterFX Templates! My Order ID is '+o.oid+'. I paid but want to check / correct my email ('+o.email+') for the download links.');
+  const html=`
+  <div id="okOv" style="position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.82);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px;">
+    <div style="max-width:380px;width:100%;background:var(--bg2);border:1px solid var(--gb);border-radius:14px;padding:30px 26px;text-align:center;font-family:'DM Sans',sans-serif;">
+      <div style="font-size:44px;margin-bottom:6px;">✅</div>
+      <h3 style="font-family:'Cinzel',serif;color:var(--gold);font-size:19px;margin:0 0 4px;">Payment Successful!</h3>
+      <p style="color:var(--mt);font-size:12px;margin:0 0 18px;">Order ID: ${o.oid}</p>
+      <p style="color:var(--tx);font-size:13px;line-height:1.6;margin:0 0 6px;">Your download links have been sent to:</p>
+      <p style="color:var(--gold);font-size:15px;font-weight:700;word-break:break-all;margin:0 0 4px;">${o.email}</p>
+      <p style="color:var(--mt);font-size:11.5px;margin:0 0 18px;">(Arrives in ~1 min — check Spam / Promotions too)</p>
+      <div style="background:rgba(201,168,76,.08);border:1px solid var(--gb);border-radius:8px;padding:12px;margin-bottom:18px;">
+        <p style="color:var(--tx);font-size:12px;line-height:1.6;margin:0;">Wrong email or didn't receive it?<br><a href="${wa}" target="_blank" style="color:#25D366;font-weight:700;text-decoration:none;">📱 WhatsApp us: +91 97399 09710</a></p>
+      </div>
+      <button onclick="var x=document.getElementById('okOv');if(x)x.remove();" style="width:100%;background:linear-gradient(135deg,#C9A84C,#a6852f);color:#0a0a12;border:none;padding:13px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;">Done</button>
+    </div>
+  </div>`;
+  const d=document.createElement('div');
+  d.innerHTML=html;
+  document.body.appendChild(d.firstElementChild);
 }
 
 function nrWA(){
