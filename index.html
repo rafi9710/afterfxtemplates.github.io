@@ -191,11 +191,13 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
 .cph h3{font-family:'Cinzel',serif;font-size:15px;color:var(--gold);}
 .cpc{background:none;border:none;color:var(--mt);font-size:18px;cursor:pointer;padding:4px;transition:color .2s;}
 .cpc:hover{color:#fff;}
-.cpb{flex:1;overflow-y:auto;padding:14px 22px;}
+.cpb{flex:1;overflow-y:auto;padding:14px 22px;min-height:130px;}
 .cpi{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--gb);}
 .cpit{width:52px;height:36px;object-fit:cover;border-radius:3px;background:var(--bg3);}
 .cpii{flex:1;}
-.cpin{font-size:12px;font-weight:600;color:#fff;margin-bottom:2px;line-height:1.3;}
+.cpin{font-size:12px;font-weight:600;color:#fff;margin-bottom:2px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.cprm{background:none;border:none;color:var(--mt);font-size:18px;line-height:1;cursor:pointer;padding:2px 5px;margin-left:4px;flex-shrink:0;align-self:flex-start;}
+.cprm:hover{color:#e88a8f;}
 .cpip{font-size:11px;color:var(--gold);}
 .cpq{display:flex;align-items:center;gap:7px;}
 .qb{background:var(--bg3);border:1px solid var(--gb);color:var(--tx);width:22px;height:22px;border-radius:2px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .2s;}
@@ -801,6 +803,11 @@ function changeQty(id,d){
   saveCart();updateCount();renderCart();renderGrid();
 }
 
+function removeItem(id){
+  cart=cart.filter(c=>c.id!==id);
+  saveCart();updateCount();renderCart();renderGrid();
+}
+
 function openCart(){document.getElementById('overlay').classList.add('on');renderCart();}
 function closeCart(){document.getElementById('overlay').classList.remove('on');}
 function ovClick(e){if(e.target===document.getElementById('overlay'))closeCart();}
@@ -821,6 +828,7 @@ function renderCart(){
         <span class="qn">${c.qty}</span>
         <button class="qb" onclick="changeQty('${c.id}',1)">+</button>
       </div>
+      <button class="cprm" onclick="removeItem('${c.id}')" title="Remove">×</button>
     </div>`).join('');
   const discRow = save>0
     ? `<div style="display:flex;justify-content:space-between;align-items:center;background:var(--gold-dim);border:1px solid var(--gb);border-radius:4px;padding:9px 12px;margin-bottom:10px;"><span style="font-size:12px;color:var(--gold);font-weight:600;">🔥 ${q}-Project Bundle</span><span style="font-size:12px;color:var(--gold);font-weight:700;">You save ₹${save}</span></div>`
@@ -830,8 +838,7 @@ function renderCart(){
     <div class="cptot"><span>Total</span><span class="am">${save>0?`<span style="text-decoration:line-through;color:var(--mt);font-size:13px;margin-right:8px;font-weight:400;">₹${base}</span>`:''}₹${total}</span></div>
     <div class="cowarn">
       <div class="cowarn-h">⚠ Read before you buy</div>
-      <p>These templates are licensed for your <b>personal event only</b>. You may share your own invitation — but you may <b>NOT</b> re-post our template or demo videos, take custom orders, sell invitation-making services, or present our designs as your own work.</p>
-      <p style="margin-top:6px;">Buy only if you agree. Any violation will lead to <b>immediate copyright strikes and legal action — without any prior notice.</b></p>
+      <p>For your <b>personal event only</b>. Re-posting our videos, taking custom orders, reselling, or presenting our work as your own → <b>copyright strikes &amp; legal action, without notice.</b> <a href="terms.html" target="_blank" style="color:#e7cd7e;">Full terms</a></p>
     </div>
     <div class="cust">
       <input type="text" id="custName" placeholder="Your Name" autocomplete="name">
