@@ -829,14 +829,9 @@ function renderCart(){
         <button class="qb" onclick="changeQty('${c.id}',1)">+</button>
       </div>
       <button class="cprm" onclick="removeItem('${c.id}')" title="Remove">×</button>
-    </div>`).join('');
-  const discRow = save>0
-    ? `<div style="display:flex;justify-content:space-between;align-items:center;background:var(--gold-dim);border:1px solid var(--gb);border-radius:4px;padding:9px 12px;margin-bottom:10px;"><span style="font-size:12px;color:var(--gold);font-weight:600;">🔥 ${q}-Project Bundle</span><span style="font-size:12px;color:var(--gold);font-weight:700;">You save ₹${save}</span></div>`
-    : '';
-  f.innerHTML=`<div class="cpf">
-    ${discRow}
-    <div class="cptot"><span>Total</span><span class="am">${save>0?`<span style="text-decoration:line-through;color:var(--mt);font-size:13px;margin-right:8px;font-weight:400;">₹${base}</span>`:''}₹${total}</span></div>
-    <div class="cowarn">
+    </div>`).join('')
+    + `
+    <div class="cowarn" style="margin-top:14px;">
       <div class="cowarn-h">⚠ Read before you buy</div>
       <p>For your <b>personal event only</b>. Re-posting our videos, taking custom orders, reselling, or presenting our work as your own → <b>copyright strikes &amp; legal action, without notice.</b> <a href="terms.html" target="_blank" style="color:#e7cd7e;">Full terms</a></p>
     </div>
@@ -844,7 +839,13 @@ function renderCart(){
       <input type="text" id="custName" placeholder="Your Name" autocomplete="name">
       <input type="email" id="custEmail" placeholder="Your Email (template will be sent here)" autocomplete="email">
     </div>
-    <label class="tcrow"><input type="checkbox" id="tcChk" ${tcAccepted?'checked':''} onchange="onTc(this.checked)"><span>I have read and accept the <a href="terms.html" target="_blank">Terms &amp; Conditions</a>. These files are for my personal use only — I will not resell, re-post, or present them as my own work.</span></label>
+    <label class="tcrow"><input type="checkbox" id="tcChk" ${tcAccepted?'checked':''} onchange="onTc(this.checked)"><span>I have read and accept the <a href="terms.html" target="_blank">Terms &amp; Conditions</a>. These files are for my personal use only — I will not resell, re-post, or present them as my own work.</span></label>`;
+  const discRow = save>0
+    ? `<div style="display:flex;justify-content:space-between;align-items:center;background:var(--gold-dim);border:1px solid var(--gb);border-radius:4px;padding:9px 12px;margin-bottom:10px;"><span style="font-size:12px;color:var(--gold);font-weight:600;">🔥 ${q}-Project Bundle</span><span style="font-size:12px;color:var(--gold);font-weight:700;">You save ₹${save}</span></div>`
+    : '';
+  f.innerHTML=`<div class="cpf">
+    ${discRow}
+    <div class="cptot"><span>Total</span><span class="am">${save>0?`<span style="text-decoration:line-through;color:var(--mt);font-size:13px;margin-right:8px;font-weight:400;">₹${base}</span>`:''}₹${total}</span></div>
     <button class="chk" id="chkBtn" ${tcAccepted?'':'disabled'} onclick="checkout()">
       Pay ₹${total} with Razorpay
     </button>
