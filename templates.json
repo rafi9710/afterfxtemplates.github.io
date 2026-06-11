@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "exportedAt": "2026-06-11T06:26:00.954Z",
+  "exportedAt": "2026-06-11T10:36:49.345Z",
   "templates": [
     {
       "id": "uEVu1olxARs",
@@ -1233,6 +1233,267 @@
       "cat": "wedding",
       "price": 300,
       "url": "https://www.youtube.com/watch?v=fCLRiEJL2mA"
+    },
+    {
+      "id": "dcpYY7R_3ls",
+      "title": "wedding",
+      "thumb": "https://i.ytimg.com/vi/dcpYY7R_3ls/mqdefault.jpg",
+      "cat": "wedding",
+      "price": 300,
+      "url": "https://www.youtube.com/watch?v=dcpYY7R_3ls",
+      "addedAt": "2026-06-11"
+    },
+    {
+      "id": "8jck-cD6D7k",
+      "title": "wedding",
+      "thumb": "https://i.ytimg.com/vi/8jck-cD6D7k/mqdefault.jpg",
+      "cat": "wedding",
+      "price": 300,
+      "url": "https://www.youtube.com/watch?v=8jck-cD6D7k",
+      "addedAt": "2026-06-11"
+    },
+    {
+      "id": "d91LfdxRjCU",
+      "title": "wedding",
+      "thumb": "https://i.ytimg.com/vi/d91LfdxRjCU/mqdefault.jpg",
+      "cat": "wedding",
+      "price": 300,
+      "url": "https://www.youtube.com/watch?v=d91LfdxRjCU",
+      "addedAt": "2026-06-11"
+    },
+    {
+      "id": "pNSdhg1pFFU",
+      "title": "Engagement",
+      "thumb": "https://i.ytimg.com/vi/pNSdhg1pFFU/mqdefault.jpg",
+      "cat": "wedding",
+      "price": 300,
+      "url": "https://www.youtube.com/watch?v=pNSdhg1pFFU",
+      "addedAt": "2026-06-11"
+    },
+    {
+      "id": "J9e896hECmU",
+      "title": "half saree",
+      "thumb": "https://i.ytimg.com/vi/J9e896hECmU/mqdefault.jpg",
+      "cat": "halfsaree",
+      "price": 300,
+      "url": "https://www.youtube.com/watch?v=J9e896hECmU",
+      "addedAt": "2026-06-11"
+    },
+    {
+      "id": "___gvzYlBvo",
+      "title": "wedding",
+      "thumb": "https://i.ytimg.com/vi/___gvzYlBvo/mqdefault.jpg",
+      "cat": "wedding",
+      "price": 300,
+      "url": "https://www.youtube.com/watch?v=___gvzYlBvo",
+      "addedAt": "2026-06-11"
+    },
+    {
+      "id": "R2uBNUN2cg8",
+      "title": "Ai wedding",
+      "thumb": "https://i.ytimg.com/vi/R2uBNUN2cg8/mqdefault.jpg",
+      "cat": "wedding",
+      "price": 300,
+      "url": "https://www.youtube.com/watch?v=R2uBNUN2cg8",
+      "addedAt": "2026-06-11"
+    },
+    {
+      "id": "2iVbnTYMPFI",
+      "title": "Naming Ceremony",
+      "thumb": "https://i.ytimg.com/vi/2iVbnTYMPFI/mqdefault.jpg",
+      "cat": "cradle",
+      "price": 300,
+      "url": "https://www.youtube.com/watch?v=2iVbnTYMPFI",
+      "addedAt": "2026-06-11"
+    },
+    {
+      "id": "TVVueLJr_T0",
+      "title": "wedding",
+      "thumb": "https://i.ytimg.com/vi/TVVueLJr_T0/mqdefault.jpg",
+      "cat": "wedding",
+      "price": 300,
+      "url": "https://www.youtube.com/watch?v=TVVueLJr_T0",
+      "addedAt": "2026-06-11"
+    },
+    {
+      "id": "NMfBz8XEC3M",
+      "title": "Seemantham",
+      "thumb": "https://i.ytimg.com/vi/NMfBz8XEC3M/mqdefault.jpg",
+      "cat": "babyshower",
+      "price": 300,
+      "url": "https://www.youtube.com/watch?v=NMfBz8XEC3M",
+      "addedAt": "2026-06-11"
+    },
+    {
+      "id": "Q-wimftY2js",
+      "title": "wedding",
+      "thumb": "https://i.ytimg.com/vi/Q-wimftY2js/mqdefault.jpg",
+      "cat": "wedding",
+      "price": 300,
+      "url": "https://www.youtube.com/watch?v=Q-wimftY2js",
+      "addedAt": "2026-06-11"
+    },
+    {
+      "id": "mmehyWoyk0A",
+      "title": "Birthday",
+      "thumb": "https://i.ytimg.com/vi/mmehyWoyk0A/mqdefault.jpg",
+      "cat": "birthday",
+      "price": 300,
+      "url": "https://www.youtube.com/watch?v=mmehyWoyk0A",
+      "addedAt": "2026-06-11"
+    },
+    {
+      "id": "6ySXUMCSIpk",
+      "title": "Housewarming",
+      "thumb": "https://i.ytimg.com/vi/6ySXUMCSIpk/mqdefault.jpg",
+      "cat": "housewarming",
+      "price": 300,
+      "url": "https://www.youtube.com/watch?v=6ySXUMCSIpk",
+      "addedAt": "2026-06-11"
+    },
+    {
+      "id": "5eZatRycKXU",
+      "title": "Ai wedding",
+      "thumb": "https://i.ytimg.com/vi/5eZatRycKXU/mqdefault.jpg",
+      "cat": "wedding",
+      "price": 300,
+      "url": "https://www.youtube.com/watch?v=5eZatRycKXU",
+      "addedAt": "2026-06-11"
+    },
+    {
+      "id": "2d2V95Cgf20",
+      "title": "wedding",
+      "thumb": "https://i.ytimg.com/vi/2d2V95Cgf20/mqdefault.jpg",
+      "cat": "wedding",
+      "price": 300,
+      "url": "https://www.youtube.com/watch?v=2d2V95Cgf20",
+      "addedAt": "2026-06-11"
+    },
+    {
+      "id": "rOYrG1GlizE",
+      "title": "Half saree",
+      "thumb": "https://i.ytimg.com/vi/rOYrG1GlizE/mqdefault.jpg",
+      "cat": "halfsaree",
+      "price": 300,
+      "url": "https://www.youtube.com/watch?v=rOYrG1GlizE",
+      "addedAt": "2026-06-11"
+    },
+    {
+      "id": "ek3XhSFxTvw",
+      "title": "wedding",
+      "thumb": "https://i.ytimg.com/vi/ek3XhSFxTvw/mqdefault.jpg",
+      "cat": "wedding",
+      "price": 300,
+      "url": "https://www.youtube.com/watch?v=ek3XhSFxTvw",
+      "addedAt": "2026-06-11"
+    },
+    {
+      "id": "xU15ycuxMbs",
+      "title": "Telugu Vertical Invitation",
+      "thumb": "https://i.ytimg.com/vi/xU15ycuxMbs/mqdefault.jpg",
+      "cat": "wedding",
+      "price": 300,
+      "url": "https://www.youtube.com/watch?v=xU15ycuxMbs",
+      "addedAt": "2026-06-11"
+    },
+    {
+      "id": "eZIiWF3EtYw",
+      "title": "half saree",
+      "thumb": "https://i.ytimg.com/vi/eZIiWF3EtYw/mqdefault.jpg",
+      "cat": "halfsaree",
+      "price": 300,
+      "url": "https://www.youtube.com/watch?v=eZIiWF3EtYw",
+      "addedAt": "2026-06-11"
+    },
+    {
+      "id": "x96JHrJaBXc",
+      "title": "wedding",
+      "thumb": "https://i.ytimg.com/vi/x96JHrJaBXc/mqdefault.jpg",
+      "cat": "wedding",
+      "price": 300,
+      "url": "https://www.youtube.com/watch?v=x96JHrJaBXc",
+      "addedAt": "2026-06-11"
+    },
+    {
+      "id": "xrhramguoWM",
+      "title": "Engagement",
+      "thumb": "https://i.ytimg.com/vi/xrhramguoWM/mqdefault.jpg",
+      "cat": "wedding",
+      "price": 300,
+      "url": "https://www.youtube.com/watch?v=xrhramguoWM",
+      "addedAt": "2026-06-11"
+    },
+    {
+      "id": "wjbKHctDM9s",
+      "title": "Seemantham",
+      "thumb": "https://i.ytimg.com/vi/wjbKHctDM9s/mqdefault.jpg",
+      "cat": "babyshower",
+      "price": 300,
+      "url": "https://www.youtube.com/watch?v=wjbKHctDM9s",
+      "addedAt": "2026-06-11"
+    },
+    {
+      "id": "JcePcp88QN0",
+      "title": "Naming Ceremony",
+      "thumb": "https://i.ytimg.com/vi/JcePcp88QN0/mqdefault.jpg",
+      "cat": "cradle",
+      "price": 300,
+      "url": "https://www.youtube.com/watch?v=JcePcp88QN0",
+      "addedAt": "2026-06-11"
+    },
+    {
+      "id": "g7GLTHOKQB0",
+      "title": "wedding",
+      "thumb": "https://i.ytimg.com/vi/g7GLTHOKQB0/mqdefault.jpg",
+      "cat": "wedding",
+      "price": 300,
+      "url": "https://www.youtube.com/watch?v=g7GLTHOKQB0",
+      "addedAt": "2026-06-11"
+    },
+    {
+      "id": "yBAnkf0EBrA",
+      "title": "wedding",
+      "thumb": "https://i.ytimg.com/vi/yBAnkf0EBrA/mqdefault.jpg",
+      "cat": "wedding",
+      "price": 300,
+      "url": "https://www.youtube.com/watch?v=yBAnkf0EBrA",
+      "addedAt": "2026-06-11"
+    },
+    {
+      "id": "5VgRxwWkpZg",
+      "title": "Naming Ceremony",
+      "thumb": "https://i.ytimg.com/vi/5VgRxwWkpZg/mqdefault.jpg",
+      "cat": "cradle",
+      "price": 300,
+      "url": "https://www.youtube.com/watch?v=5VgRxwWkpZg",
+      "addedAt": "2026-06-11"
+    },
+    {
+      "id": "CSGnGl_tqbQ",
+      "title": "Half saree",
+      "thumb": "https://i.ytimg.com/vi/CSGnGl_tqbQ/mqdefault.jpg",
+      "cat": "halfsaree",
+      "price": 300,
+      "url": "https://www.youtube.com/watch?v=CSGnGl_tqbQ",
+      "addedAt": "2026-06-11"
+    },
+    {
+      "id": "QtuiPlP3aXo",
+      "title": "3d wedding",
+      "thumb": "https://i.ytimg.com/vi/QtuiPlP3aXo/mqdefault.jpg",
+      "cat": "wedding",
+      "price": 300,
+      "url": "https://www.youtube.com/watch?v=QtuiPlP3aXo",
+      "addedAt": "2026-06-11"
+    },
+    {
+      "id": "ICp-s0NH-GE",
+      "title": "3d wedding",
+      "thumb": "https://i.ytimg.com/vi/ICp-s0NH-GE/mqdefault.jpg",
+      "cat": "wedding",
+      "price": 300,
+      "url": "https://www.youtube.com/watch?v=ICp-s0NH-GE",
+      "addedAt": "2026-06-11"
     }
   ]
 }
