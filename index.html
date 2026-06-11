@@ -865,11 +865,10 @@ function onTc(v){
   if(b) b.disabled=!v;
 }
 
-/* ===== Razorpay config ===== */
-const RAZORPAY_KEY = "rzp_test_SyzK8Dxa40xcIl";   // TEST key (live ke time rzp_live_ se badlega)
-const MAKE_WEBHOOK = "https://hook.us2.make.com/ti2j0g88lgefw0szoldin3lrhbw1a07s";
+/* ===== Razorpay (SECURE — backend on Vercel) ===== */
+const API_BASE = "https://afterfx-api.vercel.app";   // Vercel serverless API
 
-function checkout(){
+async function checkout(){
   if(!tcAccepted){ showToast('Please accept the Terms & Conditions first'); return; }
   if(!cart.length){ showToast('Your cart is empty'); return; }
 
@@ -880,61 +879,86 @@ function checkout(){
 
   const total=cartTotal();
   const oid='AFX-'+Date.now().toString().slice(-6);
-
-  // YouTube videoIds — ye delivery sheet se match honge
-  const ids=cart.map(c=>c.id).join(',');
+  const ids=cart.map(c=>c.id).join(',');           // YouTube videoIds → sheet match
   const readable=cart.map(c=>`${c.title} x${c.qty}`).join(', ');
   const q=cartQty();
 
-  const options={
-    key: RAZORPAY_KEY,
-    amount: Math.round(total*100),   // paise me
-    currency:"INR",
-    name:"AfterFX Templates",
-    description: q+" template(s) — "+oid,
-    image:"https://afterfxtemplates.com/logo.png",
-    prefill:{ name:name, email:email },
-    notes:{
-      order_id: oid,
-      customer_name: name,
-      customer_email: email,
-      template_ids: ids,
-      templates: readable,
-      qty: String(q),
-      total: String(total)
-    },
-    theme:{ color:"#C9A84C" },
-    handler: function(r){ onPaySuccess(r.razorpay_payment_id, {oid,name,email,ids,readable,q,total}); }
-  };
+  const btn=document.getElementById('chkBtn');
+  if(btn){ btn.disabled=true; btn.textContent='Please wait…'; }
 
-  const rzp=new Razorpay(options);
-  rzp.on('payment.failed', function(resp){ showToast('Payment failed: '+(resp.error&&resp.error.description||'try again')); });
-  rzp.open();
+  try{
+    // 1) backend se asli order banwao
+    const resp=await fetch(API_BASE+'/api/create-order',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        amount: Math.round(total*100),
+        currency:'INR',
+        receipt: oid,
+        notes:{ order_id:oid, customer_email:email }
+      })
+    });
+    const data=await resp.json();
+    if(!resp.ok || !data.order_id){ throw new Error(data.error||'Order failed'); }
+
+    // 2) Razorpay modal (key backend se aayi)
+    const options={
+      key: data.key_id,
+      order_id: data.order_id,
+      amount: data.amount,
+      currency: data.currency,
+      name:"AfterFX Templates",
+      description: q+" template(s) — "+oid,
+      image:"https://afterfxtemplates.com/logo.png",
+      prefill:{ name:name, email:email },
+      theme:{ color:"#C9A84C" },
+      handler: function(r){ verifyPayment(r, {oid,name,email,ids,readable,q,total}); }
+    };
+    const rzp=new Razorpay(options);
+    rzp.on('payment.failed', function(resp){
+      showToast('Payment failed: '+(resp.error&&resp.error.description||'try again'));
+      resetChkBtn();
+    });
+    rzp.open();
+    // agar user modal band kar de bina pay kiye
+    rzp.on('payment.cancel', resetChkBtn);
+  }catch(err){
+    showToast('Could not start payment. Please try again.');
+    resetChkBtn();
+  }
 }
 
-function onPaySuccess(paymentId, o){
-  // Make webhook ko delivery data bhejo
-  const payload={
-    event:"payment.captured",
-    payment_id: paymentId,
-    order_id: o.oid,
-    customer_name: o.name,
-    customer_email: o.email,
-    template_ids: o.ids,
-    templates: o.readable,
-    qty: String(o.q),
-    total: String(o.total)
-  };
-  fetch(MAKE_WEBHOOK,{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify(payload)
-  }).catch(function(){ /* delivery webhook fail ho bhi jaye to payment to ho chuka */ });
+function resetChkBtn(){
+  const btn=document.getElementById('chkBtn');
+  if(btn){ btn.disabled=false; btn.textContent='Pay ₹'+cartTotal()+' with Razorpay'; }
+}
 
-  // cart clear + confirmation
-  cart=[];tcAccepted=false;saveCart();updateCount();closeCart();renderGrid();
-  showToast('✓ Payment successful! Check your email shortly.');
-  showPaySuccess(o, paymentId);
+async function verifyPayment(r, o){
+  try{
+    const resp=await fetch(API_BASE+'/api/verify-payment',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        razorpay_order_id: r.razorpay_order_id,
+        razorpay_payment_id: r.razorpay_payment_id,
+        razorpay_signature: r.razorpay_signature,
+        order: o
+      })
+    });
+    const data=await resp.json();
+    if(resp.ok && data.verified){
+      // verified — backend ne Make trigger kar diya (delivery email jayega)
+      cart=[];tcAccepted=false;saveCart();updateCount();closeCart();renderGrid();
+      showToast('✓ Payment successful! Check your email shortly.');
+      showPaySuccess(o, r.razorpay_payment_id);
+    }else{
+      showToast('Payment could not be verified. Contact support with your Order ID.');
+      resetChkBtn();
+    }
+  }catch(err){
+    showToast('Verification error. If money was deducted, contact support with Order ID '+o.oid);
+    resetChkBtn();
+  }
 }
 
 function showPaySuccess(o, paymentId){
