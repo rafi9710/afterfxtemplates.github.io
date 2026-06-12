@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="shortcut icon" href="logo.png">
+<link rel="apple-touch-icon" href="logo.png">
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <title>AfterFX Templates — Wedding, Naming Ceremony & Baby Name Reveal Invitation Videos</title>
 <meta name="description" content="Premium After Effects invitation video templates for Telugu weddings, naming ceremony (Barasala), baby name reveals, half saree, cradle & birthday celebrations across India. Telugu + English. Starting at ₹300.">
@@ -308,7 +311,7 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
   </div>
   <div class="hstats">
     <div class="hs"><div class="n">10K+</div><div class="l">Happy Customers</div></div>
-    <div class="hs"><div class="n">1M+</div><div class="l">Video Views</div></div>
+    <div class="hs"><div class="n">2M+</div><div class="l">Video Views</div></div>
     <div class="hs"><div class="n">100+</div><div class="l">Templates</div></div>
     <div class="hs"><div class="n">Telugu</div><div class="l">+ English</div></div>
     <div class="hs"><div class="n">₹300</div><div class="l">Starting</div></div>
@@ -393,7 +396,7 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
   <div class="pi2">
     <div class="sl">Save More · Buy More</div>
     <div class="st" style="color:#fff">Bundle Packages</div>
-    <div class="ss">Horizontal & Vertical both included · Instant delivery via WhatsApp</div>
+    <div class="ss">Horizontal & Vertical both included · Instant delivery to your email</div>
     <div class="pgrid" id="pgrid"></div>
   </div>
 </div>
@@ -744,8 +747,8 @@ function renderPricing(){
 }
 
 function bundleOrder(qty,price){
-  const msg=`Hi AfterFX Templates! I would like to order a bundle:\n\nBundle: ${qty} Templates\nPrice: ₹${price.toLocaleString('en-IN')}\n\nPlease guide me. Thank you!`;
-  window.open(`https://wa.me/919739909710?text=${encodeURIComponent(msg)}`,'_blank');
+  document.getElementById('templates').scrollIntoView({behavior:'smooth'});
+  showToast(`Pick any ${qty} templates — bundle price ₹${price.toLocaleString('en-IN')} applies automatically in your cart!`);
 }
 
 function saveCart(){localStorage.setItem('afx_c',JSON.stringify(cart));}
