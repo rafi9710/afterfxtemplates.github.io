@@ -109,6 +109,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:60px;display:flex;ali
 .badd:hover{background:var(--gold-l);}
 .badd.done{background:var(--bg4);color:var(--green);border:1px solid var(--green);cursor:default;}
 .bwatch{background:transparent;border:1px solid var(--gb);color:var(--mt);padding:8px 12px;border-radius:3px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap;}
+.bshare{background:transparent;border:1px solid var(--gb);color:var(--gold);padding:8px 11px;border-radius:3px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;line-height:1;}
+.bshare:hover{border-color:var(--gold);background:var(--gold-dim);}
 .bwatch:hover{border-color:var(--gold);color:var(--gold);}
 
 /* SKELETON */
@@ -720,6 +722,7 @@ function renderGrid(){
             ? `<button class="badd" onclick="customizeWA('${v.title.replace(/'/g,"\\'")}','${v.url}')">✦ Customize</button>`
             : `<button class="badd ${inc?'done':''}" onclick="addCart('${v.id}','${v.title.replace(/'/g,"\\'")}','${v.thumb}',${v.price},'${v.url}')" id="ab${v.id}">${inc?'✓ Added':'+ Add to Cart'}</button>`}
           <button class="bwatch" onclick="window.open('${v.url}','_blank')">▶ Watch</button>
+          <button class="bshare" onclick="shareTemplate('${v.id}','${v.title.replace(/'/g,"\\'")}')" title="Share this template">↗</button>
         </div>
       </div>
     </div>`;
@@ -997,11 +1000,32 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('on'),2200);
 }
 
+function shareTemplate(id,title){
+  const url='https://afterfxtemplates.com/?t='+encodeURIComponent(id);
+  const text=title+' — AfterFX Templates';
+  if(navigator.share){
+    navigator.share({title:title,text:text,url:url}).catch(()=>{});
+  }else if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(()=>showToast('🔗 Link copied! Share it anywhere.')).catch(()=>prompt('Copy this link:',url));
+  }else{prompt('Copy this link:',url);}
+}
+
+function applyDeepLink(){
+  const tp=new URLSearchParams(location.search).get('t');
+  if(!tp)return;
+  const t=videos.find(v=>String(v.id)===tp);
+  if(!t)return;
+  const sb=document.getElementById('searchbox');
+  if(sb)sb.value=t.title;
+  onSearch(t.title);
+  setTimeout(()=>{const el=document.getElementById('templates');if(el)el.scrollIntoView({behavior:'smooth'});},350);
+}
+
 renderPricing();updateCount();
 
 (async()=>{
   videos=await fetchVideos();
-  if(videos.length){renderTabs();renderGrid();}
+  if(videos.length){renderTabs();renderGrid();applyDeepLink();}
   else{
     document.getElementById('vgrid').innerHTML=`<div style="color:var(--mt);text-align:center;padding:48px;grid-column:1/-1;font-size:14px;"><div style="font-size:34px;margin-bottom:12px">📦</div><div style="margin-bottom:14px">Templates coming soon!</div><a href="https://youtube.com/@afterfxtemplates" target="_blank" class="bg" style="display:inline-flex">▶ Watch on YouTube</a></div>`;
     document.getElementById('tabs').innerHTML='';
