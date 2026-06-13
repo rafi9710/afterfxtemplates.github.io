@@ -238,6 +238,15 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
       </div>
 
       <div class="field">
+        <label>Orientation</label>
+        <select id="fOrient">
+          <option value="h">↔ Horizontal (16:9)</option>
+          <option value="v">↕ Vertical (9:16)</option>
+          <option value="both">↔↕ Both included</option>
+        </select>
+      </div>
+
+      <div class="field">
         <label>Price (₹)</label>
         <input type="number" id="fPrice" min="0" placeholder="300">
       </div>
@@ -445,6 +454,7 @@ async function fetchVideos(){
           defaultThumb:t.thumb,
           url:t.url,
           defaultCat:t.cat,
+          defaultOrient:t.orient||'h',
           defaultPrice:(t.price!=null?t.price:300),
           addedAt:t.addedAt,
           isExtra:false
@@ -516,6 +526,8 @@ function getMergedList(){
       defaultThumb:v.defaultThumb,
       cat:c.cat||v.defaultCat,
       defaultCat:v.defaultCat,
+      orient:c.orient||v.defaultOrient||'h',
+      defaultOrient:v.defaultOrient||'h',
       price:c.price!=null?c.price:(v.defaultPrice!=null?v.defaultPrice:300),
       url:v.url,
       addedAt:v.addedAt,
@@ -527,7 +539,7 @@ function getMergedList(){
   const baseIds=new Set(allVideos.map(v=>v.id));
   // skip any custom-added entry whose id already exists in the base list (avoids duplicates after a round-trip)
   const cleanExtras=extras.filter(e=>!baseIds.has(e.id));
-  const combined=[...cleanExtras.map(e=>({...e,customizeOnly:co.includes(e.id),isExtra:true,isCustomized:false})),...merged];
+  const combined=[...cleanExtras.map(e=>({...e,orient:e.orient||'h',customizeOnly:co.includes(e.id),isExtra:true,isCustomized:false})),...merged];
 
   // apply saved display order (seed from current order on first run; new items fall to the end)
   let order=getOrder();
@@ -574,6 +586,7 @@ function exportForWebsite(){
     .filter(t=>!hidden.includes(t.id))
     .map(t=>{
       const o={id:t.id,title:t.title,thumb:t.thumb,cat:t.cat,price:t.price,url:t.url};
+      if(t.orient && t.orient!=='h') o.orient=t.orient;
       if(t.customizeOnly) o.customizeOnly=true;
       if(t.addedAt) o.addedAt=t.addedAt;
       return o;
@@ -632,6 +645,7 @@ function renderList(){
         <div class="tpl-title">${t.title}</div>
         <div class="tpl-meta">
           <span class="tpl-cat">${t.cat}</span>
+          <span class="tpl-cat" style="background:transparent;border:1px solid var(--gold);">${t.orient==='v'?'↕ V':t.orient==='both'?'↔↕ Both':'↔ H'}</span>
           <span class="tpl-price">${t.customizeOnly?'Customize Only':'₹'+t.price}</span>
         </div>
         <div class="tpl-actions">
@@ -657,6 +671,7 @@ function openEditModal(id,isExtra){
   document.getElementById('editIsExtra').value=isExtra?'1':'';
   document.getElementById('fTitle').value=t.title;
   document.getElementById('fCat').value=t.cat;
+  document.getElementById('fOrient').value=t.orient||'h';
   document.getElementById('fPrice').value=t.price;
   document.getElementById('ytField').style.display=isExtra?'block':'none';
   if(isExtra){
@@ -681,6 +696,7 @@ function openAddModal(){
   document.getElementById('editIsExtra').value='1';
   document.getElementById('fTitle').value='';
   document.getElementById('fCat').value='wedding';
+  document.getElementById('fOrient').value='h';
   document.getElementById('fPrice').value=300;
   document.getElementById('fYtUrl').value='';
   document.getElementById('fThumbUrl').value='';
@@ -732,6 +748,7 @@ function updatePreviewImg(src){
 function saveTemplate(){
   const title=document.getElementById('fTitle').value.trim();
   const cat=document.getElementById('fCat').value;
+  const orient=document.getElementById('fOrient').value;
   const price=parseInt(document.getElementById('fPrice').value)||300;
   const isExtra=document.getElementById('editIsExtra').value==='1';
 
@@ -752,12 +769,12 @@ function saveTemplate(){
     if(editingId){
       const idx=extras.findIndex(e=>e.id===editingId);
       if(idx>=0){
-        extras[idx]={...extras[idx],title,cat,price,url:ytUrl||extras[idx].url,thumb:thumb||extras[idx].thumb};
+        extras[idx]={...extras[idx],title,cat,orient,price,url:ytUrl||extras[idx].url,thumb:thumb||extras[idx].thumb};
       }
     }else{
       const newId='custom_'+Date.now();
       savedId=newId;
-      extras.unshift({id:newId,title,cat,price,url:ytUrl||'#',thumb:thumb||'https://via.placeholder.com/480x270/14141F/C9A84C?text='+encodeURIComponent(title),addedAt:new Date().toISOString().slice(0,10)});
+      extras.unshift({id:newId,title,cat,orient,price,url:ytUrl||'#',thumb:thumb||'https://via.placeholder.com/480x270/14141F/C9A84C?text='+encodeURIComponent(title),addedAt:new Date().toISOString().slice(0,10)});
     }
     setExtras(extras);
   }else{
@@ -766,6 +783,7 @@ function saveTemplate(){
     const data={};
     if(title!==orig.title) data.title=title;
     if(cat!==orig.defaultCat) data.cat=cat;
+    if(orient!==(orig.defaultOrient||'h')) data.orient=orient;
     if(price!==300) data.price=price;
     if(currentThumbTab==='default'){
       // Reset thumb

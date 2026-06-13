@@ -98,6 +98,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:60px;display:flex;ali
 .vc:hover .pb{opacity:1;}
 .pi{width:44px;height:44px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;padding-left:3px;}
 .vb2{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.75);color:var(--gold);font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:3px 10px;border-radius:2px;font-weight:600;backdrop-filter:blur(4px);}
+.vb-or{position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,.75);color:#fff;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;padding:3px 9px;border-radius:2px;font-weight:600;backdrop-filter:blur(4px);}
 .vb-new{position:absolute;top:8px;right:8px;background:var(--gold);color:#000;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;padding:3px 9px;border-radius:2px;font-weight:800;box-shadow:0 0 0 0 rgba(201,168,76,.6);animation:newpulse 2s infinite;}
 @keyframes newpulse{0%{box-shadow:0 0 0 0 rgba(201,168,76,.55);}70%{box-shadow:0 0 0 7px rgba(201,168,76,0);}100%{box-shadow:0 0 0 0 rgba(201,168,76,0);}}
 .vbody{padding:14px 16px;}
@@ -334,6 +335,7 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
     <input type="text" id="searchbox" class="searchbox" placeholder="Search templates… e.g. wedding, barasala, half saree" oninput="onSearch(this.value)" autocomplete="off">
     <button class="searchclear" id="searchclear" onclick="clearSearch()" aria-label="Clear search">&times;</button>
   </div>
+  <div class="tabs" id="orienttabs"></div>
   <div class="tabs" id="tabs"></div>
   <div class="vgrid" id="vgrid">
     <div class="skc"><div class="skt sk"></div><div class="skb"><div class="skl sk"></div><div class="skl s sk"></div></div></div>
@@ -522,6 +524,15 @@ const CATS = [
   {id:'others',label:'Others'},
 ];
 
+const ORIENTS = [
+  {id:'all', label:'All'},
+  {id:'h',   label:'\u2194 Horizontal'},
+  {id:'v',   label:'\u2195 Vertical'},
+];
+// missing/unknown orient is treated as horizontal (the catalog default)
+function vOrient(v){ return (v.orient==='v'||v.orient==='both') ? v.orient : 'h'; }
+function matchOrient(v){ if(orient==='all') return true; const o=vOrient(v); return o===orient || o==='both'; }
+
 const KW = {
   wedding:   ['wedding','vivah','kalyana','bride','groom','muhurtham','marriage','engagement'],
   birthday:  ['birthday','bday','happy birthday'],
@@ -539,7 +550,7 @@ const PRICING = [
   {qty:20,price:3000,off:'50% OFF 🔥',best:true},
 ];
 
-let videos=[], filter='all', search='', cart=JSON.parse(localStorage.getItem('afx_c')||'[]'), tcAccepted=false;
+let videos=[], filter='all', orient='all', search='', cart=JSON.parse(localStorage.getItem('afx_c')||'[]'), tcAccepted=false;
 
 function detectCat(t){
   const tl=t.toLowerCase();
@@ -647,6 +658,17 @@ function renderTabs(){
   ).join('');
 }
 
+function renderOrientTabs(){
+  document.getElementById('orienttabs').innerHTML=ORIENTS.map(o=>
+    `<button class="tab ${o.id===orient?'on':''}" onclick="setOrient('${o.id}')">${o.label}</button>`
+  ).join('');
+}
+
+function setOrient(o){
+  orient=o; shown=PAGE_SIZE;
+  renderOrientTabs(); renderGrid();
+}
+
 function setFilter(f){
   filter=f; shown=PAGE_SIZE;
   // switching category clears any active search
@@ -685,9 +707,10 @@ function isNew(v){
 
 function renderGrid(){
   const q=search.trim().toLowerCase();
-  const list = q
+  const list = (q
     ? videos.filter(v=>v.title.toLowerCase().includes(q))
-    : (filter==='all'?videos:videos.filter(v=>v.cat===filter));
+    : (filter==='all'?videos:videos.filter(v=>v.cat===filter))
+  ).filter(matchOrient);
   const el=document.getElementById('vgrid');
   const wrap=document.getElementById('loadmore-wrap');
   if(!list.length){
@@ -709,6 +732,7 @@ function renderGrid(){
         <img src="${v.thumb}" alt="${v.title}" loading="lazy" onerror="this.parentElement.style.background='var(--bg4)'">
         <div class="pb"><div class="pi">▶</div></div>
         <div class="vb2">${v.cat.charAt(0).toUpperCase()+v.cat.slice(1)}</div>
+        <div class="vb-or">${vOrient(v)==='v'?'\u2195 Vertical':vOrient(v)==='both'?'\u2194\u2195 Both':'\u2194 Horizontal'}</div>
         ${isNew(v)?'<div class="vb-new">★ New</div>':''}
         ${co?'<div class="vb-co">Customize Only</div>':''}
       </div>
@@ -1025,10 +1049,11 @@ renderPricing();updateCount();
 
 (async()=>{
   videos=await fetchVideos();
-  if(videos.length){renderTabs();renderGrid();applyDeepLink();}
+  if(videos.length){renderOrientTabs();renderTabs();renderGrid();applyDeepLink();}
   else{
     document.getElementById('vgrid').innerHTML=`<div style="color:var(--mt);text-align:center;padding:48px;grid-column:1/-1;font-size:14px;"><div style="font-size:34px;margin-bottom:12px">📦</div><div style="margin-bottom:14px">Templates coming soon!</div><a href="https://youtube.com/@afterfxtemplates" target="_blank" class="bg" style="display:inline-flex">▶ Watch on YouTube</a></div>`;
     document.getElementById('tabs').innerHTML='';
+    document.getElementById('orienttabs').innerHTML='';
   }
 })();
 </script>
