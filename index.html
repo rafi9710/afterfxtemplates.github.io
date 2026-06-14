@@ -750,7 +750,22 @@ function renderOrientTabs(){
 
 function setOrient(o){
   orient=o; shown=PAGE_SIZE;
-  renderOrientTabs(); renderGrid();
+  renderOrientTabs(); renderGrid(); syncURL();
+}
+
+function syncURL(){
+  if(focusId) return;
+  const p=new URLSearchParams();
+  if(filter && filter!=='all') p.set('cat',filter);
+  if(orient && orient!=='all') p.set('orient',orient);
+  const qs=p.toString();
+  if(history.replaceState) history.replaceState({},'',location.pathname+(qs?('?'+qs):''));
+}
+function readFilterParams(){
+  const sp=new URLSearchParams(location.search);
+  const o=sp.get('orient'); const c=sp.get('cat');
+  if(o==='h'||o==='v') orient=o;
+  if(c && videos.some(v=>v.cat===c)) filter=c;
 }
 
 function setFilter(f){
@@ -759,7 +774,7 @@ function setFilter(f){
   search='';
   const sb=document.getElementById('searchbox'); if(sb) sb.value='';
   const sc=document.getElementById('searchclear'); if(sc) sc.style.display='none';
-  renderTabs(); renderGrid();
+  renderTabs(); renderGrid(); syncURL();
 }
 
 function onSearch(val){
@@ -1159,7 +1174,7 @@ renderPricing();updateCount();
 
 (async()=>{
   videos=await fetchVideos();
-  if(videos.length){renderSortMenu();renderOrientTabs();renderTabs();renderGrid();applyDeepLink();}
+  if(videos.length){readFilterParams();renderSortMenu();renderOrientTabs();renderTabs();renderGrid();applyDeepLink();}
   else{
     document.getElementById('vgrid').innerHTML=`<div style="color:var(--mt);text-align:center;padding:48px;grid-column:1/-1;font-size:14px;"><div style="font-size:34px;margin-bottom:12px">📦</div><div style="margin-bottom:14px">Templates coming soon!</div><a href="https://youtube.com/@afterfxtemplates" target="_blank" class="bg" style="display:inline-flex">▶ Watch on YouTube</a></div>`;
     document.getElementById('tabs').innerHTML='';
