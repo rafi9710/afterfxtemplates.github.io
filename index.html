@@ -84,6 +84,20 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:60px;display:flex;ali
 .searchbox{width:100%;background:var(--bg2);border:1px solid var(--gb);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:14px;padding:12px 40px;border-radius:4px;outline:none;transition:border-color .2s;}
 .searchbox:focus{border-color:var(--gold);}
 .searchbox::placeholder{color:var(--mt);}
+.sortbar{display:flex;justify-content:flex-end;margin:-6px 0 22px;}
+.sortdd{position:relative;}
+.sortbtn{display:inline-flex;align-items:center;gap:7px;background:var(--bg2);border:1px solid var(--gb);color:var(--mt);font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:600;letter-spacing:.5px;padding:9px 14px;border-radius:4px;cursor:pointer;transition:border-color .2s;}
+.sortbtn:hover{border-color:var(--gold);}
+.sortbtn b{color:var(--gold);font-weight:700;}
+.sortcaret{width:13px;height:13px;fill:var(--mt);transition:transform .2s;}
+.sortdd.open .sortcaret{transform:rotate(180deg);}
+.sortmenu{position:absolute;top:calc(100% + 6px);right:0;min-width:215px;background:var(--bg2);border:1px solid var(--gb);border-radius:6px;box-shadow:0 14px 30px rgba(0,0,0,.5);padding:6px;z-index:400;display:none;}
+.sortdd.open .sortmenu{display:block;}
+.sortopt{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;text-align:left;background:transparent;border:none;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:13px;padding:10px 12px;border-radius:4px;cursor:pointer;transition:background .15s;}
+.sortopt:hover{background:var(--gold-dim);}
+.sortopt.on{color:var(--gold);font-weight:700;}
+.sortopt .tick{color:var(--gold);font-weight:700;opacity:0;}
+.sortopt.on .tick{opacity:1;}
 .searchclear{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--mt);font-size:20px;line-height:1;cursor:pointer;padding:4px 9px;display:none;}
 .searchclear:hover{color:var(--gold);}
 
@@ -337,6 +351,12 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
   </div>
   <div class="tabs" id="orienttabs"></div>
   <div class="tabs" id="tabs"></div>
+  <div class="sortbar">
+    <div class="sortdd" id="sortdd">
+      <button class="sortbtn" id="sortbtn" onclick="toggleSort(event)">Sort by <b id="sortlabel">Featured</b><svg class="sortcaret" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg></button>
+      <div class="sortmenu" id="sortmenu"></div>
+    </div>
+  </div>
   <div class="vgrid" id="vgrid">
     <div class="skc"><div class="skt sk"></div><div class="skb"><div class="skl sk"></div><div class="skl s sk"></div></div></div>
     <div class="skc"><div class="skt sk"></div><div class="skb"><div class="skl sk"></div><div class="skl s sk"></div></div></div>
@@ -533,6 +553,34 @@ const ORIENTS = [
 function vOrient(v){ return (v.orient==='v'||v.orient==='both') ? v.orient : 'h'; }
 function matchOrient(v){ if(orient==='all') return true; const o=vOrient(v); return o===orient || o==='both'; }
 
+const SORTS = [
+  {id:'featured', label:'Featured'},
+  {id:'newest',   label:'Newest first'},
+];
+let sortMode='featured';
+function renderSortMenu(){
+  document.getElementById('sortmenu').innerHTML=SORTS.map(sx=>
+    `<button class="sortopt ${sx.id===sortMode?'on':''}" onclick="setSort('${sx.id}')">${sx.label}<span class="tick">\u2713</span></button>`
+  ).join('');
+  const lab=SORTS.find(sx=>sx.id===sortMode);
+  document.getElementById('sortlabel').textContent=lab?lab.label:'Featured';
+}
+function toggleSort(e){ e.stopPropagation(); document.getElementById('sortdd').classList.toggle('open'); }
+function setSort(id){
+  sortMode=id; shown=PAGE_SIZE;
+  document.getElementById('sortdd').classList.remove('open');
+  renderSortMenu(); renderGrid();
+}
+function applySort(list){
+  const a=list.slice();
+  if(sortMode==='newest') a.sort((x,y)=>(Date.parse(y.addedAt||0)||0)-(Date.parse(x.addedAt||0)||0));
+  return a;
+}
+document.addEventListener('click',e=>{
+  const dd=document.getElementById('sortdd');
+  if(dd && !dd.contains(e.target)) dd.classList.remove('open');
+});
+
 const KW = {
   wedding:   ['wedding','vivah','kalyana','bride','groom','muhurtham','marriage','engagement'],
   birthday:  ['birthday','bday','happy birthday'],
@@ -707,10 +755,10 @@ function isNew(v){
 
 function renderGrid(){
   const q=search.trim().toLowerCase();
-  const list = (q
+  const list = applySort((q
     ? videos.filter(v=>v.title.toLowerCase().includes(q))
     : (filter==='all'?videos:videos.filter(v=>v.cat===filter))
-  ).filter(matchOrient);
+  ).filter(matchOrient));
   const el=document.getElementById('vgrid');
   const wrap=document.getElementById('loadmore-wrap');
   if(!list.length){
@@ -1049,7 +1097,7 @@ renderPricing();updateCount();
 
 (async()=>{
   videos=await fetchVideos();
-  if(videos.length){renderOrientTabs();renderTabs();renderGrid();applyDeepLink();}
+  if(videos.length){renderSortMenu();renderOrientTabs();renderTabs();renderGrid();applyDeepLink();}
   else{
     document.getElementById('vgrid').innerHTML=`<div style="color:var(--mt);text-align:center;padding:48px;grid-column:1/-1;font-size:14px;"><div style="font-size:34px;margin-bottom:12px">📦</div><div style="margin-bottom:14px">Templates coming soon!</div><a href="https://youtube.com/@afterfxtemplates" target="_blank" class="bg" style="display:inline-flex">▶ Watch on YouTube</a></div>`;
     document.getElementById('tabs').innerHTML='';
