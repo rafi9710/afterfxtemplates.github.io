@@ -109,6 +109,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:60px;display:flex;ali
 @media(max-width:680px){.howbar{flex-direction:column;}.howdiv{width:auto;height:1px;margin:0 16px;}}
 .customlink{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;background:rgba(201,168,76,.12);border:1px solid var(--gb);color:var(--gold);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:9px 10px;border-radius:4px;margin:4px 0 11px;cursor:pointer;transition:.18s;}
 .customlink:hover{background:var(--gold);color:#080810;border-color:var(--gold);}
+.vgrid.focusgrid{grid-template-columns:minmax(0,330px);justify-content:center;}
+.backall{display:inline-flex;align-items:center;gap:6px;background:transparent;border:1px solid var(--gb);color:var(--gold);font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:10px 18px;border-radius:4px;cursor:pointer;transition:.18s;}
+.backall:hover{background:var(--gold);color:#080810;border-color:var(--gold);}
 .searchclear{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--mt);font-size:20px;line-height:1;cursor:pointer;padding:4px 9px;display:none;}
 .searchclear:hover{color:var(--gold);}
 
@@ -355,6 +358,10 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
     <div class="st">Browse Our Templates</div>
     <div class="ss">Click any template to watch demo · Add to cart to order</div>
   </div>
+  <div id="focusbar" style="display:none;margin-bottom:24px;">
+    <button class="backall" onclick="exitFocus()">← View all templates</button>
+    <div style="color:var(--mt);font-size:13px;margin-top:10px;">You're viewing a single template shared with you.</div>
+  </div>
   <div class="howbar">
     <div class="howopt">
       <div class="howic">📁</div>
@@ -586,6 +593,7 @@ const SORTS = [
   {id:'newest',   label:'Newest first'},
 ];
 let sortMode='featured';
+let focusId=null;
 function renderSortMenu(){
   document.getElementById('sortmenu').innerHTML=SORTS.map(sx=>
     `<button class="sortopt ${sx.id===sortMode?'on':''}" onclick="setSort('${sx.id}')">${sx.label}<span class="tick">\u2713</span></button>`
@@ -782,14 +790,27 @@ function isNew(v){
 }
 
 function renderGrid(){
-  const q=search.trim().toLowerCase();
-  const list = applySort((q
-    ? videos.filter(v=>v.title.toLowerCase().includes(q))
-    : (filter==='all'?videos:videos.filter(v=>v.cat===filter))
-  ).filter(matchOrient));
   const el=document.getElementById('vgrid');
   const wrap=document.getElementById('loadmore-wrap');
+  let list, q='';
+  if(focusId){
+    const ft=videos.find(v=>String(v.id)===String(focusId));
+    list=ft?[ft]:[];
+    el.classList.add('focusgrid');
+  }else{
+    el.classList.remove('focusgrid');
+    q=search.trim().toLowerCase();
+    list = applySort((q
+      ? videos.filter(v=>v.title.toLowerCase().includes(q))
+      : (filter==='all'?videos:videos.filter(v=>v.cat===filter))
+    ).filter(matchOrient));
+  }
   if(!list.length){
+    if(focusId){
+      el.innerHTML=`<div style="color:var(--mt);text-align:center;padding:40px;grid-column:1/-1;font-size:14px;">This template isn't available right now.<br><a href="#" onclick="exitFocus();return false;" style="color:var(--gold);text-decoration:none;font-size:13px;margin-top:8px;display:inline-block;">← View all templates</a></div>`;
+      if(wrap)wrap.style.display='none';
+      return;
+    }
     if(q){
       const safe=search.replace(/[&<>"]/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[s]));
       el.innerHTML=`<div style="color:var(--mt);text-align:center;padding:40px;grid-column:1/-1;font-size:14px;"><div style="font-size:30px;margin-bottom:10px">🔍</div>No templates found for "<span style="color:var(--gold)">${safe}</span>".<br><span style="font-size:13px;">Try another keyword, or <a href="#" onclick="clearSearch();return false;" style="color:var(--gold);text-decoration:none;">browse all templates</a>.</span></div>`;
@@ -1111,15 +1132,27 @@ function shareTemplate(id,title){
   }else{prompt('Copy this link:',url);}
 }
 
+function enterFocus(id){
+  focusId=String(id);
+  ['.searchwrap','#orienttabs','#tabs','.sortbar','.howbar'].forEach(s=>{const e=document.querySelector(s);if(e)e.style.display='none';});
+  const fb=document.getElementById('focusbar'); if(fb)fb.style.display='block';
+  shown=PAGE_SIZE; renderGrid();
+}
+function exitFocus(){
+  focusId=null;
+  ['.searchwrap','#orienttabs','#tabs','.sortbar','.howbar'].forEach(s=>{const e=document.querySelector(s);if(e)e.style.display='';});
+  const fb=document.getElementById('focusbar'); if(fb)fb.style.display='none';
+  if(history.replaceState)history.replaceState({},'',location.pathname);
+  shown=PAGE_SIZE; renderGrid();
+  const el=document.getElementById('templates'); if(el)el.scrollIntoView({behavior:'smooth'});
+}
 function applyDeepLink(){
   const tp=new URLSearchParams(location.search).get('t');
   if(!tp)return;
   const t=videos.find(v=>String(v.id)===tp);
   if(!t)return;
-  const sb=document.getElementById('searchbox');
-  if(sb)sb.value=t.title;
-  onSearch(t.title);
-  setTimeout(()=>{const el=document.getElementById('templates');if(el)el.scrollIntoView({behavior:'smooth'});},350);
+  enterFocus(t.id);
+  setTimeout(()=>{const el=document.getElementById('templates');if(el)el.scrollIntoView({behavior:'smooth'});},300);
 }
 
 renderPricing();updateCount();
