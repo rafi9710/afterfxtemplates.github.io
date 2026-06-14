@@ -28,7 +28,7 @@
 <style>
 :root{--gold:#C9A84C;--gold-l:#E8C96A;--gold-dim:rgba(201,168,76,.13);--gb:rgba(201,168,76,.22);--gbh:rgba(201,168,76,.55);--bg:#080810;--bg2:#0E0E18;--bg3:#14141F;--bg4:#1A1A28;--tx:#EDE8DF;--mt:#7A7468;--mt2:#3A3830;--green:#3DBD72;}
 *{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
-body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;overflow-x:hidden;}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;overflow-x:hidden;cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='30' viewBox='0 0 22 30'%3E%3Cpath d='M3 2 L3 23 L8.5 18 L11.8 25.5 L15 24 L11.7 16.8 L18.5 16.5 Z' fill='white' stroke='black' stroke-width='1.6' stroke-linejoin='round'/%3E%3C/svg%3E") 3 2, auto;}
 ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:3px;}
 
 /* NAV */
@@ -113,8 +113,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:60px;display:flex;ali
 .backall{display:inline-flex;align-items:center;gap:6px;background:transparent;border:1px solid var(--gb);color:var(--gold);font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:10px 18px;border-radius:4px;cursor:pointer;transition:.18s;}
 .backall:hover{background:var(--gold);color:#080810;border-color:var(--gold);}
 .nr-head{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap;}
-.nr-demo{display:inline-flex;align-items:center;gap:8px;background:rgba(201,168,76,.12);border:1px solid var(--gb);color:var(--gold);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:12px 22px;border-radius:6px;cursor:pointer;transition:.18s;white-space:nowrap;}
-.nr-demo:hover{background:var(--gold);color:#0a0a12;border-color:var(--gold);}
+.nr-demo{display:inline-flex;align-items:center;gap:8px;background:rgba(201,168,76,.12);border:1px solid var(--gb);color:var(--gold);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;padding:13px 26px;border-radius:4px;cursor:pointer;transition:.2s;white-space:nowrap;}
+.nr-demo:hover{background:var(--gold);color:#0a0a12;border-color:var(--gold);transform:translateY(-2px);}
+.nr-box-btns{display:flex;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap;}
 .searchclear{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--mt);font-size:20px;line-height:1;cursor:pointer;padding:4px 9px;display:none;}
 .searchclear:hover{color:var(--gold);}
 
@@ -412,14 +413,9 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
 <!-- NAME REVEAL -->
 <div class="nr" id="name-reveal">
   <div class="nr-in">
-    <div class="nr-head">
-      <div>
-        <div class="nr-badge">⭐ Special Service · Customize Only</div>
-        <div class="st" style="font-family:'Cinzel',serif;font-size:clamp(22px,3vw,32px);color:#fff;">Baby Name Reveal Videos</div>
-        <div class="ss" style="margin-top:6px;">Personalized · Not Available for Direct Sale</div>
-      </div>
-      <button class="nr-demo" onclick="window.open('https://www.youtube.com/playlist?list=PLnmD7KI4DUbxfPlGhlKDJxqojptBbxlnj','_blank')">▶ Watch Demo</button>
-    </div>
+    <div class="nr-badge">⭐ Special Service · Customize Only</div>
+    <div class="st" style="font-family:'Cinzel',serif;font-size:clamp(22px,3vw,32px);color:#fff;">Baby Name Reveal Videos</div>
+    <div class="ss" style="margin-top:6px;">Personalized · Not Available for Direct Sale</div>
     <div class="nr-grid">
       <div class="nr-info">
         <p style="margin-top:8px;">Baby Name Reveal videos are <strong style="color:var(--gold)">fully personalized</strong> — we create a unique cinematic video based on your baby's name, its meaning, and mythological theme.</p>
@@ -446,10 +442,13 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
           <div class="bi">🎬</div>
           <h3>Order Your Name Reveal</h3>
           <p>Share your baby's name on WhatsApp. We'll research the meaning, suggest a perfect theme, and create your video.</p>
-          <button class="wa-btn" onclick="nrWA()">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-            Chat on WhatsApp
-          </button>
+          <div class="nr-box-btns">
+            <button class="nr-demo" onclick="window.open('https://www.youtube.com/playlist?list=PLnmD7KI4DUbxfPlGhlKDJxqojptBbxlnj','_blank')">▶ Watch Demo</button>
+            <button class="wa-btn" onclick="nrWA()">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              Chat on WhatsApp
+            </button>
+          </div>
         </div>
       </div>
     </div>
