@@ -98,6 +98,17 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:60px;display:flex;ali
 .sortopt.on{color:var(--gold);font-weight:700;}
 .sortopt .tick{color:var(--gold);font-weight:700;opacity:0;}
 .sortopt.on .tick{opacity:1;}
+.howbar{display:flex;align-items:stretch;background:var(--bg2);border:1px solid var(--gb);border-radius:8px;padding:6px;margin-bottom:30px;}
+.howopt{flex:1;display:flex;gap:13px;padding:16px 18px;align-items:flex-start;}
+.howic{font-size:23px;line-height:1;flex-shrink:0;}
+.howt{font-family:'DM Sans',sans-serif;font-weight:700;color:var(--gold);font-size:14px;margin-bottom:5px;letter-spacing:.3px;}
+.howd{font-size:12.5px;color:var(--mt);line-height:1.55;}
+.howd a{color:var(--gold);text-decoration:none;font-weight:600;}
+.howd a:hover{text-decoration:underline;}
+.howdiv{width:1px;background:var(--gb);flex-shrink:0;margin:12px 0;}
+@media(max-width:680px){.howbar{flex-direction:column;}.howdiv{width:auto;height:1px;margin:0 16px;}}
+.customlink{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;background:rgba(201,168,76,.12);border:1px solid var(--gb);color:var(--gold);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:9px 10px;border-radius:4px;margin:4px 0 11px;cursor:pointer;transition:.18s;}
+.customlink:hover{background:var(--gold);color:#080810;border-color:var(--gold);}
 .searchclear{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--mt);font-size:20px;line-height:1;cursor:pointer;padding:4px 9px;display:none;}
 .searchclear:hover{color:var(--gold);}
 
@@ -343,6 +354,23 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
     <div class="sl">After Effects Project Files</div>
     <div class="st">Browse Our Templates</div>
     <div class="ss">Click any template to watch demo · Add to cart to order</div>
+  </div>
+  <div class="howbar">
+    <div class="howopt">
+      <div class="howic">📁</div>
+      <div>
+        <div class="howt">Project File — ₹300</div>
+        <div class="howd">Editable After Effects file — you add your own name &amp; details. Best if you (or your editor) use After Effects.</div>
+      </div>
+    </div>
+    <div class="howdiv"></div>
+    <div class="howopt">
+      <div class="howic">🎬</div>
+      <div>
+        <div class="howt">Ready-Made Video — Custom Quote</div>
+        <div class="howd">Don't use After Effects? We add your details &amp; deliver a finished video. <a href="https://wa.me/919739909710?text=Hi%20AfterFX%20Templates!%20I%20want%20a%20ready-made%20personalized%20video.%20Please%20share%20the%20details%20and%20pricing." target="_blank">Message us on WhatsApp →</a></div>
+      </div>
+    </div>
   </div>
   <div class="searchwrap">
     <svg class="si" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/></svg>
@@ -788,7 +816,8 @@ function renderGrid(){
         <div class="vtitle">${v.title}</div>
         <div class="vmeta">${co
           ? `<span class="vprice" style="font-size:13px;">Customize Only</span><span style="font-size:10px;color:var(--mt)">Personalized Service</span>`
-          : `<span class="vprice">₹${v.price}</span><span style="font-size:10px;color:var(--mt)">AE Project File</span>`}</div>
+          : `<span class="vprice">₹${v.price}</span><span style="font-size:10px;color:var(--mt)">Editable project file</span>`}</div>
+        ${co?'':`<button class="customlink" onclick="customizeWA('${v.title.replace(/'/g,"\\'")}','${v.url}')">🎬 Get it ready-made for you →</button>`}
         <div class="vacts">
           ${co
             ? `<button class="badd" onclick="customizeWA('${v.title.replace(/'/g,"\\'")}','${v.url}')">✦ Customize</button>`
