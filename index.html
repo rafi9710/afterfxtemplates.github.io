@@ -1106,6 +1106,7 @@ async function verifyPayment(r, o){
 
 function showPaySuccess(o, paymentId){
   const wa='https://wa.me/919739909710?text='+encodeURIComponent('Hi AfterFX Templates! My Order ID is '+o.oid+'. I paid but want to check / correct my email ('+o.email+') for the download links.');
+  const rate='https://wa.me/919739909710?text='+encodeURIComponent('Hi AfterFX Templates! I want to share my feedback / rating for my order '+o.oid+': ');
   const html=`
   <div id="okOv" style="position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.82);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px;">
     <div style="max-width:380px;width:100%;background:var(--bg2);border:1px solid var(--gb);border-radius:14px;padding:30px 26px;text-align:center;font-family:'DM Sans',sans-serif;">
@@ -1117,6 +1118,17 @@ function showPaySuccess(o, paymentId){
       <p style="color:var(--mt);font-size:11.5px;margin:0 0 18px;">(Arrives in ~1 min — check Spam / Promotions too)</p>
       <div style="background:rgba(201,168,76,.08);border:1px solid var(--gb);border-radius:8px;padding:12px;margin-bottom:18px;">
         <p style="color:var(--tx);font-size:12px;line-height:1.6;margin:0;">Wrong email or didn't receive it?<br><a href="${wa}" target="_blank" style="color:#25D366;font-weight:700;text-decoration:none;">📱 WhatsApp us: +91 97399 09710</a></p>
+      </div>
+      <div style="border-top:1px solid var(--gb);margin:2px 0 16px;padding-top:16px;">
+        <p style="color:var(--gold);font-family:'Cinzel',serif;font-size:14px;font-weight:700;margin:0 0 12px;">Loved our work? 💛</p>
+        <a href="https://www.youtube.com/@AfterFXtemplates?sub_confirmation=1" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:#FF0000;color:#fff;text-decoration:none;padding:11px;border-radius:8px;font-weight:700;font-size:13px;margin-bottom:9px;font-family:'DM Sans',sans-serif;">▶ Subscribe on YouTube</a>
+        <a href="${rate}" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(201,168,76,.12);border:1px solid var(--gb);color:var(--gold);text-decoration:none;padding:11px;border-radius:8px;font-weight:700;font-size:13px;margin-bottom:15px;font-family:'DM Sans',sans-serif;">⭐ Rate / Review our work</a>
+        <p style="color:var(--mt);font-size:10.5px;margin:0 0 9px;letter-spacing:1px;">FOLLOW US</p>
+        <div style="display:flex;gap:8px;">
+          <a href="https://whatsapp.com/channel/0029Vb7FskW1iUxQWcL5su0J" target="_blank" style="flex:1;text-align:center;background:var(--bg3);border:1px solid var(--gb);color:var(--tx);text-decoration:none;padding:9px 4px;border-radius:7px;font-size:11px;font-weight:600;font-family:'DM Sans',sans-serif;">WhatsApp</a>
+          <a href="https://www.instagram.com/afterfxtemplaets" target="_blank" style="flex:1;text-align:center;background:var(--bg3);border:1px solid var(--gb);color:var(--tx);text-decoration:none;padding:9px 4px;border-radius:7px;font-size:11px;font-weight:600;font-family:'DM Sans',sans-serif;">Instagram</a>
+          <a href="https://t.me/+egZdhZelWuRmY2U1" target="_blank" style="flex:1;text-align:center;background:var(--bg3);border:1px solid var(--gb);color:var(--tx);text-decoration:none;padding:9px 4px;border-radius:7px;font-size:11px;font-weight:600;font-family:'DM Sans',sans-serif;">Telegram</a>
+        </div>
       </div>
       <button onclick="var x=document.getElementById('okOv');if(x)x.remove();" style="width:100%;background:linear-gradient(135deg,#C9A84C,#a6852f);color:#0a0a12;border:none;padding:13px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;">Done</button>
     </div>
