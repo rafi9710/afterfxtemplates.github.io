@@ -1169,7 +1169,7 @@ window.addEventListener('scroll',function(){
 });
 
 function shareTemplate(id,title){
-  const url='https://afterfxtemplates.com/?t='+encodeURIComponent(id);
+  const url='https://afterfxtemplates.com/t/'+encodeURIComponent(id)+'/';
   const text=title+' — AfterFX Templates';
   if(navigator.share){
     navigator.share({title:title,text:text,url:url}).catch(()=>{});
