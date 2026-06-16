@@ -1048,7 +1048,7 @@ async function checkout(){
         amount: Math.round(total*100),
         currency:'INR',
         receipt: oid,
-        notes:{ order_id:oid, customer_email:email }
+        notes:{ order_id:oid, customer_email:email, customer_name:name, template_ids:ids, templates:readable.slice(0,240), qty:String(q), total:String(total) }
       })
     });
     const data=await resp.json();
