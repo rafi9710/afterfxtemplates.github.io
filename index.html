@@ -863,7 +863,7 @@ function renderGrid(){
         <div class="vmeta">${co
           ? `<span class="vprice" style="font-size:13px;">Customize Only</span><span style="font-size:10px;color:var(--mt)">Personalized Service</span>`
           : `<span class="vprice">₹${v.price}</span><span style="font-size:10px;color:var(--mt)">Editable project file</span>`}</div>
-        ${co?'':`<button class="customlink" onclick="customizeWA('${v.title.replace(/'/g,"\\'")}','${v.url}')">🎬 Get it ready-made for you →</button>`}
+        ${co?'':`<button class="customlink" onclick="customizeWA('${v.title.replace(/'/g,"\\'")}','${v.url}')">🎬 Want it customized? Click here</button>`}
         <div class="vacts">
           ${co
             ? `<button class="badd" onclick="customizeWA('${v.title.replace(/'/g,"\\'")}','${v.url}')">✦ Customize</button>`
