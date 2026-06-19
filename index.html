@@ -107,6 +107,18 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:60px;display:flex;ali
 .howd a:hover{text-decoration:underline;}
 .howdiv{width:1px;background:var(--gb);flex-shrink:0;margin:12px 0;}
 @media(max-width:680px){.howbar{flex-direction:column;}.howdiv{width:auto;height:1px;margin:0 16px;}}
+.savebar{display:flex;align-items:center;flex-wrap:wrap;gap:10px 22px;background:linear-gradient(100deg,rgba(201,168,76,.10),rgba(201,168,76,.03));border:1px solid var(--gbh);border-radius:8px;padding:15px 22px;margin-bottom:22px;}
+.savebar-head{display:flex;align-items:center;gap:9px;flex-shrink:0;}
+.savebar-ic{font-size:19px;line-height:1;}
+.savebar-ttl{font-family:'DM Sans',sans-serif;font-weight:700;color:var(--gold);font-size:13.5px;letter-spacing:.3px;}
+.savebar-ttl b{color:var(--gold-l);}
+.savebar-tiers{display:flex;flex-wrap:wrap;align-items:center;gap:8px 9px;}
+.savetier{font-size:12px;color:var(--tx);background:var(--bg3);border:1px solid var(--gb);border-radius:20px;padding:4px 12px;letter-spacing:.2px;white-space:nowrap;}
+.savetier b{color:var(--gold);font-weight:700;}
+.savetier .off{color:var(--green);font-weight:600;font-size:11px;}
+.savetier.best{border-color:var(--gold);background:var(--gold-dim);}
+.savebar-note{font-size:11px;color:var(--mt);letter-spacing:.3px;flex-basis:100%;}
+@media(max-width:680px){.savebar{flex-direction:column;align-items:flex-start;gap:12px;padding:14px 16px;}}
 .customlink{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;background:rgba(201,168,76,.12);border:1px solid var(--gb);color:var(--gold);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:9px 10px;border-radius:4px;margin:4px 0 11px;cursor:pointer;transition:.18s;}
 .customlink:hover{background:var(--gold);color:#080810;border-color:var(--gold);}
 .vgrid.focusgrid{grid-template-columns:minmax(0,330px);justify-content:center;}
@@ -367,6 +379,18 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
   <div id="focusbar" style="display:none;margin-bottom:24px;">
     <button class="backall" onclick="exitFocus()">← View all templates</button>
     <div style="color:var(--mt);font-size:13px;margin-top:10px;">You're viewing a single template shared with you.</div>
+  </div>
+  <div class="savebar">
+    <div class="savebar-head">
+      <span class="savebar-ic">💡</span>
+      <span class="savebar-ttl">1 template <b>₹300</b> — the more you buy, the cheaper it gets!</span>
+    </div>
+    <div class="savebar-tiers">
+      <span class="savetier"><b>5</b> → ₹200 each <span class="off">33% off</span></span>
+      <span class="savetier"><b>10</b> → ₹175 each <span class="off">42% off</span></span>
+      <span class="savetier best"><b>20</b> → ₹150 each <span class="off">50% off</span> 🔥</span>
+    </div>
+    <div class="savebar-note">Horizontal &amp; Vertical both included · Instant delivery to your email · <a href="#pricing" style="color:var(--gold);text-decoration:none;font-weight:600;">See bundle packages →</a></div>
   </div>
   <div class="howbar">
     <div class="howopt">
