@@ -374,7 +374,7 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
   <div style="margin-bottom:44px">
     <div class="sl">After Effects Project Files</div>
     <div class="st">Browse Our Templates</div>
-    <div class="ss">Click any template to watch demo · Add to cart to order</div>
+    <div class="ss">Click any template to watch demo · Buy the project file to order</div>
   </div>
   <div id="focusbar" style="display:none;margin-bottom:24px;">
     <button class="backall" onclick="exitFocus()">← View all templates</button>
@@ -891,7 +891,7 @@ function renderGrid(){
         <div class="vacts">
           ${co
             ? `<button class="badd" onclick="customizeWA('${v.title.replace(/'/g,"\\'")}','${v.url}')">✦ Customize</button>`
-            : `<button class="badd ${inc?'done':''}" onclick="addCart('${v.id}','${v.title.replace(/'/g,"\\'")}','${v.thumb}',${v.price},'${v.url}')" id="ab${v.id}">${inc?'✓ Added':'+ Add to Cart'}</button>`}
+            : `<button class="badd ${inc?'done':''}" onclick="addCart('${v.id}','${v.title.replace(/'/g,"\\'")}','${v.thumb}',${v.price},'${v.url}')" id="ab${v.id}">${inc?'✓ Added':'+ Buy Project'}</button>`}
           <button class="bwatch" onclick="window.open('${v.url}','_blank')">▶ Watch</button>
           <button class="bshare" onclick="shareTemplate('${v.id}','${v.title.replace(/'/g,"\\'")}')" title="Share this template">↗</button>
         </div>
