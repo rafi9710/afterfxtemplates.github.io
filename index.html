@@ -417,6 +417,7 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
   <div class="tabs" id="orienttabs"></div>
   <div class="tabs" id="tabs"></div>
   <div class="sortbar">
+    <button class="bshare" id="catshare" onclick="shareCategory()" style="margin-right:auto;display:none;">&#8599; Share this category</button>
     <div class="sortdd" id="sortdd">
       <button class="sortbtn" id="sortbtn" onclick="toggleSort(event)">Sort by <b id="sortlabel">Featured</b><svg class="sortcaret" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg></button>
       <div class="sortmenu" id="sortmenu"></div>
@@ -774,6 +775,13 @@ function renderTabs(){
   document.getElementById('tabs').innerHTML=CATS.filter(c=>c.id==='all'||used.has(c.id)).map(c=>
     `<button class="tab ${c.id===active?'on':''}" onclick="setFilter('${c.id}')">${c.label}</button>`
   ).join('');
+  const csb=document.getElementById('catshare');
+  if(csb){
+    if(filter && filter!=='all' && !search.trim()){
+      const lab=(CATS.find(c=>c.id===filter)||{}).label||filter;
+      csb.style.display=''; csb.textContent='\u2197 Share "'+lab+'"';
+    }else{ csb.style.display='none'; }
+  }
 }
 
 function renderOrientTabs(){
@@ -1199,6 +1207,18 @@ function shareTemplate(id,title){
     navigator.share({title:title,text:text,url:url}).catch(()=>{});
   }else if(navigator.clipboard&&navigator.clipboard.writeText){
     navigator.clipboard.writeText(url).then(()=>showToast('🔗 Link copied! Share it anywhere.')).catch(()=>prompt('Copy this link:',url));
+  }else{prompt('Copy this link:',url);}
+}
+
+function shareCategory(){
+  if(!filter || filter==='all'){ showToast('Pehle ek category chuno (Wedding, Half Saree...)'); return; }
+  const lab=(CATS.find(c=>c.id===filter)||{}).label||filter;
+  const url='https://afterfxtemplates.com/c/'+encodeURIComponent(filter)+'/';
+  const text=lab+' Invitation Templates — AfterFX Templates';
+  if(navigator.share){
+    navigator.share({title:text,text:text,url:url}).catch(()=>{});
+  }else if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(()=>showToast('🔗 Category link copied! Share it anywhere.')).catch(()=>prompt('Copy this link:',url));
   }else{prompt('Copy this link:',url);}
 }
 
