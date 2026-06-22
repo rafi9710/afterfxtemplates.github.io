@@ -135,6 +135,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:60px;display:flex;ali
 
 /* VIDEO GRID */
 .vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:18px;}
+.pag{display:flex;justify-content:center;align-items:center;gap:6px;margin-top:34px;flex-wrap:wrap;}
+.pag button{min-width:38px;height:38px;padding:0 10px;background:transparent;border:1px solid rgba(201,168,76,.3);color:#ece9e0;border-radius:6px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;transition:.15s;}
+.pag button:hover{border-color:var(--gold);color:var(--gold);}
+.pag button.on{background:var(--gold);border-color:var(--gold);color:#080810;}
+.pag button:disabled{opacity:.35;cursor:default;}
+.pag .dots{color:var(--mt);padding:0 4px;}
 .vc{background:var(--bg2);border:1px solid var(--gb);border-radius:6px;overflow:hidden;transition:all .3s;}
 .vc:hover{border-color:var(--gbh);transform:translateY(-4px);box-shadow:0 14px 40px rgba(0,0,0,.5);}
 .vt{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;background:var(--bg3);}
@@ -429,10 +435,8 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
     <div class="skc"><div class="skt sk"></div><div class="skb"><div class="skl sk"></div><div class="skl s sk"></div></div></div>
     <div class="skc"><div class="skt sk"></div><div class="skb"><div class="skl sk"></div><div class="skl s sk"></div></div></div>
   </div>
-  <div id="loadmore-wrap" style="text-align:center;margin-top:34px;display:none;">
-    <button id="loadmore-btn" onclick="loadMore()" style="background:transparent;border:1px solid var(--gold);color:var(--gold);font-family:'DM Sans',sans-serif;font-weight:600;letter-spacing:1px;padding:13px 40px;border-radius:4px;cursor:pointer;font-size:13px;text-transform:uppercase;transition:.2s;" onmouseover="this.style.background='var(--gold)';this.style.color='#080810'" onmouseout="this.style.background='transparent';this.style.color='var(--gold)'">Load More Templates</button>
-    <div id="loadmore-count" style="color:var(--mt);font-size:12px;margin-top:12px;"></div>
-  </div>
+  <div id="pagination" class="pag" style="display:none;"></div>
+    <div id="pagecount" style="text-align:center;color:var(--mt);font-size:12px;margin-top:12px;display:none;"></div>
 </section>
 
 <div class="dv">✦ Name Reveal ✦</div>
@@ -638,7 +642,7 @@ function renderSortMenu(){
 }
 function toggleSort(e){ e.stopPropagation(); document.getElementById('sortdd').classList.toggle('open'); }
 function setSort(id){
-  sortMode=id; shown=PAGE_SIZE;
+  sortMode=id; curPage=1;
   document.getElementById('sortdd').classList.remove('open');
   renderSortMenu(); renderGrid();
 }
@@ -791,7 +795,7 @@ function renderOrientTabs(){
 }
 
 function setOrient(o){
-  orient=o; shown=PAGE_SIZE;
+  orient=o; curPage=1;
   renderOrientTabs(); renderGrid(); syncURL();
 }
 
@@ -811,7 +815,7 @@ function readFilterParams(){
 }
 
 function setFilter(f){
-  filter=f; shown=PAGE_SIZE;
+  filter=f; curPage=1;
   // switching category clears any active search
   search='';
   const sb=document.getElementById('searchbox'); if(sb) sb.value='';
@@ -820,7 +824,7 @@ function setFilter(f){
 }
 
 function onSearch(val){
-  search=val; shown=PAGE_SIZE;
+  search=val; curPage=1;
   document.getElementById('searchclear').style.display = val ? 'block' : 'none';
   renderTabs(); renderGrid();
 }
@@ -829,14 +833,33 @@ function clearSearch(){
   search='';
   const sb=document.getElementById('searchbox'); if(sb) sb.value='';
   document.getElementById('searchclear').style.display='none';
-  shown=PAGE_SIZE;
+  curPage=1;
   renderTabs(); renderGrid();
 }
 
 const PAGE_SIZE=12;
-let shown=PAGE_SIZE;
+let curPage=1;
 
-function loadMore(){shown+=PAGE_SIZE;renderGrid();}
+function gotoPage(p){
+  curPage=p;
+  renderGrid();
+  const t=document.getElementById('templates');
+  if(t) t.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function renderPagination(totalPages){
+  const pag=document.getElementById('pagination');
+  if(!pag) return;
+  if(totalPages<=1){ pag.style.display='none'; return; }
+  const win=2; let pages=[];
+  for(let i=1;i<=totalPages;i++){
+    if(i===1||i===totalPages||(i>=curPage-win&&i<=curPage+win)) pages.push(i);
+    else if(pages[pages.length-1]!=='...') pages.push('...');
+  }
+  let html=`<button onclick="gotoPage(${curPage-1})" ${curPage===1?'disabled':''}>&#8249;</button>`;
+  html+=pages.map(p=>p==='...'?'<span class="dots">&#8230;</span>':`<button class="${p===curPage?'on':''}" onclick="gotoPage(${p})">${p}</button>`).join('');
+  html+=`<button onclick="gotoPage(${curPage+1})" ${curPage===totalPages?'disabled':''}>&#8250;</button>`;
+  pag.innerHTML=html; pag.style.display='flex';
+}
 
 const NEW_DAYS=15;  // template shows NEW badge for this many days after it's added
 function isNew(v){
@@ -848,7 +871,9 @@ function isNew(v){
 
 function renderGrid(){
   const el=document.getElementById('vgrid');
-  const wrap=document.getElementById('loadmore-wrap');
+  const wrap=document.getElementById('pagination');
+  const pcEl=document.getElementById('pagecount');
+  if(wrap)wrap.style.display='none'; if(pcEl)pcEl.style.display='none';
   let list, q='';
   if(focusId){
     const ft=videos.find(v=>String(v.id)===String(focusId));
@@ -877,7 +902,11 @@ function renderGrid(){
     if(wrap)wrap.style.display='none';
     return;
   }
-  const visible=list.slice(0,shown);
+  const totalPages=Math.max(1,Math.ceil(list.length/PAGE_SIZE));
+  if(curPage>totalPages) curPage=totalPages;
+  if(curPage<1) curPage=1;
+  const start=(curPage-1)*PAGE_SIZE;
+  const visible=list.slice(start,start+PAGE_SIZE);
   el.innerHTML=visible.map(v=>{
     const inc=cart.find(c=>c.id===v.id);
     const co=v.customizeOnly;
@@ -906,13 +935,10 @@ function renderGrid(){
       </div>
     </div>`;
   }).join('');
-  if(wrap){
-    if(list.length>shown){
-      wrap.style.display='block';
-      document.getElementById('loadmore-count').textContent=`Showing ${visible.length} of ${list.length} templates`;
-    }else{
-      wrap.style.display='none';
-    }
+  renderPagination(totalPages);
+  if(pcEl){
+    pcEl.style.display='block';
+    pcEl.textContent=`Showing ${start+1}\u2013${start+visible.length} of ${list.length} templates`;
   }
 }
 
@@ -1226,14 +1252,14 @@ function enterFocus(id){
   focusId=String(id);
   ['.searchwrap','#orienttabs','#tabs','.sortbar','.howbar'].forEach(s=>{const e=document.querySelector(s);if(e)e.style.display='none';});
   const fb=document.getElementById('focusbar'); if(fb)fb.style.display='block';
-  shown=PAGE_SIZE; renderGrid();
+  curPage=1; renderGrid();
 }
 function exitFocus(){
   focusId=null;
   ['.searchwrap','#orienttabs','#tabs','.sortbar','.howbar'].forEach(s=>{const e=document.querySelector(s);if(e)e.style.display='';});
   const fb=document.getElementById('focusbar'); if(fb)fb.style.display='none';
   if(history.replaceState)history.replaceState({},'',location.pathname);
-  shown=PAGE_SIZE; renderGrid();
+  curPage=1; renderGrid();
   const el=document.getElementById('templates'); if(el)el.scrollIntoView({behavior:'smooth'});
 }
 function applyDeepLink(){
