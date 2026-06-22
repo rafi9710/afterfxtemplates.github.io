@@ -86,6 +86,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:60px;display:flex;ali
 .searchbox::placeholder{color:var(--mt);}
 .sortbar{display:flex;justify-content:flex-end;margin:-6px 0 22px;}
 .sortdd{position:relative;}
+.catdd{display:inline-block;margin:8px 0 4px;}
+.catdd .sortmenu{left:0;right:auto;min-width:230px;max-height:340px;overflow:auto;}
 .sortbtn{display:inline-flex;align-items:center;gap:7px;background:var(--bg2);border:1px solid var(--gb);color:var(--mt);font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:600;letter-spacing:.5px;padding:9px 14px;border-radius:4px;cursor:pointer;transition:border-color .2s;}
 .sortbtn:hover{border-color:var(--gold);}
 .sortbtn b{color:var(--gold);font-weight:700;}
@@ -421,7 +423,10 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
     <button class="searchclear" id="searchclear" onclick="clearSearch()" aria-label="Clear search">&times;</button>
   </div>
   <div class="tabs" id="orienttabs"></div>
-  <div class="tabs" id="tabs"></div>
+  <div class="sortdd catdd" id="catdd">
+    <button class="sortbtn" id="catbtn" onclick="toggleCat(event)">Category: <b id="catlabel">All Templates</b><svg class="sortcaret" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg></button>
+    <div class="sortmenu" id="catmenu"></div>
+  </div>
   <div class="sortbar">
     <button class="bshare" id="catshare" onclick="shareCategory()" style="margin-right:auto;display:none;">&#8599; Share this category</button>
     <div class="sortdd" id="sortdd">
@@ -608,6 +613,8 @@ const RSS = `https://www.youtube.com/feeds/videos.xml?channel_id=${YT_CHANNEL_ID
 const CATS = [
   {id:'all',label:'All Templates'},
   {id:'wedding',label:'Wedding'},
+  {id:'christian',label:'Christian Wedding'},
+  {id:'engagement',label:'Engagement'},
   {id:'birthday',label:'Birthday'},
   {id:'halfsaree',label:'Half Saree'},
   {id:'cradle',label:'Cradle'},
@@ -641,6 +648,7 @@ function renderSortMenu(){
   document.getElementById('sortlabel').textContent=lab?lab.label:'Featured';
 }
 function toggleSort(e){ e.stopPropagation(); document.getElementById('sortdd').classList.toggle('open'); }
+function toggleCat(e){ e.stopPropagation(); document.getElementById('catdd').classList.toggle('open'); }
 function setSort(id){
   sortMode=id; curPage=1;
   document.getElementById('sortdd').classList.remove('open');
@@ -654,10 +662,14 @@ function applySort(list){
 document.addEventListener('click',e=>{
   const dd=document.getElementById('sortdd');
   if(dd && !dd.contains(e.target)) dd.classList.remove('open');
+  const cd=document.getElementById('catdd');
+  if(cd && !cd.contains(e.target)) cd.classList.remove('open');
 });
 
 const KW = {
-  wedding:   ['wedding','vivah','kalyana','bride','groom','muhurtham','marriage','engagement'],
+  christian: ['christian wedding','church wedding','christian','catholic'],
+  engagement:['engagement','ring ceremony','nischayam','nischayathartham','betrothal','sagai'],
+  wedding:   ['wedding','vivah','kalyana','bride','groom','muhurtham','marriage'],
   birthday:  ['birthday','bday','happy birthday'],
   halfsaree: ['half saree','halfsaree','langa','half-saree','langa voni'],
   cradle:    ['cradle','naming','namakarana','barashala','baarashala'],
@@ -776,9 +788,15 @@ function applyCustomizations(vids, ov){
 function renderTabs(){
   const active = search.trim() ? 'all' : filter;
   const used=new Set(videos.map(v=>v.cat));
-  document.getElementById('tabs').innerHTML=CATS.filter(c=>c.id==='all'||used.has(c.id)).map(c=>
-    `<button class="tab ${c.id===active?'on':''}" onclick="setFilter('${c.id}')">${c.label}</button>`
-  ).join('');
+  const opts=CATS.filter(c=>c.id==='all'||used.has(c.id));
+  const menu=document.getElementById('catmenu');
+  if(menu){
+    menu.innerHTML=opts.map(c=>
+      `<button class="sortopt ${c.id===active?'on':''}" onclick="setFilter('${c.id}')">${c.label}<span class="tick">\u2713</span></button>`
+    ).join('');
+  }
+  const lbl=document.getElementById('catlabel');
+  if(lbl){ const cur=CATS.find(c=>c.id===active); lbl.textContent=cur?cur.label:'All Templates'; }
   const csb=document.getElementById('catshare');
   if(csb){
     if(filter && filter!=='all' && !search.trim()){
@@ -816,6 +834,7 @@ function readFilterParams(){
 
 function setFilter(f){
   filter=f; curPage=1;
+  const cd=document.getElementById('catdd'); if(cd) cd.classList.remove('open');
   // switching category clears any active search
   search='';
   const sb=document.getElementById('searchbox'); if(sb) sb.value='';
