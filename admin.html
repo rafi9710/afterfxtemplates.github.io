@@ -201,6 +201,17 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
       <button class="btn-secondary" onclick="confirmReset()">🔄 Reset All</button>
     </div>
 
+    <!-- MANAGE CATEGORIES (always visible on main dashboard) -->
+    <div id="catManager" style="margin:0 0 18px;padding:14px 16px;border:1px solid var(--gold);border-radius:10px;background:#0d0d16;">
+      <div style="font-size:14px;color:var(--gold);font-weight:800;margin-bottom:4px;">&#9881; Manage Categories</div>
+      <div class="hint" style="margin-bottom:10px;font-size:12px;">Add a category here, then assign it to &#8805;1 template (Edit &#8594; Category) and Export. It shows on the live site once a template uses it.</div>
+      <div style="display:flex;gap:8px;max-width:480px;margin-bottom:10px;">
+        <input id="newCatName" type="text" placeholder="New category name (e.g. Engagement)" autocomplete="off" style="flex:1;padding:9px 11px;background:#080810;border:1px solid #2a2a3a;border-radius:7px;color:#fff;font-size:14px;" onkeydown="if(event.key==='Enter'){event.preventDefault();addCategory();}">
+        <button type="button" onclick="addCategory()" style="padding:9px 18px;background:var(--gold);color:#080810;border:0;border-radius:7px;font-weight:800;cursor:pointer;font-size:14px;white-space:nowrap;">+ Add</button>
+      </div>
+      <div id="catChips" style="display:flex;flex-wrap:wrap;gap:7px;"></div>
+    </div>
+
     <!-- LIST -->
     <div id="tplList"></div>
   </div>
@@ -225,16 +236,6 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
       <div class="field">
         <label>Category</label>
         <select id="fCat"></select>
-        <!-- ── Manage Categories (self-serve, no code editing) ── -->
-        <div id="catManager" style="margin-top:8px;padding:10px;border:1px solid #2a2a3a;border-radius:8px;background:#0d0d16;">
-          <div style="font-size:12px;color:var(--gold);font-weight:700;margin-bottom:6px;">&#9881; Manage Categories</div>
-          <div style="display:flex;gap:6px;margin-bottom:8px;">
-            <input id="newCatName" type="text" placeholder="New category name" autocomplete="off" style="flex:1;padding:6px 8px;background:#080810;border:1px solid #2a2a3a;border-radius:6px;color:#fff;font-size:13px;" onkeydown="if(event.key==='Enter'){event.preventDefault();addCategory();}">
-            <button type="button" onclick="addCategory()" style="padding:6px 12px;background:var(--gold);color:#080810;border:0;border-radius:6px;font-weight:700;cursor:pointer;font-size:13px;white-space:nowrap;">+ Add</button>
-          </div>
-          <div id="catChips" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
-          <div class="hint" style="margin-top:6px;font-size:11px;">Custom cats show in gold with &#10005; to remove. Base cats are locked. A new category appears on the live site only after you assign it to &#8805;1 template and Export.</div>
-        </div>
       </div>
 
       <div class="field">
