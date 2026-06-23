@@ -898,8 +898,12 @@ let curPage=1;
 function gotoPage(p){
   curPage=p;
   renderGrid();
-  const t=document.getElementById('templates');
-  if(t) t.scrollIntoView({behavior:'smooth',block:'start'});
+  const t=document.getElementById('vgrid');
+  if(t){
+    const navH=72; // fixed navbar (60px) + thodi gap
+    const y=t.getBoundingClientRect().top + window.pageYOffset - navH;
+    window.scrollTo({top:y, behavior:'smooth'});
+  }
 }
 function renderPagination(totalPages){
   const pag=document.getElementById('pagination');
