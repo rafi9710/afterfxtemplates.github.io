@@ -224,17 +224,17 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
 
       <div class="field">
         <label>Category</label>
-        <select id="fCat">
-          <option value="wedding">Wedding</option>
-          <option value="birthday">Birthday</option>
-          <option value="halfsaree">Half Saree</option>
-          <option value="cradle">Cradle</option>
-          <option value="saree">Saree</option>
-          <option value="namereveal">Name Reveal</option>
-          <option value="babyshower">Baby Shower</option>
-          <option value="housewarming">House Warming</option>
-          <option value="others">Others</option>
-        </select>
+        <select id="fCat"></select>
+        <!-- ── Manage Categories (self-serve, no code editing) ── -->
+        <div id="catManager" style="margin-top:8px;padding:10px;border:1px solid #2a2a3a;border-radius:8px;background:#0d0d16;">
+          <div style="font-size:12px;color:var(--gold);font-weight:700;margin-bottom:6px;">&#9881; Manage Categories</div>
+          <div style="display:flex;gap:6px;margin-bottom:8px;">
+            <input id="newCatName" type="text" placeholder="New category name" autocomplete="off" style="flex:1;padding:6px 8px;background:#080810;border:1px solid #2a2a3a;border-radius:6px;color:#fff;font-size:13px;" onkeydown="if(event.key==='Enter'){event.preventDefault();addCategory();}">
+            <button type="button" onclick="addCategory()" style="padding:6px 12px;background:var(--gold);color:#080810;border:0;border-radius:6px;font-weight:700;cursor:pointer;font-size:13px;white-space:nowrap;">+ Add</button>
+          </div>
+          <div id="catChips" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+          <div class="hint" style="margin-top:6px;font-size:11px;">Custom cats show in gold with &#10005; to remove. Base cats are locked. A new category appears on the live site only after you assign it to &#8805;1 template and Export.</div>
+        </div>
       </div>
 
       <div class="field">
@@ -430,8 +430,10 @@ function showDash(){
 
 /* INIT */
 async function init(){
+  renderCatOptions(); renderCatManager();
   document.getElementById('tplList').innerHTML='<div class="empty-state"><div class="em">⏳</div><h3>Loading templates...</h3><p>Reading published catalog</p></div>';
   allVideos=await fetchVideos();
+  renderCatOptions(); renderCatManager();
   renderStats();
   renderList();
 }
@@ -447,6 +449,11 @@ async function fetchVideos(){
         // seed customize-only flags from published file (first load only, so manual toggles aren't overwritten)
         if(localStorage.getItem('afx_co')===null){
           setCustOnly(j.templates.filter(t=>t.customizeOnly).map(t=>t.id));
+        }
+        // seed custom categories published in the file (first load only) so they survive on a fresh browser
+        if(localStorage.getItem('afx_cats')===null && Array.isArray(j.categories)){
+          const baseIds=new Set(BASE_CATS.map(c=>c.id));
+          setCustomCats(j.categories.filter(c=>c&&c.id&&!baseIds.has(c.id)).map(c=>({id:c.id,label:c.label||c.id})));
         }
         return j.templates.map(t=>({
           id:t.id,
@@ -494,6 +501,70 @@ function getCustOnly(){return JSON.parse(localStorage.getItem('afx_co')||'[]');}
 function setCustOnly(a){localStorage.setItem('afx_co',JSON.stringify(a));}
 function getOrder(){return JSON.parse(localStorage.getItem('afx_order')||'[]');}
 function setOrder(a){localStorage.setItem('afx_order',JSON.stringify(a));}
+
+/* ── DYNAMIC CATEGORIES (self-serve, stored in localStorage afx_cats) ── */
+const BASE_CATS = [
+  {id:'wedding',label:'Wedding'},
+  {id:'christian',label:'Christian Wedding'},
+  {id:'engagement',label:'Engagement'},
+  {id:'birthday',label:'Birthday'},
+  {id:'halfsaree',label:'Half Saree'},
+  {id:'cradle',label:'Cradle'},
+  {id:'saree',label:'Saree'},
+  {id:'namereveal',label:'Name Reveal'},
+  {id:'babyshower',label:'Baby Shower'},
+  {id:'housewarming',label:'House Warming'},
+  {id:'others',label:'Others'},
+];
+function getCustomCats(){return JSON.parse(localStorage.getItem('afx_cats')||'[]');}
+function setCustomCats(a){localStorage.setItem('afx_cats',JSON.stringify(a));}
+function slugifyCat(name){
+  return (name||'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'').slice(0,24);
+}
+// base + custom, with "Others" always last
+function getAllCats(){
+  const custom=getCustomCats();
+  const baseNoOthers=BASE_CATS.filter(c=>c.id!=='others');
+  const others=BASE_CATS.find(c=>c.id==='others');
+  return [...baseNoOthers, ...custom, others].filter(Boolean);
+}
+function renderCatOptions(){
+  const sel=document.getElementById('fCat'); if(!sel) return;
+  const cur=sel.value;
+  sel.innerHTML=getAllCats().map(c=>`<option value="${c.id}">${c.label}</option>`).join('');
+  if(cur && getAllCats().some(c=>c.id===cur)) sel.value=cur;
+}
+function renderCatManager(){
+  const box=document.getElementById('catChips'); if(!box) return;
+  const baseIds=new Set(BASE_CATS.map(c=>c.id));
+  box.innerHTML=getAllCats().map(c=>{
+    if(!baseIds.has(c.id)){
+      return `<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border:1px solid var(--gold);border-radius:99px;font-size:12px;color:var(--gold);">${c.label}<span onclick="removeCategory('${c.id}')" style="cursor:pointer;font-weight:800;" title="Remove">&#10005;</span></span>`;
+    }
+    return `<span style="display:inline-flex;align-items:center;padding:3px 9px;border:1px solid #2a2a3a;border-radius:99px;font-size:12px;color:#888;" title="Base category (locked)">${c.label}</span>`;
+  }).join('');
+}
+function addCategory(){
+  const inp=document.getElementById('newCatName');
+  const name=(inp.value||'').trim();
+  if(!name){ showToast('Type a category name first','err'); return; }
+  const id=slugifyCat(name);
+  if(!id){ showToast('Use letters/numbers in the name','err'); return; }
+  if(getAllCats().some(c=>c.id===id)){ showToast('That category already exists','err'); return; }
+  const custom=getCustomCats();
+  custom.push({id,label:name});
+  setCustomCats(custom);
+  inp.value='';
+  renderCatOptions(); renderCatManager();
+  document.getElementById('fCat').value=id;   // auto-select the new one
+  showToast('Added "'+name+'". Assign to \u22651 template + Export to go live.','ok');
+}
+function removeCategory(id){
+  if(!confirm('Remove this category? Any template already set to it will need re-assigning.')) return;
+  setCustomCats(getCustomCats().filter(c=>c.id!==id));
+  renderCatOptions(); renderCatManager();
+  showToast('Category removed','ok');
+}
 
 /* STATS */
 function renderStats(){
@@ -591,7 +662,7 @@ function exportForWebsite(){
       if(t.addedAt) o.addedAt=t.addedAt;
       return o;
     });
-  const data={version:2,exportedAt:new Date().toISOString(),templates:list};
+  const data={version:2,exportedAt:new Date().toISOString(),categories:getAllCats(),templates:list};
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);

@@ -620,7 +620,7 @@ const YT_CHANNEL_ID = 'UC0Bt76u7WpzjCS_C3vuGBeQ';
 const PROXY = 'https://api.allorigins.win/get?url=';
 const RSS = `https://www.youtube.com/feeds/videos.xml?channel_id=${YT_CHANNEL_ID}`;
 
-const CATS = [
+let CATS = [
   {id:'all',label:'All Templates'},
   {id:'wedding',label:'Wedding'},
   {id:'christian',label:'Christian Wedding'},
@@ -634,6 +634,29 @@ const CATS = [
   {id:'housewarming',label:'House Warming'},
   {id:'others',label:'Others'},
 ];
+
+// ── DYNAMIC CATEGORIES ──────────────────────────────────────────────
+// Categories the admin adds himself are published inside templates.json
+// as `categories:[{id,label}]`. mergeCats() folds any NEW ones into CATS
+// at runtime (inserted just before "Others"), so the storefront shows
+// admin-added categories with NO code editing. Existing/base cats are kept.
+let PUBLISHED_CATS = [];
+function mergeCats(published){
+  if(!Array.isArray(published) || !published.length) return;
+  PUBLISHED_CATS = published;
+  const have = new Set(CATS.map(c=>c.id));
+  const oIdx = CATS.findIndex(c=>c.id==='others');
+  const insertAt = oIdx===-1 ? CATS.length : oIdx;
+  const toAdd = [];
+  published.forEach(pc=>{
+    if(!pc || !pc.id) return;
+    if(pc.id==='all' || pc.id==='others') return;   // UI pseudo / always-last
+    if(have.has(pc.id)) return;                       // already in base list
+    have.add(pc.id);
+    toAdd.push({id:pc.id, label:pc.label||pc.id});
+  });
+  if(toAdd.length) CATS.splice(insertAt, 0, ...toAdd);
+}
 
 const ORIENTS = [
   {id:'all', label:'All'},
@@ -763,6 +786,9 @@ async function fetchBase(){
 
 async function fetchVideos(){
   const json = await loadJson();
+
+  // Fold any admin-published categories into the storefront tab list (self-serve, no code edits).
+  if(json && Array.isArray(json.categories)) mergeCats(json.categories);
 
   // PREFERRED: templates.json carries the full catalog → render directly, no proxy/YouTube needed.
   if(json && Array.isArray(json.templates) && json.templates.length){
