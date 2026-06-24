@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "exportedAt": "2026-06-24T07:09:41.955Z",
+  "exportedAt": "2026-06-24T07:18:42.003Z",
   "categories": [
     {
       "id": "wedding",
@@ -41,6 +41,10 @@
     {
       "id": "housewarming",
       "label": "House Warming"
+    },
+    {
+      "id": "muslimwedding",
+      "label": "Muslim Wedding"
     },
     {
       "id": "others",
@@ -313,7 +317,7 @@
       "id": "TVVueLJr_T0",
       "title": "wedding",
       "thumb": "https://i.ytimg.com/vi/TVVueLJr_T0/mqdefault.jpg",
-      "cat": "wedding",
+      "cat": "muslimwedding",
       "price": 300,
       "url": "https://www.youtube.com/watch?v=TVVueLJr_T0",
       "orient": "v",
@@ -603,7 +607,7 @@
       "id": "VI0qoBhbjjE",
       "title": "Wedding",
       "thumb": "https://i.ytimg.com/vi/VI0qoBhbjjE/mqdefault.jpg",
-      "cat": "wedding",
+      "cat": "muslimwedding",
       "price": 300,
       "url": "https://www.youtube.com/watch?v=VI0qoBhbjjE"
     },
@@ -692,7 +696,7 @@
       "id": "H-STIJcPkdw",
       "title": "wedding",
       "thumb": "https://i.ytimg.com/vi/H-STIJcPkdw/mqdefault.jpg",
-      "cat": "wedding",
+      "cat": "muslimwedding",
       "price": 300,
       "url": "https://www.youtube.com/watch?v=H-STIJcPkdw",
       "orient": "v"
@@ -777,7 +781,7 @@
       "id": "9GuNkTL4BG0",
       "title": "Muslim wedding",
       "thumb": "https://i.ytimg.com/vi/9GuNkTL4BG0/mqdefault.jpg",
-      "cat": "wedding",
+      "cat": "muslimwedding",
       "price": 300,
       "url": "https://www.youtube.com/watch?v=9GuNkTL4BG0",
       "orient": "v"
@@ -843,7 +847,7 @@
       "id": "uaz2QP7oaNY",
       "title": "3D Islamic Wedding",
       "thumb": "https://i.ytimg.com/vi/uaz2QP7oaNY/mqdefault.jpg",
-      "cat": "wedding",
+      "cat": "muslimwedding",
       "price": 300,
       "url": "https://www.youtube.com/watch?v=uaz2QP7oaNY"
     },
@@ -891,7 +895,7 @@
       "id": "bf3k-vTdGf4",
       "title": "3D Islamic Wedding",
       "thumb": "https://i.ytimg.com/vi/bf3k-vTdGf4/mqdefault.jpg",
-      "cat": "wedding",
+      "cat": "muslimwedding",
       "price": 300,
       "url": "https://www.youtube.com/watch?v=bf3k-vTdGf4"
     },
@@ -1016,7 +1020,7 @@
       "id": "EdFhiyCE2nI",
       "title": "3D Engagement",
       "thumb": "https://i.ytimg.com/vi/EdFhiyCE2nI/mqdefault.jpg",
-      "cat": "wedding",
+      "cat": "engagement",
       "price": 300,
       "url": "https://www.youtube.com/watch?v=EdFhiyCE2nI"
     },
@@ -1056,7 +1060,7 @@
       "id": "Nq96uqWkhko",
       "title": "Islamic Wedding",
       "thumb": "https://i.ytimg.com/vi/Nq96uqWkhko/mqdefault.jpg",
-      "cat": "wedding",
+      "cat": "muslimwedding",
       "price": 300,
       "url": "https://www.youtube.com/watch?v=Nq96uqWkhko"
     },
@@ -1162,7 +1166,7 @@
       "id": "lWvy0BmhU0s",
       "title": "Islamic Wedding",
       "thumb": "https://i.ytimg.com/vi/lWvy0BmhU0s/mqdefault.jpg",
-      "cat": "wedding",
+      "cat": "muslimwedding",
       "price": 300,
       "url": "https://www.youtube.com/watch?v=lWvy0BmhU0s"
     },
@@ -1283,7 +1287,7 @@
       "id": "eq9vEeRcRP8",
       "title": "Islamic Wedding",
       "thumb": "https://i.ytimg.com/vi/eq9vEeRcRP8/mqdefault.jpg",
-      "cat": "wedding",
+      "cat": "muslimwedding",
       "price": 300,
       "url": "https://www.youtube.com/watch?v=eq9vEeRcRP8"
     },
@@ -1379,7 +1383,7 @@
       "id": "x57ZOIbQZ8w",
       "title": "Islamic Wedding",
       "thumb": "https://i.ytimg.com/vi/x57ZOIbQZ8w/mqdefault.jpg",
-      "cat": "wedding",
+      "cat": "muslimwedding",
       "price": 300,
       "url": "https://www.youtube.com/watch?v=x57ZOIbQZ8w"
     },
@@ -1420,7 +1424,7 @@
       "id": "Ok6ka3MUrFU",
       "title": "Islamic Wedding",
       "thumb": "https://i.ytimg.com/vi/Ok6ka3MUrFU/mqdefault.jpg",
-      "cat": "wedding",
+      "cat": "muslimwedding",
       "price": 300,
       "url": "https://www.youtube.com/watch?v=Ok6ka3MUrFU",
       "orient": "v"
@@ -1647,7 +1651,7 @@
       "id": "3bizA0ipwck",
       "title": "Muslim Wedding",
       "thumb": "https://i.ytimg.com/vi/3bizA0ipwck/mqdefault.jpg",
-      "cat": "wedding",
+      "cat": "muslimwedding",
       "price": 300,
       "url": "https://www.youtube.com/watch?v=3bizA0ipwck"
     },
