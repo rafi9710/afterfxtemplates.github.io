@@ -1007,11 +1007,11 @@ function renderGrid(){
         <div class="vmeta">${co
           ? `<span class="vprice" style="font-size:13px;">Customize Only</span><span style="font-size:10px;color:var(--mt)">Personalized Service</span>`
           : `<span class="vprice">₹${v.price}</span><span style="font-size:10px;color:var(--mt)">Editable project file</span>`}</div>
-        ${co?'':`<button class="customlink" onclick="customizeWA('${v.title.replace(/'/g,"\\'")}','${v.url}')">🎬 Want it customized? Click here</button>`}
+        ${co?'':`<button class="customlink" onclick="customizeWA('${v.title.replace(/'/g,"\\'")}','${v.url}')">🎬 Don't have After Effects? Get a ready-made video →</button>`}
         <div class="vacts">
           ${co
             ? `<button class="badd" onclick="customizeWA('${v.title.replace(/'/g,"\\'")}','${v.url}')">✦ Customize</button>`
-            : `<button class="badd ${inc?'done':''}" onclick="addCart('${v.id}','${v.title.replace(/'/g,"\\'")}','${v.thumb}',${v.price},'${v.url}')" id="ab${v.id}">${inc?'✓ Added':'+ Buy Project'}</button>`}
+            : `<button class="badd ${inc?'done':''}" onclick="addCart('${v.id}','${v.title.replace(/'/g,"\\'")}','${v.thumb}',${v.price},'${v.url}')" id="ab${v.id}">${inc?'✓ Added':'+ Buy Project File'}</button>`}
           <button class="bwatch" onclick="window.open('${v.url}','_blank')">▶ Watch</button>
           <button class="bshare" onclick="shareTemplate('${v.id}','${v.title.replace(/'/g,"\\'")}')" title="Share this template">↗</button>
         </div>
