@@ -294,6 +294,14 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
 /* TOAST */
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--gold);color:#000;padding:9px 22px;border-radius:3px;font-size:12px;font-weight:700;z-index:700;transition:transform .3s;pointer-events:none;letter-spacing:.5px;}
 .toast.on{transform:translateX(-50%) translateY(0);}
+/* CART TOAST (rich, with View Cart button) */
+.carttoast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(140px);display:flex;align-items:center;gap:11px;background:#11110a;border:1px solid var(--gold);border-radius:10px;padding:11px 13px;max-width:330px;width:88%;z-index:800;opacity:0;transition:all .35s ease;pointer-events:none;box-sizing:border-box;}
+.carttoast.on{transform:translateX(-50%) translateY(0);opacity:1;pointer-events:auto;}
+.carttoast .cti{width:32px;height:32px;border-radius:50%;background:var(--gold);color:#000;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;}
+.carttoast .ctx{flex:1;color:#fff;font-size:13px;font-weight:600;line-height:1.3;min-width:0;}
+.carttoast .ctx small{display:block;color:#bbb;font-size:11px;font-weight:400;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.carttoast .ctv{background:var(--gold);color:#000;font-weight:700;font-size:12px;padding:7px 12px;border-radius:5px;border:none;cursor:pointer;white-space:nowrap;letter-spacing:.3px;}
+.carttoast .ctv:hover{filter:brightness(1.08);}
 
 @media(max-width:640px){
   nav{padding:0 12px;}
@@ -628,6 +636,11 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
 </div>
 
 <div class="toast" id="toast"></div>
+<div class="carttoast" id="cartToast">
+  <div class="cti">✓</div>
+  <div class="ctx">Added to cart!<small id="ctName"></small></div>
+  <button class="ctv" onclick="openCart()">🛒 View Cart</button>
+</div>
 <button class="scrollfab" id="scrollfab" onclick="scrollFab()" title="Scroll" aria-label="Scroll up or down">↓</button>
 
 <script>
@@ -1066,7 +1079,7 @@ function addCart(id,title,thumb,price,url){
   saveCart();updateCount();
   const btn=document.getElementById('ab'+id);
   if(btn){btn.textContent='✓ Added';btn.classList.add('done');}
-  showToast('Added to cart! 🛒');
+  showCartToast(title);
 }
 
 function bigOrderNotice(){
@@ -1118,7 +1131,7 @@ function renderCart(){
     </div>
     <div class="cust">
       <input type="text" id="custName" placeholder="Your Name" autocomplete="name">
-      <input type="email" id="custEmail" placeholder="Your Email (template will be sent here)" autocomplete="email">
+      <input type="email" id="custEmail" placeholder="Your Email (template will be sent here)" autocomplete="email" oninput="emailLive(this)">
     </div>
     <label class="tcrow"><input type="checkbox" id="tcChk" ${tcAccepted?'checked':''} onchange="onTc(this.checked)"><span>I have read and accept the <a href="terms.html" target="_blank">Terms &amp; Conditions</a>. These files are for my personal use only — I will not resell, re-post, or present them as my own work.</span></label>`;
   const discRow = save>0
@@ -1154,9 +1167,21 @@ async function checkout(){
   if(!cart.length){ showToast('Your cart is empty'); return; }
 
   const name=(document.getElementById('custName')?.value||'').trim();
-  const email=(document.getElementById('custEmail')?.value||'').trim();
+  let email=(document.getElementById('custEmail')?.value||'').trim();
   if(!name){ showToast('Please enter your name'); return; }
-  if(!email || email.indexOf('@')<1){ showToast('Please enter a valid email'); return; }
+  if(!isValidEmail(email)){
+    showToast('⚠ Galat email! Sahi email daalo — delivery isi par aayegi');
+    const f=document.getElementById('custEmail');
+    if(f){ f.style.borderColor='#e24b4a'; f.focus(); }
+    return;
+  }
+  const fix=emailTypoFix(email);
+  if(fix){
+    if(confirm('Did you mean  "'+fix+'" ?\n\nYou typed:  "'+email+'"\nWrong email = aapko template nahi milega.\n\nOK = use "'+fix+'"   |   Cancel = keep "'+email+'"')){
+      email=fix;
+      const f=document.getElementById('custEmail'); if(f) f.value=fix;
+    }
+  }
 
   const total=cartTotal();
   const oid='AFX-'+Date.now().toString().slice(-6);
@@ -1285,6 +1310,37 @@ function showToast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;t.classList.add('on');
   setTimeout(()=>t.classList.remove('on'),2200);
+}
+
+function showCartToast(title){
+  const t=document.getElementById('cartToast');
+  if(!t){ showToast('Added to cart! 🛒'); return; }
+  const n=document.getElementById('ctName');
+  if(n) n.textContent=title||'';
+  t.classList.add('on');
+  clearTimeout(window._ctT);
+  window._ctT=setTimeout(()=>t.classList.remove('on'),4500);
+}
+
+/* ===== Email validation (delivery goes to this email — must be correct) ===== */
+function isValidEmail(e){
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(e||'').trim());
+}
+const EMAIL_TYPOS={
+  'gmail.con':'gmail.com','gmail.co':'gmail.com','gmail.cm':'gmail.com','gmail.comm':'gmail.com',
+  'gmial.com':'gmail.com','gmai.com':'gmail.com','gmaill.com':'gmail.com','gnail.com':'gmail.com','gamil.com':'gmail.com',
+  'yahoo.con':'yahoo.com','yaho.com':'yahoo.com','yahooo.com':'yahoo.com',
+  'hotmail.con':'hotmail.com','hotmial.com':'hotmail.com','hotmai.com':'hotmail.com',
+  'outlook.con':'outlook.com','outook.com':'outlook.com','rediffmail.con':'rediffmail.com'
+};
+function emailTypoFix(e){
+  const d=(String(e).split('@')[1]||'').toLowerCase();
+  return EMAIL_TYPOS[d] ? String(e).split('@')[0]+'@'+EMAIL_TYPOS[d] : null;
+}
+function emailLive(el){
+  const v=el.value.trim();
+  if(!v){ el.style.borderColor=''; return; }
+  el.style.borderColor = isValidEmail(v) ? '#3aa76d' : '#e24b4a';
 }
 
 function scrollFab(){
