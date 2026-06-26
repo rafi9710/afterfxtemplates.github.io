@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "exportedAt": "2026-06-26T05:04:04.354Z",
+  "exportedAt": "2026-06-26T05:33:33.771Z",
   "categories": [
     {
       "id": "wedding",
@@ -52,6 +52,16 @@
     }
   ],
   "templates": [
+    {
+      "id": "wAjaTEwORWg",
+      "title": "Name Reveal Video",
+      "thumb": "https://i.ytimg.com/vi/wAjaTEwORWg/mqdefault.jpg",
+      "cat": "namereveal",
+      "price": 300,
+      "url": "https://www.youtube.com/watch?v=wAjaTEwORWg",
+      "customizeOnly": true,
+      "addedAt": "2026-06-26"
+    },
     {
       "id": "custom_1782284949050",
       "title": "Birthday Invitation Video Template | After Effects | Jungle Birthday Invitation | Afetfx Templates",
