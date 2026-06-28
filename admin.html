@@ -855,7 +855,13 @@ function saveTemplate(){
         extras[idx]={...extras[idx],title,cat,orient,price,url:ytUrl||extras[idx].url,thumb:thumb||extras[idx].thumb};
       }
     }else{
-      const newId='custom_'+Date.now();
+      // Use the YouTube video ID as the template ID (clean + matches the master sheet).
+      // Falls back to custom_<time> only if no valid video ID is found.
+      const vid=(typeof ytId==='function')?ytId(ytUrl):'';
+      const newId=vid||('custom_'+Date.now());
+      // prevent a duplicate ID already in the catalog
+      const dup=extras.some(e=>e.id===newId)||(allVideos&&allVideos.some(v=>v.id===newId));
+      if(dup){showToast('This video is already in your templates (ID '+newId+')','err');return;}
       savedId=newId;
       extras.unshift({id:newId,title,cat,orient,price,url:ytUrl||'#',thumb:thumb||'https://via.placeholder.com/480x270/14141F/C9A84C?text='+encodeURIComponent(title),addedAt:new Date().toISOString().slice(0,10)});
     }
