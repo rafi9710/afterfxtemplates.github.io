@@ -63,6 +63,9 @@
   .card .cprice{font-family:'Cinzel',serif;font-size:18px;font-weight:700;color:var(--gold);}
   .card .cbuy{background:var(--gold);color:#000;border:none;padding:9px 16px;border-radius:4px;font-size:12px;font-weight:700;letter-spacing:.5px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s;}
   .card .cbuy:hover{background:var(--gold-l);}
+  .byline{display:block;width:100%;margin-top:11px;padding-top:11px;border-top:1px solid var(--gb);background:none;border:0;text-align:left;color:var(--mt);font-family:'DM Sans',sans-serif;font-size:11.5px;cursor:pointer;transition:color .15s;}
+  .byline b{color:var(--gold);font-weight:600;}
+  .byline:hover{color:var(--gold-l);}
   .empty{grid-column:1/-1;text-align:center;color:var(--mt);padding:60px 20px;font-size:14px;}
   /* MODAL (order details + pay) */
   .ov{position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.8);backdrop-filter:blur(6px);display:none;align-items:flex-start;justify-content:center;padding:30px 16px;overflow-y:auto;}
@@ -217,6 +220,27 @@
   <p style="margin-top:18px;font-size:11px;color:var(--mt2);">© 2025 AfterFX Templates · All Rights Reserved</p>
 </footer>
 
+<!-- EDITOR PROFILE MODAL -->
+<div class="ov" id="edov" onclick="if(event.target===this)closeEditor()">
+  <div class="modal" style="max-width:380px;">
+    <div class="mh">
+      <div>
+        <div class="mt" id="edpName"></div>
+        <div style="color:var(--mt);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-top:3px;">Designer</div>
+      </div>
+      <button class="mx" onclick="closeEditor()">✕</button>
+    </div>
+    <div class="mbody">
+      <p id="edpAbout" style="color:var(--tx);font-size:13.5px;line-height:1.6;margin-bottom:4px;"></p>
+      <div id="edpDesignsWrap" style="display:none;">
+        <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--mt);margin:18px 0 10px;">Some of their designs</div>
+        <div id="edpDesigns" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;"></div>
+      </div>
+    </div>
+    <div class="mfoot"><button class="paybtn" onclick="closeEditor()">Close</button></div>
+  </div>
+</div>
+
 <!-- ORDER MODAL -->
 <div class="ov" id="ov" onclick="if(event.target===this)closeOrder()">
   <div class="modal">
@@ -300,6 +324,7 @@
         <div class="fld"><label>Price — English ₹ <span class="req">*</span></label><input id="ePriceEn" inputmode="numeric" placeholder="222"></div>
         <div class="fld"><label>Price — Telugu ₹ <span class="req">*</span></label><input id="ePriceTe" inputmode="numeric" placeholder="299"></div>
       </div>
+      <div class="fld"><label>Designed by (editor)</label><select id="eEditor"><option value="">— none —</option></select></div>
       <div class="fld"><label>Short description</label><input id="eDesc" placeholder="e.g. Deep maroon &amp; gold — names, date and venue customized"></div>
       <label style="display:block;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--mt);margin-bottom:6px;font-weight:600;">Poster image</label>
       <div class="thumb-tabs">
@@ -319,6 +344,16 @@
         <button class="mbtn gold" onclick="saveCard()">Save card</button>
         <button class="mbtn" onclick="resetForm()" id="cancelEdit" style="display:none;">Cancel edit</button>
       </div>
+    </div>
+
+    <div class="mgr-card">
+      <h3>Editors / Designers</h3>
+      <div class="sub">Add the people who design these cards. The name shows as &ldquo;Designed by&rdquo; on each card, and the profile shows what they design. <b>No phone is ever shown.</b> Orders route to the right editor in Make using this name.</div>
+      <input type="hidden" id="edId">
+      <div class="fld"><label>Name <span class="req">*</span></label><input id="edNameI" placeholder="e.g. Ravi"></div>
+      <div class="fld"><label>What they design (shown on their profile)</label><textarea id="edAboutI" placeholder="e.g. South Indian wedding & half saree invitation posters"></textarea></div>
+      <div style="display:flex;gap:10px;"><button class="mbtn gold" onclick="saveEditor()">Save editor</button><button class="mbtn" id="edCancel" style="display:none;" onclick="resetEditor()">Cancel</button></div>
+      <div class="mgr-list" id="edList" style="margin-top:16px;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));"></div>
     </div>
 
     <div class="mgr-card">
@@ -343,16 +378,25 @@ function catName(id){var c=CATS.find(x=>x.id===id);return c?c.name:'Others';}
 let curCat='all';
 
 /* fallback sample so the page works before wedding-cards.json exists */
-const SAMPLE={version:1,cards:[
-  {id:"wc_sample1",title:"Royal Maroon Wedding Card",cat:"wedding",thumb:"",priceEn:222,priceTe:299,desc:"Deep maroon &amp; gold. Your names, date and venue, beautifully set.",on:true},
-  {id:"wc_sample2",title:"Half Saree Ceremony Poster",cat:"half-saree",thumb:"",priceEn:222,priceTe:299,desc:"Elegant traditional design for the half saree function.",on:true},
-  {id:"wc_sample3",title:"First Birthday Invite",cat:"birthday",thumb:"",priceEn:199,priceTe:249,desc:"Playful and cute — perfect for the little one's big day.",on:true}
-]};
+const SAMPLE={version:1,
+  editors:[
+    {id:"ed_1",name:"Editor One",about:"South Indian wedding & half saree invitation posters."},
+    {id:"ed_2",name:"Editor Two",about:"Birthday, baby shower & playful celebration posters."}
+  ],
+  cards:[
+    {id:"wc_sample1",title:"Royal Maroon Wedding Card",cat:"wedding",editor:"ed_1",thumb:"",priceEn:222,priceTe:299,desc:"Deep maroon &amp; gold. Your names, date and venue, beautifully set.",on:true},
+    {id:"wc_sample2",title:"Half Saree Ceremony Poster",cat:"half-saree",editor:"ed_1",thumb:"",priceEn:222,priceTe:299,desc:"Elegant traditional design for the half saree function.",on:true},
+    {id:"wc_sample3",title:"First Birthday Invite",cat:"birthday",editor:"ed_2",thumb:"",priceEn:199,priceTe:249,desc:"Playful and cute — perfect for the little one's big day.",on:true}
+  ]};
 
 let PUBLISHED=[];      // live cards (customer view)
+let PUB_EDITORS=[];    // live editors (customer view)
 let currentCard=null;  // card being ordered
 let currentTotal=0;    // live total based on selected languages
 let refImg="";         // customer-uploaded reference (base64, optional)
+
+function editorBy(id){return (PUB_EDITORS||[]).find(e=>e.id===id)||null;}
+function editorName(id){const e=editorBy(id);return e?e.name:'';}
 
 /* per-language price helpers (back-compat with old single 'price') */
 function pEn(c){return Number(c&&c.priceEn!=null?c.priceEn:(c&&c.price||0))||0;}
@@ -374,8 +418,9 @@ function thumbHTML(c){
 async function loadPublished(){
   try{
     const r=await fetch('wedding-cards.json?t='+Date.now());
-    if(r.ok){const j=await r.json();if(j&&Array.isArray(j.cards))return j.cards;}
+    if(r.ok){const j=await r.json();if(j&&Array.isArray(j.cards)){PUB_EDITORS=Array.isArray(j.editors)?j.editors:[];return j.cards;}}
   }catch(e){}
+  PUB_EDITORS=SAMPLE.editors.slice();
   return SAMPLE.cards.slice();
 }
 function renderCatTabs(){
@@ -388,6 +433,21 @@ function renderCatTabs(){
   }).join('');
 }
 function setCat(id){curCat=id;renderCatTabs();renderGrid();}
+function openEditor(id){
+  const e=editorBy(id);if(!e)return;
+  document.getElementById('edpName').textContent=e.name;
+  document.getElementById('edpAbout').textContent=e.about||'';
+  const designs=PUBLISHED.filter(c=>c.on!==false && c.editor===id).slice(0,6);
+  const wrap=document.getElementById('edpDesignsWrap');
+  const grid=document.getElementById('edpDesigns');
+  if(designs.length){
+    wrap.style.display='';
+    grid.innerHTML=designs.map(c=>'<div style="aspect-ratio:3/4;border-radius:6px;overflow:hidden;background:var(--bg3);cursor:pointer;" onclick="closeEditor();openOrder(\''+c.id+'\')">'+(c.thumb?'<img src="'+esc(c.thumb)+'" style="width:100%;height:100%;object-fit:cover;">':'<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--gold);opacity:.5;">🖼</div>')+'</div>').join('');
+  }else{wrap.style.display='none';}
+  document.getElementById('edov').classList.add('on');
+  document.body.style.overflow='hidden';
+}
+function closeEditor(){document.getElementById('edov').classList.remove('on');document.body.style.overflow='';}
 function renderGrid(){
   const g=document.getElementById('grid');
   let live=PUBLISHED.filter(c=>c.on!==false);
@@ -401,6 +461,7 @@ function renderGrid(){
         (c.desc?'<div class="cd">'+esc(c.desc)+'</div>':'<div class="cd"></div>')+
         '<div class="crow"><span class="cprice">'+cardPriceLabel(c)+'</span>'+
         '<button class="cbuy" onclick="openOrder(\''+c.id+'\')">Customize &amp; Order →</button></div>'+
+        (c.editor&&editorName(c.editor)?'<button class="byline" onclick="event.stopPropagation();openEditor(\''+c.editor+'\')">Designed by <b>'+esc(editorName(c.editor))+'</b></button>':'')+
       '</div>'+
     '</div>'
   ).join('');
@@ -490,7 +551,7 @@ function payNow(){
       key:data.key_id,order_id:data.order_id,amount:data.amount,currency:data.currency,
       name:'AfterFX Templates',description:'Wedding Card — '+oid,image:'https://afterfxtemplates.com/logo.png',
       prefill:{name:name,email:email,contact:phone},theme:{color:'#C9A84C'},
-      handler:function(r){verifyPay(r,{oid,name,email,phone,couple,date,venue,langs,notes,price,title:currentCard.title,cardId:currentCard.id,ref:refImg});}
+      handler:function(r){verifyPay(r,{oid,name,email,phone,couple,date,venue,langs,notes,price,title:currentCard.title,cardId:currentCard.id,editorId:(currentCard.editor||''),editorName:editorName(currentCard.editor||''),ref:refImg});}
     };
     const rzp=new Razorpay(options);
     rzp.on('payment.failed',function(resp){toast('Payment failed: '+((resp.error&&resp.error.description)||'try again'));resetPay(price);});
@@ -515,6 +576,7 @@ function postOrderHook(o){
   try{
     fetch(ORDER_HOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
       order_id:o.oid,payment_id:o.paymentId||'',card_title:o.title,card_id:o.cardId||'',price:o.price,
+      editor_id:o.editorId||'',editor_name:o.editorName||'',
       customer_name:o.name,email:o.email,phone:o.phone,couple:o.couple,wedding_date:o.date,venue:o.venue||'',
       languages:(o.langs||[]).join(', '),notes:o.notes||'',reference_image:o.ref||''
     })}).catch(function(){});
@@ -543,22 +605,63 @@ function showSuccess(o){
 }
 
 /* ================= MANAGER ================= */
-function getCards(){try{const j=JSON.parse(localStorage.getItem(LS_KEY));if(j&&Array.isArray(j.cards))return j.cards;}catch(e){}return null;}
-function setCards(arr){try{localStorage.setItem(LS_KEY,JSON.stringify({version:1,cards:arr}));return true;}catch(e){toast('⚠ Image too large to save. Use a smaller image, or the Paste-URL option.');return false;}}
+function getStore(){try{const j=JSON.parse(localStorage.getItem(LS_KEY));if(j&&typeof j==='object')return {version:1,editors:Array.isArray(j.editors)?j.editors:[],cards:Array.isArray(j.cards)?j.cards:[]};}catch(e){}return null;}
+function saveStore(o){try{localStorage.setItem(LS_KEY,JSON.stringify({version:1,editors:o.editors||[],cards:o.cards||[]}));return true;}catch(e){toast('⚠ Storage full. Use smaller images or the Paste-URL option.');return false;}}
+function getCards(){const s=getStore();return s?s.cards:null;}
+function setCards(arr){const s=getStore()||{editors:[],cards:[]};s.cards=arr;return saveStore(s);}
+function getEditors(){const s=getStore();return s?s.editors:[];}
+function setEditors(arr){const s=getStore()||{editors:[],cards:[]};s.editors=arr;return saveStore(s);}
 
 function openGate(){document.getElementById('gate').classList.add('on');setTimeout(()=>{const i=document.getElementById('gpw');if(i)i.focus();},60);}
 function doGate(){
   if(document.getElementById('gpw').value===ADMIN_PW){
     document.getElementById('gate').classList.remove('on');
-    if(getCards()===null){setCards(PUBLISHED.length?PUBLISHED.slice():SAMPLE.cards.slice());}
+    if(getStore()===null){saveStore({editors:(PUB_EDITORS.length?PUB_EDITORS:SAMPLE.editors).slice(),cards:(PUBLISHED.length?PUBLISHED:SAMPLE.cards).slice()});}
     openMgr();
   }else{document.getElementById('gerr').textContent='Wrong password.';document.getElementById('gpw').value='';}
 }
 function openMgr(){document.getElementById('mgr').classList.add('on');document.body.style.overflow='hidden';renderMgr();}
 function closeMgr(){document.getElementById('mgr').classList.remove('on');document.body.style.overflow='';}
-function seedFromLive(){setCards(PUBLISHED.slice());resetForm();renderMgr();toast('Loaded the live designs');}
+function seedFromLive(){saveStore({editors:PUB_EDITORS.slice(),cards:PUBLISHED.slice()});resetForm();resetEditor();renderMgr();toast('Loaded the live designs');}
+
+function edName(id){const e=(getEditors()||[]).find(x=>x.id===id);return e?e.name:'';}
+function fillEditorSelect(){
+  const eds=getEditors()||[];const sel=document.getElementById('eEditor');if(!sel)return;
+  const cur=sel.value;
+  sel.innerHTML='<option value="">— none —</option>'+eds.map(e=>'<option value="'+esc(e.id)+'">'+esc(e.name)+'</option>').join('');
+  sel.value=cur;
+}
+function renderEditors(){
+  const eds=getEditors()||[];
+  const list=document.getElementById('edList');
+  if(!eds.length){list.innerHTML='<div class="empty" style="color:var(--mt)">No editors yet. Add one above.</div>';return;}
+  list.innerHTML=eds.map((e,i)=>
+    '<div class="mli"><div class="mlb">'+
+      '<div class="mln">'+esc(e.name)+'</div>'+
+      '<div style="font-size:12px;color:var(--mt);line-height:1.5;margin:4px 0 10px;">'+esc(e.about||'')+'</div>'+
+      '<div class="mlrow">'+
+        '<button onclick="editEditor('+i+')">Edit</button>'+
+        '<button class="del" onclick="delEditor('+i+')">Delete</button>'+
+      '</div>'+
+    '</div></div>'
+  ).join('');
+}
+function resetEditor(){document.getElementById('edId').value='';document.getElementById('edNameI').value='';document.getElementById('edAboutI').value='';document.getElementById('edCancel').style.display='none';}
+function editEditor(i){const e=(getEditors()||[])[i];if(!e)return;document.getElementById('edId').value=e.id;document.getElementById('edNameI').value=e.name||'';document.getElementById('edAboutI').value=e.about||'';document.getElementById('edCancel').style.display='';}
+function saveEditor(){
+  const name=val('edNameI'),about=val('edAboutI');
+  if(!name){return toast('Enter the editor name');}
+  const eds=getEditors()||[];const id=document.getElementById('edId').value;
+  if(id){const e=eds.find(x=>x.id===id);if(e){e.name=name;e.about=about;}}
+  else{eds.push({id:'ed_'+Date.now(),name,about});}
+  if(!setEditors(eds)){return;}
+  resetEditor();renderMgr();toast('Editor saved ✓ — Export when done');
+}
+function delEditor(i){const eds=getEditors()||[];if(!eds[i])return;if(!confirm('Delete editor "'+eds[i].name+'"? Cards keep their assignment id.'))return;eds.splice(i,1);setEditors(eds);renderMgr();toast('Editor deleted');}
 
 function renderMgr(){
+  fillEditorSelect();
+  renderEditors();
   const cards=getCards()||[];
   document.getElementById('cardCount').textContent='('+cards.length+')';
   const list=document.getElementById('mgrList');
@@ -568,7 +671,7 @@ function renderMgr(){
       '<div class="mlt">'+(c.thumb?'<img src="'+esc(c.thumb)+'">':'<div class="ph" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--gold);opacity:.5;font-size:26px;">🖼</div>')+(c.on===false?'<span class="off">Hidden</span>':'')+'</div>'+
       '<div class="mlb">'+
         '<div class="mln">'+esc(c.title)+'</div>'+
-        '<div style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--mt);margin:2px 0 2px;">'+esc(catName(c.cat||'others'))+'</div>'+
+        '<div style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--mt);margin:2px 0 2px;">'+esc(catName(c.cat||'others'))+(c.editor&&edName(c.editor)?' · '+esc(edName(c.editor)):'')+'</div>'+
         '<div class="mlp">EN '+rupee(pEn(c))+' &nbsp;·&nbsp; TE '+rupee(pTe(c))+'</div>'+
         '<div class="mlrow">'+
           '<button onclick="editCard('+i+')">Edit</button>'+
@@ -603,25 +706,28 @@ function readThumb(inp){
   };
   r.readAsDataURL(f);
 }
-function resetForm(){document.getElementById('eId').value='';document.getElementById('eTitle').value='';document.getElementById('eCat').value='wedding';document.getElementById('ePriceEn').value='';document.getElementById('ePriceTe').value='';document.getElementById('eDesc').value='';document.getElementById('eThumbUrl').value='';document.getElementById('eThumbFile').value='';showPrev('');document.getElementById('formTitle').textContent='Add a new card';document.getElementById('cancelEdit').style.display='none';thumbTab('url');}
-function editCard(i){const c=(getCards()||[])[i];if(!c)return;document.getElementById('eId').value=c.id;document.getElementById('eTitle').value=c.title||'';document.getElementById('eCat').value=c.cat||'wedding';document.getElementById('ePriceEn').value=pEn(c)||'';document.getElementById('ePriceTe').value=pTe(c)||'';document.getElementById('eDesc').value=c.desc||'';document.getElementById('eThumbUrl').value=c.thumb||'';showPrev(c.thumb||'');document.getElementById('formTitle').textContent='Edit card';document.getElementById('cancelEdit').style.display='';window.scrollTo({top:0,behavior:'smooth'});}
+function resetForm(){document.getElementById('eId').value='';document.getElementById('eTitle').value='';document.getElementById('eCat').value='wedding';document.getElementById('eEditor').value='';document.getElementById('ePriceEn').value='';document.getElementById('ePriceTe').value='';document.getElementById('eDesc').value='';document.getElementById('eThumbUrl').value='';document.getElementById('eThumbFile').value='';showPrev('');document.getElementById('formTitle').textContent='Add a new card';document.getElementById('cancelEdit').style.display='none';thumbTab('url');}
+function editCard(i){const c=(getCards()||[])[i];if(!c)return;fillEditorSelect();document.getElementById('eId').value=c.id;document.getElementById('eTitle').value=c.title||'';document.getElementById('eCat').value=c.cat||'wedding';document.getElementById('eEditor').value=c.editor||'';document.getElementById('ePriceEn').value=pEn(c)||'';document.getElementById('ePriceTe').value=pTe(c)||'';document.getElementById('eDesc').value=c.desc||'';document.getElementById('eThumbUrl').value=c.thumb||'';showPrev(c.thumb||'');document.getElementById('formTitle').textContent='Edit card';document.getElementById('cancelEdit').style.display='';window.scrollTo({top:0,behavior:'smooth'});}
 function saveCard(){
-  const title=val('eTitle'),cat=val('eCat'),priceEn=parseInt(val('ePriceEn'),10),priceTe=parseInt(val('ePriceTe'),10),desc=val('eDesc'),thumb=val('eThumbUrl');
+  const title=val('eTitle'),cat=val('eCat'),editor=val('eEditor'),priceEn=parseInt(val('ePriceEn'),10),priceTe=parseInt(val('ePriceTe'),10),desc=val('eDesc'),thumb=val('eThumbUrl');
   if(!title){return toast('Enter a title');}
   if(!priceEn||priceEn<1){return toast('Enter a valid English price');}
   if(!priceTe||priceTe<1){return toast('Enter a valid Telugu price');}
   const cards=getCards()||[];
   const id=document.getElementById('eId').value;
-  if(id){const c=cards.find(x=>x.id===id);if(c){c.title=title;c.cat=cat;c.priceEn=priceEn;c.priceTe=priceTe;delete c.price;c.desc=desc;c.thumb=thumb;}}
-  else{cards.push({id:'wc_'+Date.now(),title,cat,priceEn,priceTe,desc,thumb,on:true});}
+  if(id){const c=cards.find(x=>x.id===id);if(c){c.title=title;c.cat=cat;c.editor=editor;c.priceEn=priceEn;c.priceTe=priceTe;delete c.price;c.desc=desc;c.thumb=thumb;}}
+  else{cards.push({id:'wc_'+Date.now(),title,cat,editor,priceEn,priceTe,desc,thumb,on:true});}
   if(!setCards(cards)){return;}
   resetForm();renderMgr();toast('Saved ✓ — now click Export above');
 }
 function toggleCard(i){const cards=getCards()||[];if(!cards[i])return;cards[i].on=cards[i].on===false;setCards(cards);renderMgr();}
 function delCard(i){const cards=getCards()||[];if(!cards[i])return;if(!confirm('Delete "'+cards[i].title+'"?'))return;cards.splice(i,1);setCards(cards);renderMgr();toast('Deleted');}
 function exportJSON(){
+  const eds=getEditors()||[];
   const cards=getCards()||[];
-  const data={version:1,cards:cards.map(c=>({id:c.id,title:c.title,cat:c.cat||'others',thumb:c.thumb||'',priceEn:pEn(c),priceTe:pTe(c),desc:c.desc||'',on:c.on!==false}))};
+  const data={version:1,
+    editors:eds.map(e=>({id:e.id,name:e.name,about:e.about||''})),
+    cards:cards.map(c=>({id:c.id,title:c.title,cat:c.cat||'others',editor:c.editor||'',thumb:c.thumb||'',priceEn:pEn(c),priceTe:pTe(c),desc:c.desc||'',on:c.on!==false}))};
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='wedding-cards.json';document.body.appendChild(a);a.click();a.remove();
   toast('Downloaded wedding-cards.json — upload it to GitHub (commit to main)');
