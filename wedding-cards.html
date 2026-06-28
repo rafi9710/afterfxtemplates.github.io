@@ -573,12 +573,14 @@ function verifyPay(r,o){
 
 function postOrderHook(o){
   if(!ORDER_HOOK)return;
+  var refRaw=o.ref?String(o.ref).replace(/^data:[^,]+,/,''):'';
   try{
     fetch(ORDER_HOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
       order_id:o.oid,payment_id:o.paymentId||'',card_title:o.title,card_id:o.cardId||'',price:o.price,
       editor_id:o.editorId||'',editor_name:o.editorName||'',
       customer_name:o.name,email:o.email,phone:o.phone,couple:o.couple,wedding_date:o.date,venue:o.venue||'',
-      languages:(o.langs||[]).join(', '),notes:o.notes||'',reference_image:o.ref||''
+      languages:(o.langs||[]).join(', '),notes:o.notes||'',
+      reference_image:refRaw,reference_filename:refRaw?('reference-'+o.oid+'.jpg'):''
     })}).catch(function(){});
   }catch(e){}
 }
