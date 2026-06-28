@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Wedding Card Posters — Customized | AfterFX Templates</title>
-<meta name="description" content="Beautiful customized wedding card posters. Pick a design, share your details, and we'll personalize it for you. Delivered to your email.">
+<title>Invitation Card Posters — Wedding, Half Saree, Birthday & More | AfterFX Templates</title>
+<meta name="description" content="Custom-designed invitation card posters for every celebration — Wedding, Half Saree, Birthday, Baby Shower and more. Pick a design, share your details, we personalize it for you.">
 <link rel="icon" href="logo.png">
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -43,6 +43,11 @@
   .sect-head{text-align:center;margin-bottom:34px;}
   .sl{font-size:10px;letter-spacing:4px;color:var(--gold);text-transform:uppercase;font-weight:600;margin-bottom:8px;}
   .st{font-family:'Cinzel',serif;font-size:clamp(22px,3vw,32px);font-weight:700;color:#fff;}
+  .cattabs{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin-bottom:30px;}
+  .cattab{border:1px solid var(--gb);background:transparent;color:var(--mt);padding:8px 18px;border-radius:30px;font-size:12px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;transition:.18s;}
+  .cattab:hover{border-color:var(--gold);color:var(--gold);}
+  .cattab.on{background:var(--gold);border-color:var(--gold);color:#080810;}
+  .vb-cat{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.72);color:var(--gold);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;padding:3px 9px;border-radius:3px;font-weight:700;backdrop-filter:blur(4px);}
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:22px;}
   .card{background:var(--bg2);border:1px solid var(--gb);border-radius:8px;overflow:hidden;transition:transform .25s,border-color .25s;display:flex;flex-direction:column;}
   .card:hover{transform:translateY(-4px);border-color:var(--gbh);}
@@ -160,7 +165,7 @@
   <div class="nav-links" id="navLinks">
     <a class="nl" href="index.html">Home</a>
     <a class="nl" href="index.html#templates">Video Templates</a>
-    <a class="nl on" href="wedding-cards.html">Wedding Cards</a>
+    <a class="nl on" href="wedding-cards.html">Invitation Cards</a>
     <a class="nl" href="about.html">About</a>
     <a class="nl" href="index.html#contact">Contact</a>
     <a class="nl" href="#" onclick="openGate();return false;" title="Manage" style="opacity:.4;font-size:10px;">⚙</a>
@@ -169,13 +174,13 @@
 </nav>
 
 <section class="hero">
-  <div class="ho">Personalized For You</div>
-  <h1>Wedding Card <span class="g">Posters</span></h1>
-  <p>Pick a design you love, share your wedding details, and we'll personalize it with your names, date and venue — delivered ready to share.</p>
+  <div class="ho">We Design Custom Invitation Posters</div>
+  <h1>Invitation Card <span class="g">Posters</span></h1>
+  <p>Wedding · Half Saree · Birthday · Baby Shower &amp; more. Pick a design you love, share your details, and we'll personalize it for you — delivered ready to share.</p>
   <div class="steps">
-    <div class="step"><div class="n">STEP 1</div><div class="t">Choose a design</div><div class="d">Browse our wedding card posters and pick your favourite.</div></div>
-    <div class="step"><div class="n">STEP 2</div><div class="t">Add your details</div><div class="d">Names, date, venue & language — fill the quick form.</div></div>
-    <div class="step"><div class="n">STEP 3</div><div class="t">Pay & relax</div><div class="d">Secure payment, then we customize and email your card.</div></div>
+    <div class="step"><div class="n">STEP 1</div><div class="t">Choose a design</div><div class="d">Browse poster designs by occasion and pick your favourite.</div></div>
+    <div class="step"><div class="n">STEP 2</div><div class="t">Add your details</div><div class="d">Names, date, language &amp; venue — fill the quick form.</div></div>
+    <div class="step"><div class="n">STEP 3</div><div class="t">Pay &amp; relax</div><div class="d">Secure payment, then we customize and email your card.</div></div>
   </div>
 </section>
 
@@ -183,8 +188,9 @@
   <div class="wrap">
     <div class="sect-head">
       <div class="sl">The Collection</div>
-      <div class="st">Choose Your Card</div>
+      <div class="st">Browse Designs</div>
     </div>
+    <div class="cattabs" id="catTabs"></div>
     <div class="grid" id="grid">
       <div class="empty">Loading designs…</div>
     </div>
@@ -223,10 +229,10 @@
       <button class="mx" onclick="closeOrder()">✕</button>
     </div>
     <div class="mbody">
-      <div class="mnote">Fill your wedding details below. After payment we personalize this card and email it to you — usually within a few hours.</div>
-      <div class="fld"><label>Couple names <span class="req">*</span></label><input id="fCouple" placeholder="e.g. Priya &amp; Arjun"></div>
+      <div class="mnote">Fill the details below. After payment we personalize this design and email it to you — usually within a few hours.</div>
+      <div class="fld"><label>Name(s) for the card <span class="req">*</span></label><input id="fCouple" placeholder="e.g. Priya &amp; Arjun · Baby Aarav · Ananya's 1st Birthday"></div>
       <div class="row2">
-        <div class="fld"><label>Wedding date <span class="req">*</span></label><input id="fDate" placeholder="e.g. 24 July 2026"></div>
+        <div class="fld"><label>Event date <span class="req">*</span></label><input id="fDate" placeholder="e.g. 24 July 2026"></div>
         <div class="fld"><label>Venue</label><input id="fVenue" placeholder="e.g. The Leela Palace, Bengaluru"></div>
       </div>
       <div class="fld"><label>Language(s) needed <span class="req">*</span> <span style="text-transform:none;letter-spacing:0;color:var(--mt2);font-weight:400;">(pick one or both — price updates)</span></label>
@@ -278,7 +284,18 @@
       <h3 id="formTitle">Add a new card</h3>
       <div class="sub">Set the poster image, title and price. Customers pay this fixed price, then you personalize &amp; deliver.</div>
       <input type="hidden" id="eId">
-      <div class="fld"><label>Title <span class="req">*</span></label><input id="eTitle" placeholder="e.g. Royal Maroon Wedding Card"></div>
+      <div class="row2">
+        <div class="fld"><label>Title <span class="req">*</span></label><input id="eTitle" placeholder="e.g. Royal Maroon Wedding Card"></div>
+        <div class="fld"><label>Occasion / Category <span class="req">*</span></label>
+          <select id="eCat">
+            <option value="wedding">Wedding</option>
+            <option value="half-saree">Half Saree</option>
+            <option value="birthday">Birthday</option>
+            <option value="baby-shower">Baby Shower</option>
+            <option value="others">Others</option>
+          </select>
+        </div>
+      </div>
       <div class="row2">
         <div class="fld"><label>Price — English ₹ <span class="req">*</span></label><input id="ePriceEn" inputmode="numeric" placeholder="222"></div>
         <div class="fld"><label>Price — Telugu ₹ <span class="req">*</span></label><input id="ePriceTe" inputmode="numeric" placeholder="299"></div>
@@ -321,12 +338,15 @@ const ORDER_HOOK="";   // e.g. "https://hook.eu2.make.com/xxxxxxxxxxxxx"  — le
 const WA="919739909710";
 const ADMIN_PW="rafi9710";
 const LS_KEY="afx_wcards";
+const CATS=[{id:'wedding',name:'Wedding'},{id:'half-saree',name:'Half Saree'},{id:'birthday',name:'Birthday'},{id:'baby-shower',name:'Baby Shower'},{id:'others',name:'Others'}];
+function catName(id){var c=CATS.find(x=>x.id===id);return c?c.name:'Others';}
+let curCat='all';
 
 /* fallback sample so the page works before wedding-cards.json exists */
 const SAMPLE={version:1,cards:[
-  {id:"wc_sample1",title:"Royal Maroon Wedding Card",thumb:"",price:299,desc:"Deep maroon &amp; gold. Your names, date and venue, beautifully set.",on:true},
-  {id:"wc_sample2",title:"Ivory Floral Invitation",thumb:"",price:349,desc:"Soft ivory with delicate florals — elegant and timeless.",on:true},
-  {id:"wc_sample3",title:"Temple Heritage Card",thumb:"",price:399,desc:"Traditional South Indian temple art with gold accents.",on:true}
+  {id:"wc_sample1",title:"Royal Maroon Wedding Card",cat:"wedding",thumb:"",priceEn:222,priceTe:299,desc:"Deep maroon &amp; gold. Your names, date and venue, beautifully set.",on:true},
+  {id:"wc_sample2",title:"Half Saree Ceremony Poster",cat:"half-saree",thumb:"",priceEn:222,priceTe:299,desc:"Elegant traditional design for the half saree function.",on:true},
+  {id:"wc_sample3",title:"First Birthday Invite",cat:"birthday",thumb:"",priceEn:199,priceTe:249,desc:"Playful and cute — perfect for the little one's big day.",on:true}
 ]};
 
 let PUBLISHED=[];      // live cards (customer view)
@@ -358,13 +378,24 @@ async function loadPublished(){
   }catch(e){}
   return SAMPLE.cards.slice();
 }
+function renderCatTabs(){
+  const live=PUBLISHED.filter(c=>c.on!==false);
+  const tabs=[{id:'all',name:'All'}].concat(CATS);
+  document.getElementById('catTabs').innerHTML=tabs.map(ct=>{
+    const n=ct.id==='all'?live.length:live.filter(c=>(c.cat||'others')===ct.id).length;
+    if(ct.id!=='all'&&n===0)return '';   // hide empty occasions
+    return '<button class="cattab'+(curCat===ct.id?' on':'')+'" onclick="setCat(\''+ct.id+'\')">'+esc(ct.name)+(ct.id==='all'?'':' ('+n+')')+'</button>';
+  }).join('');
+}
+function setCat(id){curCat=id;renderCatTabs();renderGrid();}
 function renderGrid(){
   const g=document.getElementById('grid');
-  const live=PUBLISHED.filter(c=>c.on!==false);
-  if(!live.length){g.innerHTML='<div class="empty">New wedding card designs coming soon. 💛<br>Meanwhile, browse our <a href="index.html#templates" style="color:var(--gold)">video templates</a>.</div>';return;}
+  let live=PUBLISHED.filter(c=>c.on!==false);
+  if(curCat!=='all')live=live.filter(c=>(c.cat||'others')===curCat);
+  if(!live.length){g.innerHTML='<div class="empty">New designs coming soon here. 💛<br>Meanwhile, browse our <a href="index.html#templates" style="color:var(--gold)">video templates</a>.</div>';return;}
   g.innerHTML=live.map(c=>
     '<div class="card">'+
-      '<div class="thumb">'+thumbHTML(c)+'</div>'+
+      '<div class="thumb">'+thumbHTML(c)+'<span class="vb-cat">'+esc(catName(c.cat||'others'))+'</span></div>'+
       '<div class="body">'+
         '<div class="ct">'+esc(c.title)+'</div>'+
         (c.desc?'<div class="cd">'+esc(c.desc)+'</div>':'<div class="cd"></div>')+
@@ -428,8 +459,8 @@ function payNow(){
   const couple=val('fCouple'),date=val('fDate'),venue=val('fVenue'),notes=val('fNotes');
   const name=val('fName'),phone=val('fPhone');let email=val('fEmail');
   const langs=[].slice.call(document.querySelectorAll('#fLangs input:checked')).map(function(i){return i.value;});
-  if(!couple){return toast('Please enter the couple names');}
-  if(!date){return toast('Please enter the wedding date');}
+  if(!couple){return toast('Please enter the name(s) for the card');}
+  if(!date){return toast('Please enter the event date');}
   if(!langs.length){return toast('Please select at least one language');}
   if(!name){return toast('Please enter your name');}
   if(!phone){return toast('Please enter your WhatsApp number');}
@@ -439,7 +470,7 @@ function payNow(){
   const oid='WC-'+Date.now().toString().slice(-6);
   const langStr=langs.join('+');
   /* packed details reach you in the order-alert email (max ~250 chars) */
-  let packed='Wedding Card: '+currentCard.title+' | Couple: '+couple+' | Date: '+date;
+  let packed=currentCard.title+' | Name: '+couple+' | Date: '+date;
   if(venue)packed+=' | Venue: '+venue;
   packed+=' | Lang: '+langStr+' | Ph: '+phone;
   packed=packed.slice(0,250);
@@ -492,7 +523,7 @@ function postOrderHook(o){
 
 function showSuccess(o){
   const lang=(o.langs||[]).join(', ');
-  const det='Hi AfterFX Templates! I just paid for a wedding card.%0A%0AOrder: '+o.oid+'%0ACard: '+o.title+'%0ACouple: '+o.couple+'%0ADate: '+o.date+(o.venue?'%0AVenue: '+o.venue:'')+'%0ALanguage: '+lang+(o.notes?'%0ANotes: '+o.notes:'')+'%0A%0A(Attaching any reference images here.)';
+  const det='Hi AfterFX Templates! I just paid for an invitation card.%0A%0AOrder: '+o.oid+'%0ADesign: '+o.title+'%0AName: '+o.couple+'%0ADate: '+o.date+(o.venue?'%0AVenue: '+o.venue:'')+'%0ALanguage: '+lang+(o.notes?'%0ANotes: '+o.notes:'')+'%0A%0A(Attaching any reference images here.)';
   const wa='https://wa.me/'+WA+'?text='+det.replace(/ /g,'%20');
   const html=
   '<div id="okOv" style="position:fixed;inset:0;z-index:1300;background:rgba(0,0,0,.85);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px;">'+
@@ -537,6 +568,7 @@ function renderMgr(){
       '<div class="mlt">'+(c.thumb?'<img src="'+esc(c.thumb)+'">':'<div class="ph" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--gold);opacity:.5;font-size:26px;">🖼</div>')+(c.on===false?'<span class="off">Hidden</span>':'')+'</div>'+
       '<div class="mlb">'+
         '<div class="mln">'+esc(c.title)+'</div>'+
+        '<div style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--mt);margin:2px 0 2px;">'+esc(catName(c.cat||'others'))+'</div>'+
         '<div class="mlp">EN '+rupee(pEn(c))+' &nbsp;·&nbsp; TE '+rupee(pTe(c))+'</div>'+
         '<div class="mlrow">'+
           '<button onclick="editCard('+i+')">Edit</button>'+
@@ -571,17 +603,17 @@ function readThumb(inp){
   };
   r.readAsDataURL(f);
 }
-function resetForm(){document.getElementById('eId').value='';document.getElementById('eTitle').value='';document.getElementById('ePriceEn').value='';document.getElementById('ePriceTe').value='';document.getElementById('eDesc').value='';document.getElementById('eThumbUrl').value='';document.getElementById('eThumbFile').value='';showPrev('');document.getElementById('formTitle').textContent='Add a new card';document.getElementById('cancelEdit').style.display='none';thumbTab('url');}
-function editCard(i){const c=(getCards()||[])[i];if(!c)return;document.getElementById('eId').value=c.id;document.getElementById('eTitle').value=c.title||'';document.getElementById('ePriceEn').value=pEn(c)||'';document.getElementById('ePriceTe').value=pTe(c)||'';document.getElementById('eDesc').value=c.desc||'';document.getElementById('eThumbUrl').value=c.thumb||'';showPrev(c.thumb||'');document.getElementById('formTitle').textContent='Edit card';document.getElementById('cancelEdit').style.display='';window.scrollTo({top:0,behavior:'smooth'});}
+function resetForm(){document.getElementById('eId').value='';document.getElementById('eTitle').value='';document.getElementById('eCat').value='wedding';document.getElementById('ePriceEn').value='';document.getElementById('ePriceTe').value='';document.getElementById('eDesc').value='';document.getElementById('eThumbUrl').value='';document.getElementById('eThumbFile').value='';showPrev('');document.getElementById('formTitle').textContent='Add a new card';document.getElementById('cancelEdit').style.display='none';thumbTab('url');}
+function editCard(i){const c=(getCards()||[])[i];if(!c)return;document.getElementById('eId').value=c.id;document.getElementById('eTitle').value=c.title||'';document.getElementById('eCat').value=c.cat||'wedding';document.getElementById('ePriceEn').value=pEn(c)||'';document.getElementById('ePriceTe').value=pTe(c)||'';document.getElementById('eDesc').value=c.desc||'';document.getElementById('eThumbUrl').value=c.thumb||'';showPrev(c.thumb||'');document.getElementById('formTitle').textContent='Edit card';document.getElementById('cancelEdit').style.display='';window.scrollTo({top:0,behavior:'smooth'});}
 function saveCard(){
-  const title=val('eTitle'),priceEn=parseInt(val('ePriceEn'),10),priceTe=parseInt(val('ePriceTe'),10),desc=val('eDesc'),thumb=val('eThumbUrl');
+  const title=val('eTitle'),cat=val('eCat'),priceEn=parseInt(val('ePriceEn'),10),priceTe=parseInt(val('ePriceTe'),10),desc=val('eDesc'),thumb=val('eThumbUrl');
   if(!title){return toast('Enter a title');}
   if(!priceEn||priceEn<1){return toast('Enter a valid English price');}
   if(!priceTe||priceTe<1){return toast('Enter a valid Telugu price');}
   const cards=getCards()||[];
   const id=document.getElementById('eId').value;
-  if(id){const c=cards.find(x=>x.id===id);if(c){c.title=title;c.priceEn=priceEn;c.priceTe=priceTe;delete c.price;c.desc=desc;c.thumb=thumb;}}
-  else{cards.push({id:'wc_'+Date.now(),title,priceEn,priceTe,desc,thumb,on:true});}
+  if(id){const c=cards.find(x=>x.id===id);if(c){c.title=title;c.cat=cat;c.priceEn=priceEn;c.priceTe=priceTe;delete c.price;c.desc=desc;c.thumb=thumb;}}
+  else{cards.push({id:'wc_'+Date.now(),title,cat,priceEn,priceTe,desc,thumb,on:true});}
   if(!setCards(cards)){return;}
   resetForm();renderMgr();toast('Saved ✓ — now click Export above');
 }
@@ -589,7 +621,7 @@ function toggleCard(i){const cards=getCards()||[];if(!cards[i])return;cards[i].o
 function delCard(i){const cards=getCards()||[];if(!cards[i])return;if(!confirm('Delete "'+cards[i].title+'"?'))return;cards.splice(i,1);setCards(cards);renderMgr();toast('Deleted');}
 function exportJSON(){
   const cards=getCards()||[];
-  const data={version:1,cards:cards.map(c=>({id:c.id,title:c.title,thumb:c.thumb||'',priceEn:pEn(c),priceTe:pTe(c),desc:c.desc||'',on:c.on!==false}))};
+  const data={version:1,cards:cards.map(c=>({id:c.id,title:c.title,cat:c.cat||'others',thumb:c.thumb||'',priceEn:pEn(c),priceTe:pTe(c),desc:c.desc||'',on:c.on!==false}))};
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='wedding-cards.json';document.body.appendChild(a);a.click();a.remove();
   toast('Downloaded wedding-cards.json — upload it to GitHub (commit to main)');
@@ -598,6 +630,7 @@ function exportJSON(){
 /* ---------- init ---------- */
 (async function(){
   PUBLISHED=await loadPublished();
+  renderCatTabs();
   renderGrid();
   if(location.hash==='#admin')openGate();
 })();
