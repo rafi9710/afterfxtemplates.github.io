@@ -77,6 +77,10 @@
   .fld input:focus,.fld textarea:focus,.fld select:focus{border-color:var(--gold);}
   .fld textarea{resize:vertical;min-height:54px;line-height:1.45;}
   .fld select option{background:var(--bg2);color:var(--tx);}
+  .langs{display:flex;flex-wrap:wrap;gap:8px;}
+  .langs .chip{display:inline-flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--gb);border-radius:20px;padding:7px 13px;font-size:13px;color:var(--tx);cursor:pointer;user-select:none;transition:.15s;}
+  .langs .chip:has(input:checked){border-color:var(--gold);background:var(--gold-dim);color:var(--gold-l);}
+  .langs .chip input{accent-color:var(--gold);margin:0;cursor:pointer;}
   .row2{display:flex;gap:11px;}.row2>*{flex:1;min-width:0;}
   .mfoot{padding:6px 20px 20px;}
   .paybtn{width:100%;background:linear-gradient(135deg,#C9A84C,#a6852f);color:#0a0a12;border:none;padding:14px;border-radius:9px;font-weight:700;font-size:15px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:filter .2s;}
@@ -223,12 +227,24 @@
       <div class="fld"><label>Couple names <span class="req">*</span></label><input id="fCouple" placeholder="e.g. Priya &amp; Arjun"></div>
       <div class="row2">
         <div class="fld"><label>Wedding date <span class="req">*</span></label><input id="fDate" placeholder="e.g. 24 July 2026"></div>
-        <div class="fld"><label>Language</label>
-          <select id="fLang"><option>English</option><option>Telugu</option><option>Hindi</option><option>Tamil</option><option>Kannada</option><option>Other</option></select>
+        <div class="fld"><label>Venue</label><input id="fVenue" placeholder="e.g. The Leela Palace, Bengaluru"></div>
+      </div>
+      <div class="fld"><label>Language(s) needed <span class="req">*</span> <span style="text-transform:none;letter-spacing:0;color:var(--mt2);font-weight:400;">(pick one or more)</span></label>
+        <div class="langs" id="fLangs">
+          <label class="chip"><input type="checkbox" value="English" checked> English</label>
+          <label class="chip"><input type="checkbox" value="Telugu"> Telugu</label>
+          <label class="chip"><input type="checkbox" value="Hindi"> Hindi</label>
+          <label class="chip"><input type="checkbox" value="Tamil"> Tamil</label>
+          <label class="chip"><input type="checkbox" value="Kannada"> Kannada</label>
+          <label class="chip"><input type="checkbox" value="Other"> Other</label>
         </div>
       </div>
-      <div class="fld"><label>Venue</label><input id="fVenue" placeholder="e.g. The Leela Palace, Bengaluru"></div>
       <div class="fld"><label>Any extra details / requests</label><textarea id="fNotes" placeholder="Parents' names, muhurtham time, colour preference, etc."></textarea></div>
+      <div class="fld"><label>Upload your card / reference (optional)</label>
+        <input type="file" id="fRef" accept="image/*" onchange="readRef(this)">
+        <img class="prev" id="refPrev" alt="" style="width:84px;">
+        <div style="font-size:11.5px;color:var(--mt);margin-top:6px;line-height:1.5;">Already have a card or a sample you like? Attach it — it reaches our team directly so we match it.</div>
+      </div>
       <div style="height:6px;border-top:1px solid var(--gb);margin:4px 0 14px;"></div>
       <div class="row2">
         <div class="fld"><label>Your name <span class="req">*</span></label><input id="fName" placeholder="Your full name"></div>
@@ -303,6 +319,8 @@
 
 <script>
 const API_BASE="https://afterfx-api.vercel.app";
+/* === PASTE YOUR MAKE.COM WEBHOOK URL BELOW (for 2-email + 2-phone alerts with attachment) === */
+const ORDER_HOOK="";   // e.g. "https://hook.eu2.make.com/xxxxxxxxxxxxx"  — leave "" until Make is ready
 const WA="919739909710";
 const ADMIN_PW="rafi9710";
 const LS_KEY="afx_wcards";
@@ -316,6 +334,7 @@ const SAMPLE={version:1,cards:[
 
 let PUBLISHED=[];      // live cards (customer view)
 let currentCard=null;  // card being ordered
+let refImg="";         // customer-uploaded reference (base64, optional)
 
 /* ---------- helpers ---------- */
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -361,27 +380,52 @@ function openOrder(id){
   document.getElementById('payAmt').textContent=rupee(currentCard.price);
   const im=document.getElementById('mImg');
   if(currentCard.thumb){im.src=currentCard.thumb;im.style.display='';}else{im.style.display='none';}
+  refImg="";const rp=document.getElementById('refPrev');if(rp){rp.classList.remove('on');}const rf=document.getElementById('fRef');if(rf){rf.value='';}
   document.getElementById('ov').classList.add('on');
   document.body.style.overflow='hidden';
+}
+function readRef(inp){
+  const f=inp.files[0];if(!f)return;
+  toast('Attaching image…');
+  const r=new FileReader();
+  r.onload=()=>{
+    const img=new Image();
+    img.onload=()=>{
+      const max=1000;let w=img.width,h=img.height;
+      if(w>max||h>max){if(w>=h){h=Math.round(h*max/w);w=max;}else{w=Math.round(w*max/h);h=max;}}
+      const cv=document.createElement('canvas');cv.width=w;cv.height=h;
+      cv.getContext('2d').drawImage(img,0,0,w,h);
+      let out;try{out=cv.toDataURL('image/jpeg',0.82);}catch(e){out=r.result;}
+      if(out.length>r.result.length)out=r.result;
+      refImg=out;const p=document.getElementById('refPrev');if(p){p.src=out;p.classList.add('on');}
+      toast('Reference attached ✓');
+    };
+    img.onerror=()=>{refImg=r.result;const p=document.getElementById('refPrev');if(p){p.src=r.result;p.classList.add('on');}};
+    img.src=r.result;
+  };
+  r.readAsDataURL(f);
 }
 function closeOrder(){document.getElementById('ov').classList.remove('on');document.body.style.overflow='';}
 
 function payNow(){
   if(!currentCard)return;
-  const couple=val('fCouple'),date=val('fDate'),venue=val('fVenue'),lang=val('fLang'),notes=val('fNotes');
+  const couple=val('fCouple'),date=val('fDate'),venue=val('fVenue'),notes=val('fNotes');
   const name=val('fName'),phone=val('fPhone');let email=val('fEmail');
+  const langs=[].slice.call(document.querySelectorAll('#fLangs input:checked')).map(function(i){return i.value;});
   if(!couple){return toast('Please enter the couple names');}
   if(!date){return toast('Please enter the wedding date');}
+  if(!langs.length){return toast('Please select at least one language');}
   if(!name){return toast('Please enter your name');}
   if(!phone){return toast('Please enter your WhatsApp number');}
   if(!isValidEmail(email)){const f=document.getElementById('fEmail');if(f){f.style.borderColor='#E5544B';f.focus();}return toast('⚠ Galat email! Card isi email par aayega');}
 
   const price=Number(currentCard.price)||0;
   const oid='WC-'+Date.now().toString().slice(-6);
+  const langStr=langs.join('+');
   /* packed details reach you in the order-alert email (max ~250 chars) */
   let packed='Wedding Card: '+currentCard.title+' | Couple: '+couple+' | Date: '+date;
   if(venue)packed+=' | Venue: '+venue;
-  packed+=' | Lang: '+lang+' | Ph: '+phone;
+  packed+=' | Lang: '+langStr+' | Ph: '+phone;
   packed=packed.slice(0,250);
 
   const btn=document.getElementById('payBtn');
@@ -399,7 +443,7 @@ function payNow(){
       key:data.key_id,order_id:data.order_id,amount:data.amount,currency:data.currency,
       name:'AfterFX Templates',description:'Wedding Card — '+oid,image:'https://afterfxtemplates.com/logo.png',
       prefill:{name:name,email:email,contact:phone},theme:{color:'#C9A84C'},
-      handler:function(r){verifyPay(r,{oid,name,email,phone,couple,date,venue,lang,notes,price,title:currentCard.title});}
+      handler:function(r){verifyPay(r,{oid,name,email,phone,couple,date,venue,langs,notes,price,title:currentCard.title,cardId:currentCard.id,ref:refImg});}
     };
     const rzp=new Razorpay(options);
     rzp.on('payment.failed',function(resp){toast('Payment failed: '+((resp.error&&resp.error.description)||'try again'));resetPay(price);});
@@ -413,14 +457,26 @@ function verifyPay(r,o){
   fetch(API_BASE+'/api/verify-payment',{
     method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({razorpay_order_id:r.razorpay_order_id,razorpay_payment_id:r.razorpay_payment_id,razorpay_signature:r.razorpay_signature,order:{oid:o.oid,name:o.name,email:o.email,ids:o.title,readable:o.title}})
-  }).then(r=>r.json()).then(data=>{
-    if(data&&data.verified){closeOrder();showSuccess(o);}
+  }).then(r2=>r2.json()).then(data=>{
+    if(data&&data.verified){o.paymentId=r.razorpay_payment_id;postOrderHook(o);closeOrder();showSuccess(o);}
     else{toast('Payment could not be verified. WhatsApp us your Order ID '+o.oid);resetPay(o.price);}
   }).catch(()=>{toast('Verification error. If money was deducted, WhatsApp Order ID '+o.oid);resetPay(o.price);});
 }
 
+function postOrderHook(o){
+  if(!ORDER_HOOK)return;
+  try{
+    fetch(ORDER_HOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+      order_id:o.oid,payment_id:o.paymentId||'',card_title:o.title,card_id:o.cardId||'',price:o.price,
+      customer_name:o.name,email:o.email,phone:o.phone,couple:o.couple,wedding_date:o.date,venue:o.venue||'',
+      languages:(o.langs||[]).join(', '),notes:o.notes||'',reference_image:o.ref||''
+    })}).catch(function(){});
+  }catch(e){}
+}
+
 function showSuccess(o){
-  const det='Hi AfterFX Templates! I just paid for a wedding card.%0A%0AOrder: '+o.oid+'%0ACard: '+o.title+'%0ACouple: '+o.couple+'%0ADate: '+o.date+(o.venue?'%0AVenue: '+o.venue:'')+'%0ALanguage: '+o.lang+(o.notes?'%0ANotes: '+o.notes:'')+'%0A%0A(Attaching any reference images here.)';
+  const lang=(o.langs||[]).join(', ');
+  const det='Hi AfterFX Templates! I just paid for a wedding card.%0A%0AOrder: '+o.oid+'%0ACard: '+o.title+'%0ACouple: '+o.couple+'%0ADate: '+o.date+(o.venue?'%0AVenue: '+o.venue:'')+'%0ALanguage: '+lang+(o.notes?'%0ANotes: '+o.notes:'')+'%0A%0A(Attaching any reference images here.)';
   const wa='https://wa.me/'+WA+'?text='+det.replace(/ /g,'%20');
   const html=
   '<div id="okOv" style="position:fixed;inset:0;z-index:1300;background:rgba(0,0,0,.85);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px;">'+
