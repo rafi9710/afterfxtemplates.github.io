@@ -441,7 +441,7 @@ function showSuccess(o){
 
 /* ================= MANAGER ================= */
 function getCards(){try{const j=JSON.parse(localStorage.getItem(LS_KEY));if(j&&Array.isArray(j.cards))return j.cards;}catch(e){}return null;}
-function setCards(arr){localStorage.setItem(LS_KEY,JSON.stringify({version:1,cards:arr}));}
+function setCards(arr){try{localStorage.setItem(LS_KEY,JSON.stringify({version:1,cards:arr}));return true;}catch(e){toast('⚠ Image too large to save. Use a smaller image, or the Paste-URL option.');return false;}}
 
 function openGate(){document.getElementById('gate').classList.add('on');setTimeout(()=>{const i=document.getElementById('gpw');if(i)i.focus();},60);}
 function doGate(){
@@ -477,7 +477,28 @@ function renderMgr(){
 }
 function thumbTab(p){document.querySelectorAll('.thumb-tab').forEach(b=>b.classList.toggle('on',b.dataset.pane===p));document.getElementById('paneUrl').classList.toggle('on',p==='url');document.getElementById('paneUpload').classList.toggle('on',p==='upload');}
 function showPrev(u){const p=document.getElementById('ePrev');if(u){p.src=u;p.classList.add('on');}else{p.classList.remove('on');}}
-function readThumb(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{document.getElementById('eThumbUrl').value=r.result;showPrev(r.result);};r.readAsDataURL(f);}
+function readThumb(inp){
+  const f=inp.files[0];if(!f)return;
+  toast('Processing image…');
+  const r=new FileReader();
+  r.onload=()=>{
+    const img=new Image();
+    img.onload=()=>{
+      const max=900;let w=img.width,h=img.height;
+      if(w>max||h>max){if(w>=h){h=Math.round(h*max/w);w=max;}else{w=Math.round(w*max/h);h=max;}}
+      const cv=document.createElement('canvas');cv.width=w;cv.height=h;
+      cv.getContext('2d').drawImage(img,0,0,w,h);
+      let out;try{out=cv.toDataURL('image/jpeg',0.82);}catch(e){out=r.result;}
+      if(out.length>r.result.length)out=r.result;   // keep whichever is smaller
+      document.getElementById('eThumbUrl').value=out;
+      showPrev(out);
+      toast('Image ready ✓');
+    };
+    img.onerror=()=>{document.getElementById('eThumbUrl').value=r.result;showPrev(r.result);};
+    img.src=r.result;
+  };
+  r.readAsDataURL(f);
+}
 function resetForm(){document.getElementById('eId').value='';document.getElementById('eTitle').value='';document.getElementById('ePrice').value='';document.getElementById('eDesc').value='';document.getElementById('eThumbUrl').value='';document.getElementById('eThumbFile').value='';showPrev('');document.getElementById('formTitle').textContent='Add a new card';document.getElementById('cancelEdit').style.display='none';thumbTab('url');}
 function editCard(i){const c=(getCards()||[])[i];if(!c)return;document.getElementById('eId').value=c.id;document.getElementById('eTitle').value=c.title||'';document.getElementById('ePrice').value=c.price||'';document.getElementById('eDesc').value=c.desc||'';document.getElementById('eThumbUrl').value=c.thumb||'';showPrev(c.thumb||'');document.getElementById('formTitle').textContent='Edit card';document.getElementById('cancelEdit').style.display='';window.scrollTo({top:0,behavior:'smooth'});}
 function saveCard(){
@@ -488,7 +509,8 @@ function saveCard(){
   const id=document.getElementById('eId').value;
   if(id){const c=cards.find(x=>x.id===id);if(c){c.title=title;c.price=price;c.desc=desc;c.thumb=thumb;}}
   else{cards.push({id:'wc_'+Date.now(),title,price,desc,thumb,on:true});}
-  setCards(cards);resetForm();renderMgr();toast('Saved ✓ — Export when done');
+  if(!setCards(cards)){return;}
+  resetForm();renderMgr();toast('Saved ✓ — now click Export above');
 }
 function toggleCard(i){const cards=getCards()||[];if(!cards[i])return;cards[i].on=cards[i].on===false;setCards(cards);renderMgr();}
 function delCard(i){const cards=getCards()||[];if(!cards[i])return;if(!confirm('Delete "'+cards[i].title+'"?'))return;cards.splice(i,1);setCards(cards);renderMgr();toast('Deleted');}
