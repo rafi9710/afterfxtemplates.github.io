@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wedding Card Posters — Customized | AfterFX Templates</title>
+<meta name="description" content="Beautiful customized wedding card posters. Pick a design, share your details, and we'll personalize it for you. Delivered to your email.">
+<link rel="icon" href="logo.png">
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--gold:#C9A84C;--gold-l:#E8C96A;--gold-dim:rgba(201,168,76,.13);--gb:rgba(201,168,76,.22);--gbh:rgba(201,168,76,.55);--bg:#080810;--bg2:#0E0E18;--bg3:#14141F;--bg4:#1A1A28;--tx:#EDE8DF;--mt:#7A7468;--mt2:#3A3830;--green:#3DBD72;--red:#E5544B;}
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;overflow-x:hidden;}
+  ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:3px;}
+  a{color:inherit;}
+  /* NAV */
+  nav{position:fixed;top:0;left:0;right:0;z-index:500;height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:rgba(8,8,16,.93);backdrop-filter:blur(16px);border-bottom:1px solid var(--gb);}
+  .logo{font-family:'Cinzel',serif;font-size:17px;font-weight:700;color:var(--gold);text-decoration:none;letter-spacing:1px;display:flex;align-items:center;gap:10px;}
+  .logo img{height:32px;width:auto;display:block;}
+  .logo em{color:var(--tx);font-style:normal;font-weight:400;}
+  .nav-links{display:flex;align-items:center;gap:18px;}
+  .nl{color:var(--mt);font-size:12px;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;font-weight:500;transition:color .2s;}
+  .nl:hover,.nl.on{color:var(--gold);}
+  .navtoggle{display:none;background:none;border:none;color:var(--gold);font-size:24px;line-height:1;cursor:pointer;padding:4px 6px;}
+  /* HERO */
+  .wrap{max-width:1180px;margin:0 auto;padding:0 28px;}
+  .hero{padding:120px 28px 30px;text-align:center;}
+  .ho{font-family:'Cinzel',serif;font-size:11px;letter-spacing:5px;color:var(--gold);text-transform:uppercase;margin-bottom:18px;opacity:.8;}
+  .hero h1{font-family:'Cinzel',serif;font-size:clamp(28px,5vw,52px);font-weight:900;line-height:1.1;color:#fff;margin-bottom:14px;}
+  .hero h1 .g{color:var(--gold);}
+  .hero p{color:var(--mt);font-size:15px;max-width:560px;margin:0 auto;line-height:1.6;}
+  /* how it works */
+  .steps{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;max-width:880px;margin:30px auto 0;}
+  .step{flex:1;min-width:180px;background:var(--bg2);border:1px solid var(--gb);border-radius:10px;padding:16px 18px;text-align:left;}
+  .step .n{font-family:'Cinzel',serif;color:var(--gold);font-weight:700;font-size:13px;letter-spacing:2px;}
+  .step .t{color:var(--tx);font-weight:600;font-size:14px;margin:6px 0 4px;}
+  .step .d{color:var(--mt);font-size:12.5px;line-height:1.5;}
+  /* GALLERY */
+  .sect{padding:46px 0 80px;}
+  .sect-head{text-align:center;margin-bottom:34px;}
+  .sl{font-size:10px;letter-spacing:4px;color:var(--gold);text-transform:uppercase;font-weight:600;margin-bottom:8px;}
+  .st{font-family:'Cinzel',serif;font-size:clamp(22px,3vw,32px);font-weight:700;color:#fff;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:22px;}
+  .card{background:var(--bg2);border:1px solid var(--gb);border-radius:8px;overflow:hidden;transition:transform .25s,border-color .25s;display:flex;flex-direction:column;}
+  .card:hover{transform:translateY(-4px);border-color:var(--gbh);}
+  .card .thumb{position:relative;width:100%;aspect-ratio:3/4;overflow:hidden;background:var(--bg3);}
+  .card .thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+  .card .ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--gold);background:linear-gradient(160deg,var(--bg3),var(--bg2));}
+  .card .ph .em{font-size:30px;opacity:.6;}
+  .card .ph .pt{font-family:'Cinzel',serif;font-size:13px;opacity:.7;letter-spacing:1px;padding:0 14px;text-align:center;}
+  .card .body{padding:14px 14px 16px;display:flex;flex-direction:column;flex:1;}
+  .card .ct{font-family:'Cinzel',serif;font-size:16px;font-weight:700;color:var(--tx);line-height:1.25;}
+  .card .cd{font-size:12.5px;color:var(--mt);line-height:1.5;margin:6px 0 12px;flex:1;}
+  .card .crow{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .card .cprice{font-family:'Cinzel',serif;font-size:18px;font-weight:700;color:var(--gold);}
+  .card .cbuy{background:var(--gold);color:#000;border:none;padding:9px 16px;border-radius:4px;font-size:12px;font-weight:700;letter-spacing:.5px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s;}
+  .card .cbuy:hover{background:var(--gold-l);}
+  .empty{grid-column:1/-1;text-align:center;color:var(--mt);padding:60px 20px;font-size:14px;}
+  /* MODAL (order details + pay) */
+  .ov{position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.8);backdrop-filter:blur(6px);display:none;align-items:flex-start;justify-content:center;padding:30px 16px;overflow-y:auto;}
+  .ov.on{display:flex;}
+  .modal{max-width:440px;width:100%;background:var(--bg2);border:1px solid var(--gb);border-radius:14px;overflow:hidden;margin:auto;}
+  .mh{display:flex;align-items:center;gap:13px;padding:18px 20px;border-bottom:1px solid var(--gb);}
+  .mh img{width:46px;height:60px;object-fit:cover;border-radius:5px;flex:none;background:var(--bg3);}
+  .mh .mt{font-family:'Cinzel',serif;font-size:16px;color:var(--tx);font-weight:700;line-height:1.2;}
+  .mh .mp{color:var(--gold);font-weight:700;font-size:14px;margin-top:3px;}
+  .mh .mx{margin-left:auto;background:none;border:none;color:var(--mt);font-size:20px;cursor:pointer;align-self:flex-start;}
+  .mbody{padding:18px 20px 8px;}
+  .mnote{background:var(--gold-dim);border:1px solid var(--gb);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--mt);line-height:1.5;margin-bottom:16px;}
+  .fld{margin-bottom:13px;}
+  .fld label{display:block;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--mt);margin-bottom:6px;font-weight:600;}
+  .fld label .req{color:var(--gold);}
+  .fld input,.fld textarea,.fld select{width:100%;background:var(--bg);border:1px solid var(--gb);border-radius:7px;padding:11px 12px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .2s;}
+  .fld input:focus,.fld textarea:focus,.fld select:focus{border-color:var(--gold);}
+  .fld textarea{resize:vertical;min-height:54px;line-height:1.45;}
+  .fld select option{background:var(--bg2);color:var(--tx);}
+  .row2{display:flex;gap:11px;}.row2>*{flex:1;min-width:0;}
+  .mfoot{padding:6px 20px 20px;}
+  .paybtn{width:100%;background:linear-gradient(135deg,#C9A84C,#a6852f);color:#0a0a12;border:none;padding:14px;border-radius:9px;font-weight:700;font-size:15px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:filter .2s;}
+  .paybtn:hover{filter:brightness(1.07);}
+  .paybtn:disabled{opacity:.6;cursor:default;}
+  .securenote{text-align:center;color:var(--mt);font-size:11px;margin-top:10px;}
+  /* FOOTER */
+  footer{border-top:1px solid var(--gb);padding:34px 28px;text-align:center;}
+  .footer-logo{height:56px;width:auto;margin:0 auto 12px;display:block;}
+  .flogo{font-family:'Cinzel',serif;font-size:19px;color:var(--gold);font-weight:700;margin-bottom:7px;}
+  footer p{color:var(--mt);font-size:13px;}
+  .socials{display:flex;justify-content:center;gap:14px;margin-top:20px;}
+  .socials a{width:40px;height:40px;border:1px solid var(--gb);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--mt);transition:all .25s;text-decoration:none;}
+  .socials a:hover{border-color:var(--gold);color:var(--gold);background:var(--gold-dim);transform:translateY(-3px);}
+  .socials svg{width:18px;height:18px;fill:currentColor;}
+  .flinks{display:flex;justify-content:center;gap:18px;margin-top:14px;flex-wrap:wrap;}
+  .flinks a{color:var(--mt);font-size:12px;text-decoration:none;letter-spacing:1px;transition:color .2s;}
+  .flinks a:hover{color:var(--gold);}
+  /* TOAST */
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--gold);color:#000;padding:10px 22px;border-radius:4px;font-size:13px;font-weight:700;z-index:1200;transition:transform .3s;pointer-events:none;letter-spacing:.3px;max-width:90vw;text-align:center;}
+  .toast.on{transform:translateX(-50%) translateY(0);}
+  /* ===== MANAGER (admin) ===== */
+  #mgr{position:fixed;inset:0;z-index:1000;background:var(--bg);overflow-y:auto;display:none;}
+  #mgr.on{display:block;}
+  .mgr-top{position:sticky;top:0;background:linear-gradient(180deg,#0E0E18,#0a0a12);border-bottom:1px solid var(--gb);padding:14px 22px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;z-index:5;}
+  .mgr-top h2{font-family:'Cinzel',serif;color:var(--gold);font-size:18px;font-weight:700;margin-right:auto;}
+  .mbtn{background:transparent;border:1px solid var(--gb);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;letter-spacing:.5px;padding:9px 15px;border-radius:6px;cursor:pointer;transition:.2s;}
+  .mbtn:hover{border-color:var(--gold);color:var(--gold);}
+  .mbtn.gold{background:var(--gold);color:#000;border-color:var(--gold);font-weight:700;}
+  .mbtn.gold:hover{background:var(--gold-l);color:#000;}
+  .mgr-wrap{max-width:920px;margin:0 auto;padding:26px 22px 80px;}
+  .mgr-card{background:var(--bg2);border:1px solid var(--gb);border-radius:10px;padding:20px;margin-bottom:22px;}
+  .mgr-card h3{font-family:'Cinzel',serif;color:var(--tx);font-size:16px;margin-bottom:4px;}
+  .mgr-card .sub{color:var(--mt);font-size:12.5px;margin-bottom:16px;}
+  .thumb-tabs{display:flex;gap:4px;margin-bottom:10px;border-bottom:1px solid var(--gb);}
+  .thumb-tab{background:transparent;border:none;color:var(--mt);padding:8px 14px;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;font-family:'DM Sans',sans-serif;}
+  .thumb-tab.on{color:var(--gold);border-bottom-color:var(--gold);}
+  .thumb-pane{display:none;}.thumb-pane.on{display:block;}
+  .prev{width:90px;aspect-ratio:3/4;border:1px solid var(--gb);border-radius:6px;object-fit:cover;background:var(--bg3);margin-top:10px;display:none;}
+  .prev.on{display:block;}
+  .mgr-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px;}
+  .mli{background:var(--bg2);border:1px solid var(--gb);border-radius:9px;overflow:hidden;}
+  .mli .mlt{aspect-ratio:3/4;background:var(--bg3);position:relative;}
+  .mli .mlt img{width:100%;height:100%;object-fit:cover;}
+  .mli .mlt .off{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.7);color:var(--red);font-size:9px;font-weight:700;letter-spacing:1px;padding:3px 8px;border-radius:3px;text-transform:uppercase;}
+  .mli .mlb{padding:12px;}
+  .mli .mln{font-family:'Cinzel',serif;font-size:14px;color:var(--tx);font-weight:700;}
+  .mli .mlp{color:var(--gold);font-weight:700;font-size:14px;margin:4px 0 10px;}
+  .mli .mlrow{display:flex;gap:6px;}
+  .mli .mlrow button{flex:1;background:transparent;border:1px solid var(--gb);color:var(--mt);font-size:11px;font-weight:600;padding:7px;border-radius:5px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.15s;}
+  .mli .mlrow button:hover{border-color:var(--gold);color:var(--gold);}
+  .mli .mlrow button.del:hover{border-color:var(--red);color:var(--red);}
+  /* password gate */
+  #gate{position:fixed;inset:0;z-index:1100;background:radial-gradient(circle at 50% 30%,#14141F,#080810);display:none;align-items:center;justify-content:center;padding:24px;}
+  #gate.on{display:flex;}
+  .gbox{width:100%;max-width:330px;text-align:center;background:var(--bg2);border:1px solid var(--gb);border-radius:14px;padding:30px 26px;}
+  .gbox h3{font-family:'Cinzel',serif;color:var(--gold);font-size:20px;margin-bottom:6px;}
+  .gbox p{color:var(--mt);font-size:12px;margin-bottom:18px;}
+  .gbox input{width:100%;background:var(--bg);border:1px solid var(--gb);border-radius:8px;padding:12px;color:var(--tx);text-align:center;letter-spacing:2px;font-family:'DM Sans',sans-serif;outline:none;}
+  .gbox input:focus{border-color:var(--gold);}
+  .gbox button{width:100%;margin-top:12px;background:var(--gold);color:#000;border:none;border-radius:8px;padding:12px;font-weight:700;letter-spacing:1px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+  .gerr{color:var(--red);font-size:12px;margin-top:10px;min-height:16px;}
+  @media(max-width:640px){
+    nav{padding:0 14px;}
+    .nav-links{position:fixed;top:60px;left:0;right:0;flex-direction:column;align-items:stretch;gap:0;background:rgba(8,8,16,.98);border-bottom:1px solid var(--gb);padding:6px 0;display:none;}
+    .nav-links.open{display:flex;}
+    .nl{display:block;padding:13px 18px;border-bottom:1px solid rgba(201,168,76,.07);}
+    .navtoggle{display:block;}
+    .hero{padding:96px 16px 24px;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="index.html"><img src="logo.png" alt="AfterFX Templates logo">AfterFX <em>Templates</em></a>
+  <div class="nav-links" id="navLinks">
+    <a class="nl" href="index.html">Home</a>
+    <a class="nl" href="index.html#templates">Video Templates</a>
+    <a class="nl on" href="wedding-cards.html">Wedding Cards</a>
+    <a class="nl" href="about.html">About</a>
+    <a class="nl" href="index.html#contact">Contact</a>
+    <a class="nl" href="#" onclick="openGate();return false;" title="Manage" style="opacity:.4;font-size:10px;">⚙</a>
+  </div>
+  <button class="navtoggle" onclick="document.getElementById('navLinks').classList.toggle('open')" aria-label="Menu">☰</button>
+</nav>
+
+<section class="hero">
+  <div class="ho">Personalized For You</div>
+  <h1>Wedding Card <span class="g">Posters</span></h1>
+  <p>Pick a design you love, share your wedding details, and we'll personalize it with your names, date and venue — delivered ready to share.</p>
+  <div class="steps">
+    <div class="step"><div class="n">STEP 1</div><div class="t">Choose a design</div><div class="d">Browse our wedding card posters and pick your favourite.</div></div>
+    <div class="step"><div class="n">STEP 2</div><div class="t">Add your details</div><div class="d">Names, date, venue & language — fill the quick form.</div></div>
+    <div class="step"><div class="n">STEP 3</div><div class="t">Pay & relax</div><div class="d">Secure payment, then we customize and email your card.</div></div>
+  </div>
+</section>
+
+<section class="sect">
+  <div class="wrap">
+    <div class="sect-head">
+      <div class="sl">The Collection</div>
+      <div class="st">Choose Your Card</div>
+    </div>
+    <div class="grid" id="grid">
+      <div class="empty">Loading designs…</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <img src="logo.png" alt="AfterFX Templates" class="footer-logo">
+  <div class="flogo">AfterFX Templates</div>
+  <p>by Mohammad Rafi · VFX & Motion Graphics Artist · Bengaluru</p>
+  <p style="margin-top:3px;">Wedding · Birthday · Half Saree · Cradle · Baby Name Reveal</p>
+  <div class="socials">
+    <a href="https://wa.me/919739909710" target="_blank" aria-label="WhatsApp"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg></a>
+    <a href="https://www.instagram.com/afterfxtemplaets/" target="_blank" aria-label="Instagram"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
+    <a href="https://youtube.com/@afterfxtemplates" target="_blank" aria-label="YouTube"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
+  </div>
+  <div class="flinks">
+    <a href="mailto:rafikarim143@gmail.com">Email</a>
+    <a href="index.html">Templates</a>
+    <a href="about.html">About</a>
+    <a href="terms.html">Terms</a>
+    <a href="privacy.html">Privacy</a>
+  </div>
+  <p style="margin-top:18px;font-size:11px;color:var(--mt2);">© 2025 AfterFX Templates · All Rights Reserved</p>
+</footer>
+
+<!-- ORDER MODAL -->
+<div class="ov" id="ov" onclick="if(event.target===this)closeOrder()">
+  <div class="modal">
+    <div class="mh">
+      <img id="mImg" alt="">
+      <div>
+        <div class="mt" id="mTitle"></div>
+        <div class="mp" id="mPrice"></div>
+      </div>
+      <button class="mx" onclick="closeOrder()">✕</button>
+    </div>
+    <div class="mbody">
+      <div class="mnote">Fill your wedding details below. After payment we personalize this card and email it to you — usually within a few hours.</div>
+      <div class="fld"><label>Couple names <span class="req">*</span></label><input id="fCouple" placeholder="e.g. Priya &amp; Arjun"></div>
+      <div class="row2">
+        <div class="fld"><label>Wedding date <span class="req">*</span></label><input id="fDate" placeholder="e.g. 24 July 2026"></div>
+        <div class="fld"><label>Language</label>
+          <select id="fLang"><option>English</option><option>Telugu</option><option>Hindi</option><option>Tamil</option><option>Kannada</option><option>Other</option></select>
+        </div>
+      </div>
+      <div class="fld"><label>Venue</label><input id="fVenue" placeholder="e.g. The Leela Palace, Bengaluru"></div>
+      <div class="fld"><label>Any extra details / requests</label><textarea id="fNotes" placeholder="Parents' names, muhurtham time, colour preference, etc."></textarea></div>
+      <div style="height:6px;border-top:1px solid var(--gb);margin:4px 0 14px;"></div>
+      <div class="row2">
+        <div class="fld"><label>Your name <span class="req">*</span></label><input id="fName" placeholder="Your full name"></div>
+        <div class="fld"><label>WhatsApp no. <span class="req">*</span></label><input id="fPhone" inputmode="tel" placeholder="+91 98765 43210"></div>
+      </div>
+      <div class="fld"><label>Email (card delivered here) <span class="req">*</span></label><input id="fEmail" inputmode="email" placeholder="you@email.com"></div>
+    </div>
+    <div class="mfoot">
+      <button class="paybtn" id="payBtn" onclick="payNow()">Continue — Pay <span id="payAmt"></span></button>
+      <div class="securenote">🔒 Secure payment via Razorpay · UPI / Card / Netbanking</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MANAGER ===== -->
+<div id="gate">
+  <div class="gbox">
+    <h3>Wedding Cards</h3>
+    <p>Enter admin password to manage designs</p>
+    <input type="password" id="gpw" placeholder="Password" onkeypress="if(event.key==='Enter')doGate()">
+    <button onclick="doGate()">Unlock</button>
+    <div class="gerr" id="gerr"></div>
+  </div>
+</div>
+
+<div id="mgr">
+  <div class="mgr-top">
+    <h2>🖼 Wedding Cards Manager</h2>
+    <button class="mbtn" onclick="closeMgr()">← Back to page</button>
+    <button class="mbtn" onclick="seedFromLive()" title="Reload the designs currently live on the website">↻ Load live</button>
+    <button class="mbtn gold" onclick="exportJSON()">⬇ Export wedding-cards.json</button>
+  </div>
+  <div class="mgr-wrap">
+    <div class="mgr-card">
+      <h3 id="formTitle">Add a new card</h3>
+      <div class="sub">Set the poster image, title and price. Customers pay this fixed price, then you personalize &amp; deliver.</div>
+      <input type="hidden" id="eId">
+      <div class="row2">
+        <div class="fld"><label>Title <span class="req">*</span></label><input id="eTitle" placeholder="e.g. Royal Maroon Wedding Card"></div>
+        <div class="fld"><label>Price ₹ <span class="req">*</span></label><input id="ePrice" inputmode="numeric" placeholder="299"></div>
+      </div>
+      <div class="fld"><label>Short description</label><input id="eDesc" placeholder="e.g. Deep maroon &amp; gold — names, date and venue customized"></div>
+      <label style="display:block;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--mt);margin-bottom:6px;font-weight:600;">Poster image</label>
+      <div class="thumb-tabs">
+        <button type="button" class="thumb-tab on" data-pane="url" onclick="thumbTab('url')">🔗 Paste URL</button>
+        <button type="button" class="thumb-tab" data-pane="upload" onclick="thumbTab('upload')">📁 Upload</button>
+      </div>
+      <div class="thumb-pane on" id="paneUrl">
+        <input id="eThumbUrl" placeholder="https://afterfxtemplates.com/cards/royal-maroon.jpg" oninput="showPrev(this.value)">
+        <div class="sub" style="margin-top:6px;">Recommended — keeps the file small &amp; loads fast. Upload the poster to your repo (e.g. a <b>/cards/</b> folder) and paste its URL.</div>
+      </div>
+      <div class="thumb-pane" id="paneUpload">
+        <input type="file" id="eThumbFile" accept="image/*" onchange="readThumb(this)">
+        <div class="sub" style="margin-top:6px;color:var(--red);">Heads-up: uploads embed the image into the JSON and bloat the file. Prefer a URL for many cards.</div>
+      </div>
+      <img class="prev" id="ePrev" alt="preview">
+      <div style="margin-top:16px;display:flex;gap:10px;">
+        <button class="mbtn gold" onclick="saveCard()">Save card</button>
+        <button class="mbtn" onclick="resetForm()" id="cancelEdit" style="display:none;">Cancel edit</button>
+      </div>
+    </div>
+
+    <div class="mgr-card">
+      <h3>Your cards <span id="cardCount" style="color:var(--mt);font-weight:400;font-size:13px;"></span></h3>
+      <div class="sub">Edit, delete or hide a card. When done, click <b>Export</b> above and upload <b>wedding-cards.json</b> to GitHub (commit to main).</div>
+      <div class="mgr-list" id="mgrList"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API_BASE="https://afterfx-api.vercel.app";
+const WA="919739909710";
+const ADMIN_PW="rafi9710";
+const LS_KEY="afx_wcards";
+
+/* fallback sample so the page works before wedding-cards.json exists */
+const SAMPLE={version:1,cards:[
+  {id:"wc_sample1",title:"Royal Maroon Wedding Card",thumb:"",price:299,desc:"Deep maroon &amp; gold. Your names, date and venue, beautifully set.",on:true},
+  {id:"wc_sample2",title:"Ivory Floral Invitation",thumb:"",price:349,desc:"Soft ivory with delicate florals — elegant and timeless.",on:true},
+  {id:"wc_sample3",title:"Temple Heritage Card",thumb:"",price:399,desc:"Traditional South Indian temple art with gold accents.",on:true}
+]};
+
+let PUBLISHED=[];      // live cards (customer view)
+let currentCard=null;  // card being ordered
+
+/* ---------- helpers ---------- */
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),2600);}
+function isValidEmail(e){return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e);}
+function rupee(n){return '₹'+Number(n||0).toLocaleString('en-IN');}
+function thumbHTML(c){
+  if(c.thumb){return '<img src="'+esc(c.thumb)+'" alt="'+esc(c.title)+'" loading="lazy">';}
+  return '<div class="ph"><div class="em">🖼</div><div class="pt">'+esc(c.title)+'</div></div>';
+}
+
+/* ---------- customer storefront ---------- */
+async function loadPublished(){
+  try{
+    const r=await fetch('wedding-cards.json?t='+Date.now());
+    if(r.ok){const j=await r.json();if(j&&Array.isArray(j.cards))return j.cards;}
+  }catch(e){}
+  return SAMPLE.cards.slice();
+}
+function renderGrid(){
+  const g=document.getElementById('grid');
+  const live=PUBLISHED.filter(c=>c.on!==false);
+  if(!live.length){g.innerHTML='<div class="empty">New wedding card designs coming soon. 💛<br>Meanwhile, browse our <a href="index.html#templates" style="color:var(--gold)">video templates</a>.</div>';return;}
+  g.innerHTML=live.map(c=>
+    '<div class="card">'+
+      '<div class="thumb">'+thumbHTML(c)+'</div>'+
+      '<div class="body">'+
+        '<div class="ct">'+esc(c.title)+'</div>'+
+        (c.desc?'<div class="cd">'+esc(c.desc)+'</div>':'<div class="cd"></div>')+
+        '<div class="crow"><span class="cprice">'+rupee(c.price)+'</span>'+
+        '<button class="cbuy" onclick="openOrder(\''+c.id+'\')">Customize &amp; Order →</button></div>'+
+      '</div>'+
+    '</div>'
+  ).join('');
+}
+
+/* ---------- order modal ---------- */
+function openOrder(id){
+  currentCard=PUBLISHED.find(c=>c.id===id);
+  if(!currentCard)return;
+  document.getElementById('mTitle').textContent=currentCard.title;
+  document.getElementById('mPrice').textContent=rupee(currentCard.price);
+  document.getElementById('payAmt').textContent=rupee(currentCard.price);
+  const im=document.getElementById('mImg');
+  if(currentCard.thumb){im.src=currentCard.thumb;im.style.display='';}else{im.style.display='none';}
+  document.getElementById('ov').classList.add('on');
+  document.body.style.overflow='hidden';
+}
+function closeOrder(){document.getElementById('ov').classList.remove('on');document.body.style.overflow='';}
+
+function payNow(){
+  if(!currentCard)return;
+  const couple=val('fCouple'),date=val('fDate'),venue=val('fVenue'),lang=val('fLang'),notes=val('fNotes');
+  const name=val('fName'),phone=val('fPhone');let email=val('fEmail');
+  if(!couple){return toast('Please enter the couple names');}
+  if(!date){return toast('Please enter the wedding date');}
+  if(!name){return toast('Please enter your name');}
+  if(!phone){return toast('Please enter your WhatsApp number');}
+  if(!isValidEmail(email)){const f=document.getElementById('fEmail');if(f){f.style.borderColor='#E5544B';f.focus();}return toast('⚠ Galat email! Card isi email par aayega');}
+
+  const price=Number(currentCard.price)||0;
+  const oid='WC-'+Date.now().toString().slice(-6);
+  /* packed details reach you in the order-alert email (max ~250 chars) */
+  let packed='Wedding Card: '+currentCard.title+' | Couple: '+couple+' | Date: '+date;
+  if(venue)packed+=' | Venue: '+venue;
+  packed+=' | Lang: '+lang+' | Ph: '+phone;
+  packed=packed.slice(0,250);
+
+  const btn=document.getElementById('payBtn');
+  btn.disabled=true;btn.textContent='Please wait…';
+
+  fetch(API_BASE+'/api/create-order',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      amount:Math.round(price*100),currency:'INR',receipt:oid,
+      notes:{order_id:oid,customer_email:email,customer_name:name,template_ids:currentCard.id,templates:packed,qty:'1',total:String(price)}
+    })
+  }).then(r=>r.json()).then(data=>{
+    if(!data||!data.order_id){throw new Error(data&&data.error||'Order failed');}
+    const options={
+      key:data.key_id,order_id:data.order_id,amount:data.amount,currency:data.currency,
+      name:'AfterFX Templates',description:'Wedding Card — '+oid,image:'https://afterfxtemplates.com/logo.png',
+      prefill:{name:name,email:email,contact:phone},theme:{color:'#C9A84C'},
+      handler:function(r){verifyPay(r,{oid,name,email,phone,couple,date,venue,lang,notes,price,title:currentCard.title});}
+    };
+    const rzp=new Razorpay(options);
+    rzp.on('payment.failed',function(resp){toast('Payment failed: '+((resp.error&&resp.error.description)||'try again'));resetPay(price);});
+    rzp.open();
+  }).catch(()=>{toast('Could not start payment. Please try again.');resetPay(price);});
+}
+function resetPay(price){const b=document.getElementById('payBtn');b.disabled=false;b.innerHTML='Continue — Pay '+rupee(price);}
+function val(id){return (document.getElementById(id).value||'').trim();}
+
+function verifyPay(r,o){
+  fetch(API_BASE+'/api/verify-payment',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({razorpay_order_id:r.razorpay_order_id,razorpay_payment_id:r.razorpay_payment_id,razorpay_signature:r.razorpay_signature,order:{oid:o.oid,name:o.name,email:o.email,ids:o.title,readable:o.title}})
+  }).then(r=>r.json()).then(data=>{
+    if(data&&data.verified){closeOrder();showSuccess(o);}
+    else{toast('Payment could not be verified. WhatsApp us your Order ID '+o.oid);resetPay(o.price);}
+  }).catch(()=>{toast('Verification error. If money was deducted, WhatsApp Order ID '+o.oid);resetPay(o.price);});
+}
+
+function showSuccess(o){
+  const det='Hi AfterFX Templates! I just paid for a wedding card.%0A%0AOrder: '+o.oid+'%0ACard: '+o.title+'%0ACouple: '+o.couple+'%0ADate: '+o.date+(o.venue?'%0AVenue: '+o.venue:'')+'%0ALanguage: '+o.lang+(o.notes?'%0ANotes: '+o.notes:'')+'%0A%0A(Attaching any reference images here.)';
+  const wa='https://wa.me/'+WA+'?text='+det.replace(/ /g,'%20');
+  const html=
+  '<div id="okOv" style="position:fixed;inset:0;z-index:1300;background:rgba(0,0,0,.85);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px;">'+
+    '<div style="max-width:390px;width:100%;background:var(--bg2);border:1px solid var(--gb);border-radius:14px;padding:30px 26px;text-align:center;font-family:DM Sans,sans-serif;">'+
+      '<div style="font-size:44px;margin-bottom:6px;">✅</div>'+
+      '<h3 style="font-family:Cinzel,serif;color:var(--gold);font-size:19px;margin:0 0 4px;">Order Received!</h3>'+
+      '<p style="color:var(--mt);font-size:12px;margin:0 0 16px;">Order ID: '+esc(o.oid)+'</p>'+
+      '<p style="color:var(--tx);font-size:13.5px;line-height:1.6;margin:0 0 16px;">Thank you! We\u2019ll personalize <b>'+esc(o.title)+'</b> with your details and email the finished card to <b style="color:var(--gold);word-break:break-all;">'+esc(o.email)+'</b> \u2014 usually within a few hours.</p>'+
+      '<div style="background:rgba(201,168,76,.08);border:1px solid var(--gb);border-radius:8px;padding:13px;margin-bottom:16px;">'+
+        '<p style="color:var(--tx);font-size:12.5px;line-height:1.55;margin:0 0 9px;">Want to add reference images or extra notes? Send them on WhatsApp \u2014 it helps us match exactly what you want.</p>'+
+        '<a href="'+wa+'" target="_blank" style="display:inline-flex;align-items:center;gap:7px;background:#25D366;color:#053b1e;font-weight:800;text-decoration:none;padding:11px 20px;border-radius:8px;font-size:13px;">\uD83D\uDCF2 Share details on WhatsApp</a>'+
+      '</div>'+
+      '<button onclick="var x=document.getElementById(\'okOv\');if(x)x.remove();" style="width:100%;background:linear-gradient(135deg,#C9A84C,#a6852f);color:#0a0a12;border:none;padding:13px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;font-family:DM Sans,sans-serif;">Done</button>'+
+    '</div>'+
+  '</div>';
+  const d=document.createElement('div');d.innerHTML=html;document.body.appendChild(d.firstElementChild);
+}
+
+/* ================= MANAGER ================= */
+function getCards(){try{const j=JSON.parse(localStorage.getItem(LS_KEY));if(j&&Array.isArray(j.cards))return j.cards;}catch(e){}return null;}
+function setCards(arr){localStorage.setItem(LS_KEY,JSON.stringify({version:1,cards:arr}));}
+
+function openGate(){document.getElementById('gate').classList.add('on');setTimeout(()=>{const i=document.getElementById('gpw');if(i)i.focus();},60);}
+function doGate(){
+  if(document.getElementById('gpw').value===ADMIN_PW){
+    document.getElementById('gate').classList.remove('on');
+    if(getCards()===null){setCards(PUBLISHED.length?PUBLISHED.slice():SAMPLE.cards.slice());}
+    openMgr();
+  }else{document.getElementById('gerr').textContent='Wrong password.';document.getElementById('gpw').value='';}
+}
+function openMgr(){document.getElementById('mgr').classList.add('on');document.body.style.overflow='hidden';renderMgr();}
+function closeMgr(){document.getElementById('mgr').classList.remove('on');document.body.style.overflow='';}
+function seedFromLive(){setCards(PUBLISHED.slice());resetForm();renderMgr();toast('Loaded the live designs');}
+
+function renderMgr(){
+  const cards=getCards()||[];
+  document.getElementById('cardCount').textContent='('+cards.length+')';
+  const list=document.getElementById('mgrList');
+  if(!cards.length){list.innerHTML='<div class="empty" style="color:var(--mt)">No cards yet. Add your first one above.</div>';return;}
+  list.innerHTML=cards.map((c,i)=>
+    '<div class="mli">'+
+      '<div class="mlt">'+(c.thumb?'<img src="'+esc(c.thumb)+'">':'<div class="ph" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--gold);opacity:.5;font-size:26px;">🖼</div>')+(c.on===false?'<span class="off">Hidden</span>':'')+'</div>'+
+      '<div class="mlb">'+
+        '<div class="mln">'+esc(c.title)+'</div>'+
+        '<div class="mlp">'+rupee(c.price)+'</div>'+
+        '<div class="mlrow">'+
+          '<button onclick="editCard('+i+')">Edit</button>'+
+          '<button onclick="toggleCard('+i+')">'+(c.on===false?'Show':'Hide')+'</button>'+
+          '<button class="del" onclick="delCard('+i+')">Delete</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>'
+  ).join('');
+}
+function thumbTab(p){document.querySelectorAll('.thumb-tab').forEach(b=>b.classList.toggle('on',b.dataset.pane===p));document.getElementById('paneUrl').classList.toggle('on',p==='url');document.getElementById('paneUpload').classList.toggle('on',p==='upload');}
+function showPrev(u){const p=document.getElementById('ePrev');if(u){p.src=u;p.classList.add('on');}else{p.classList.remove('on');}}
+function readThumb(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{document.getElementById('eThumbUrl').value=r.result;showPrev(r.result);};r.readAsDataURL(f);}
+function resetForm(){document.getElementById('eId').value='';document.getElementById('eTitle').value='';document.getElementById('ePrice').value='';document.getElementById('eDesc').value='';document.getElementById('eThumbUrl').value='';document.getElementById('eThumbFile').value='';showPrev('');document.getElementById('formTitle').textContent='Add a new card';document.getElementById('cancelEdit').style.display='none';thumbTab('url');}
+function editCard(i){const c=(getCards()||[])[i];if(!c)return;document.getElementById('eId').value=c.id;document.getElementById('eTitle').value=c.title||'';document.getElementById('ePrice').value=c.price||'';document.getElementById('eDesc').value=c.desc||'';document.getElementById('eThumbUrl').value=c.thumb||'';showPrev(c.thumb||'');document.getElementById('formTitle').textContent='Edit card';document.getElementById('cancelEdit').style.display='';window.scrollTo({top:0,behavior:'smooth'});}
+function saveCard(){
+  const title=val('eTitle'),price=parseInt(val('ePrice'),10),desc=val('eDesc'),thumb=val('eThumbUrl');
+  if(!title){return toast('Enter a title');}
+  if(!price||price<1){return toast('Enter a valid price');}
+  const cards=getCards()||[];
+  const id=document.getElementById('eId').value;
+  if(id){const c=cards.find(x=>x.id===id);if(c){c.title=title;c.price=price;c.desc=desc;c.thumb=thumb;}}
+  else{cards.push({id:'wc_'+Date.now(),title,price,desc,thumb,on:true});}
+  setCards(cards);resetForm();renderMgr();toast('Saved ✓ — Export when done');
+}
+function toggleCard(i){const cards=getCards()||[];if(!cards[i])return;cards[i].on=cards[i].on===false;setCards(cards);renderMgr();}
+function delCard(i){const cards=getCards()||[];if(!cards[i])return;if(!confirm('Delete "'+cards[i].title+'"?'))return;cards.splice(i,1);setCards(cards);renderMgr();toast('Deleted');}
+function exportJSON(){
+  const cards=getCards()||[];
+  const data={version:1,cards:cards.map(c=>({id:c.id,title:c.title,thumb:c.thumb||'',price:Number(c.price)||0,desc:c.desc||'',on:c.on!==false}))};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='wedding-cards.json';document.body.appendChild(a);a.click();a.remove();
+  toast('Downloaded wedding-cards.json — upload it to GitHub (commit to main)');
+}
+
+/* ---------- init ---------- */
+(async function(){
+  PUBLISHED=await loadPublished();
+  renderGrid();
+  if(location.hash==='#admin')openGate();
+})();
+</script>
+</body>
+</html>
