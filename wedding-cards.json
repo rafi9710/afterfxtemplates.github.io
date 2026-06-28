@@ -1,4 +1,13 @@
 {
   "version": 1,
-  "cards": []
+  "cards": [
+    {
+      "id": "wc_1782646777115",
+      "title": "test",
+      "thumb": "",
+      "price": 200,
+      "desc": "test",
+      "on": true
+    }
+  ]
 }
