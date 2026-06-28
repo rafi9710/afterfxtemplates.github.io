@@ -229,14 +229,10 @@
         <div class="fld"><label>Wedding date <span class="req">*</span></label><input id="fDate" placeholder="e.g. 24 July 2026"></div>
         <div class="fld"><label>Venue</label><input id="fVenue" placeholder="e.g. The Leela Palace, Bengaluru"></div>
       </div>
-      <div class="fld"><label>Language(s) needed <span class="req">*</span> <span style="text-transform:none;letter-spacing:0;color:var(--mt2);font-weight:400;">(pick one or more)</span></label>
+      <div class="fld"><label>Language(s) needed <span class="req">*</span> <span style="text-transform:none;letter-spacing:0;color:var(--mt2);font-weight:400;">(pick one or both — price updates)</span></label>
         <div class="langs" id="fLangs">
-          <label class="chip"><input type="checkbox" value="English" checked> English</label>
-          <label class="chip"><input type="checkbox" value="Telugu"> Telugu</label>
-          <label class="chip"><input type="checkbox" value="Hindi"> Hindi</label>
-          <label class="chip"><input type="checkbox" value="Tamil"> Tamil</label>
-          <label class="chip"><input type="checkbox" value="Kannada"> Kannada</label>
-          <label class="chip"><input type="checkbox" value="Other"> Other</label>
+          <label class="chip"><input type="checkbox" value="English" checked onchange="recalc()"> English <b id="pcEn" style="color:var(--gold);font-weight:700;"></b></label>
+          <label class="chip"><input type="checkbox" value="Telugu" onchange="recalc()"> Telugu <b id="pcTe" style="color:var(--gold);font-weight:700;"></b></label>
         </div>
       </div>
       <div class="fld"><label>Any extra details / requests</label><textarea id="fNotes" placeholder="Parents' names, muhurtham time, colour preference, etc."></textarea></div>
@@ -282,9 +278,10 @@
       <h3 id="formTitle">Add a new card</h3>
       <div class="sub">Set the poster image, title and price. Customers pay this fixed price, then you personalize &amp; deliver.</div>
       <input type="hidden" id="eId">
+      <div class="fld"><label>Title <span class="req">*</span></label><input id="eTitle" placeholder="e.g. Royal Maroon Wedding Card"></div>
       <div class="row2">
-        <div class="fld"><label>Title <span class="req">*</span></label><input id="eTitle" placeholder="e.g. Royal Maroon Wedding Card"></div>
-        <div class="fld"><label>Price ₹ <span class="req">*</span></label><input id="ePrice" inputmode="numeric" placeholder="299"></div>
+        <div class="fld"><label>Price — English ₹ <span class="req">*</span></label><input id="ePriceEn" inputmode="numeric" placeholder="222"></div>
+        <div class="fld"><label>Price — Telugu ₹ <span class="req">*</span></label><input id="ePriceTe" inputmode="numeric" placeholder="299"></div>
       </div>
       <div class="fld"><label>Short description</label><input id="eDesc" placeholder="e.g. Deep maroon &amp; gold — names, date and venue customized"></div>
       <label style="display:block;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--mt);margin-bottom:6px;font-weight:600;">Poster image</label>
@@ -334,7 +331,14 @@ const SAMPLE={version:1,cards:[
 
 let PUBLISHED=[];      // live cards (customer view)
 let currentCard=null;  // card being ordered
+let currentTotal=0;    // live total based on selected languages
 let refImg="";         // customer-uploaded reference (base64, optional)
+
+/* per-language price helpers (back-compat with old single 'price') */
+function pEn(c){return Number(c&&c.priceEn!=null?c.priceEn:(c&&c.price||0))||0;}
+function pTe(c){return Number(c&&c.priceTe!=null?c.priceTe:(c&&c.price||0))||0;}
+function langPrice(c,lang){return lang==='Telugu'?pTe(c):pEn(c);}
+function cardPriceLabel(c){var a=pEn(c),b=pTe(c);return a===b?rupee(a):'From '+rupee(Math.min(a,b));}
 
 /* ---------- helpers ---------- */
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -364,7 +368,7 @@ function renderGrid(){
       '<div class="body">'+
         '<div class="ct">'+esc(c.title)+'</div>'+
         (c.desc?'<div class="cd">'+esc(c.desc)+'</div>':'<div class="cd"></div>')+
-        '<div class="crow"><span class="cprice">'+rupee(c.price)+'</span>'+
+        '<div class="crow"><span class="cprice">'+cardPriceLabel(c)+'</span>'+
         '<button class="cbuy" onclick="openOrder(\''+c.id+'\')">Customize &amp; Order →</button></div>'+
       '</div>'+
     '</div>'
@@ -376,13 +380,25 @@ function openOrder(id){
   currentCard=PUBLISHED.find(c=>c.id===id);
   if(!currentCard)return;
   document.getElementById('mTitle').textContent=currentCard.title;
-  document.getElementById('mPrice').textContent=rupee(currentCard.price);
-  document.getElementById('payAmt').textContent=rupee(currentCard.price);
   const im=document.getElementById('mImg');
   if(currentCard.thumb){im.src=currentCard.thumb;im.style.display='';}else{im.style.display='none';}
+  // show each language's price on its chip, reset to English-only, compute total
+  document.getElementById('pcEn').textContent='₹'+pEn(currentCard);
+  document.getElementById('pcTe').textContent='₹'+pTe(currentCard);
+  const boxes=document.querySelectorAll('#fLangs input');
+  boxes.forEach(b=>{b.checked=(b.value==='English');});
+  recalc();
   refImg="";const rp=document.getElementById('refPrev');if(rp){rp.classList.remove('on');}const rf=document.getElementById('fRef');if(rf){rf.value='';}
   document.getElementById('ov').classList.add('on');
   document.body.style.overflow='hidden';
+}
+function recalc(){
+  if(!currentCard)return;
+  let total=0;
+  document.querySelectorAll('#fLangs input:checked').forEach(i=>{total+=langPrice(currentCard,i.value);});
+  currentTotal=total;
+  document.getElementById('mPrice').textContent=rupee(total);
+  document.getElementById('payAmt').textContent=rupee(total);
 }
 function readRef(inp){
   const f=inp.files[0];if(!f)return;
@@ -419,7 +435,7 @@ function payNow(){
   if(!phone){return toast('Please enter your WhatsApp number');}
   if(!isValidEmail(email)){const f=document.getElementById('fEmail');if(f){f.style.borderColor='#E5544B';f.focus();}return toast('⚠ Galat email! Card isi email par aayega');}
 
-  const price=Number(currentCard.price)||0;
+  const price=currentTotal||langPrice(currentCard,'English');
   const oid='WC-'+Date.now().toString().slice(-6);
   const langStr=langs.join('+');
   /* packed details reach you in the order-alert email (max ~250 chars) */
@@ -521,7 +537,7 @@ function renderMgr(){
       '<div class="mlt">'+(c.thumb?'<img src="'+esc(c.thumb)+'">':'<div class="ph" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--gold);opacity:.5;font-size:26px;">🖼</div>')+(c.on===false?'<span class="off">Hidden</span>':'')+'</div>'+
       '<div class="mlb">'+
         '<div class="mln">'+esc(c.title)+'</div>'+
-        '<div class="mlp">'+rupee(c.price)+'</div>'+
+        '<div class="mlp">EN '+rupee(pEn(c))+' &nbsp;·&nbsp; TE '+rupee(pTe(c))+'</div>'+
         '<div class="mlrow">'+
           '<button onclick="editCard('+i+')">Edit</button>'+
           '<button onclick="toggleCard('+i+')">'+(c.on===false?'Show':'Hide')+'</button>'+
@@ -555,16 +571,17 @@ function readThumb(inp){
   };
   r.readAsDataURL(f);
 }
-function resetForm(){document.getElementById('eId').value='';document.getElementById('eTitle').value='';document.getElementById('ePrice').value='';document.getElementById('eDesc').value='';document.getElementById('eThumbUrl').value='';document.getElementById('eThumbFile').value='';showPrev('');document.getElementById('formTitle').textContent='Add a new card';document.getElementById('cancelEdit').style.display='none';thumbTab('url');}
-function editCard(i){const c=(getCards()||[])[i];if(!c)return;document.getElementById('eId').value=c.id;document.getElementById('eTitle').value=c.title||'';document.getElementById('ePrice').value=c.price||'';document.getElementById('eDesc').value=c.desc||'';document.getElementById('eThumbUrl').value=c.thumb||'';showPrev(c.thumb||'');document.getElementById('formTitle').textContent='Edit card';document.getElementById('cancelEdit').style.display='';window.scrollTo({top:0,behavior:'smooth'});}
+function resetForm(){document.getElementById('eId').value='';document.getElementById('eTitle').value='';document.getElementById('ePriceEn').value='';document.getElementById('ePriceTe').value='';document.getElementById('eDesc').value='';document.getElementById('eThumbUrl').value='';document.getElementById('eThumbFile').value='';showPrev('');document.getElementById('formTitle').textContent='Add a new card';document.getElementById('cancelEdit').style.display='none';thumbTab('url');}
+function editCard(i){const c=(getCards()||[])[i];if(!c)return;document.getElementById('eId').value=c.id;document.getElementById('eTitle').value=c.title||'';document.getElementById('ePriceEn').value=pEn(c)||'';document.getElementById('ePriceTe').value=pTe(c)||'';document.getElementById('eDesc').value=c.desc||'';document.getElementById('eThumbUrl').value=c.thumb||'';showPrev(c.thumb||'');document.getElementById('formTitle').textContent='Edit card';document.getElementById('cancelEdit').style.display='';window.scrollTo({top:0,behavior:'smooth'});}
 function saveCard(){
-  const title=val('eTitle'),price=parseInt(val('ePrice'),10),desc=val('eDesc'),thumb=val('eThumbUrl');
+  const title=val('eTitle'),priceEn=parseInt(val('ePriceEn'),10),priceTe=parseInt(val('ePriceTe'),10),desc=val('eDesc'),thumb=val('eThumbUrl');
   if(!title){return toast('Enter a title');}
-  if(!price||price<1){return toast('Enter a valid price');}
+  if(!priceEn||priceEn<1){return toast('Enter a valid English price');}
+  if(!priceTe||priceTe<1){return toast('Enter a valid Telugu price');}
   const cards=getCards()||[];
   const id=document.getElementById('eId').value;
-  if(id){const c=cards.find(x=>x.id===id);if(c){c.title=title;c.price=price;c.desc=desc;c.thumb=thumb;}}
-  else{cards.push({id:'wc_'+Date.now(),title,price,desc,thumb,on:true});}
+  if(id){const c=cards.find(x=>x.id===id);if(c){c.title=title;c.priceEn=priceEn;c.priceTe=priceTe;delete c.price;c.desc=desc;c.thumb=thumb;}}
+  else{cards.push({id:'wc_'+Date.now(),title,priceEn,priceTe,desc,thumb,on:true});}
   if(!setCards(cards)){return;}
   resetForm();renderMgr();toast('Saved ✓ — now click Export above');
 }
@@ -572,7 +589,7 @@ function toggleCard(i){const cards=getCards()||[];if(!cards[i])return;cards[i].o
 function delCard(i){const cards=getCards()||[];if(!cards[i])return;if(!confirm('Delete "'+cards[i].title+'"?'))return;cards.splice(i,1);setCards(cards);renderMgr();toast('Deleted');}
 function exportJSON(){
   const cards=getCards()||[];
-  const data={version:1,cards:cards.map(c=>({id:c.id,title:c.title,thumb:c.thumb||'',price:Number(c.price)||0,desc:c.desc||'',on:c.on!==false}))};
+  const data={version:1,cards:cards.map(c=>({id:c.id,title:c.title,thumb:c.thumb||'',priceEn:pEn(c),priceTe:pTe(c),desc:c.desc||'',on:c.on!==false}))};
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='wedding-cards.json';document.body.appendChild(a);a.click();a.remove();
   toast('Downloaded wedding-cards.json — upload it to GitHub (commit to main)');
