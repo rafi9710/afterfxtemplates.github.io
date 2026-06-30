@@ -70,7 +70,7 @@
   /* MODAL (order details + pay) */
   .ov{position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.8);backdrop-filter:blur(6px);display:none;align-items:flex-start;justify-content:center;padding:30px 16px;overflow-y:auto;}
   .ov.on{display:flex;}
-  .modal{max-width:440px;width:100%;background:var(--bg2);border:1px solid var(--gb);border-radius:14px;overflow:hidden;margin:auto;}
+  .modal{max-width:440px;width:100%;background:var(--bg2);border:1px solid var(--gb);border-radius:14px;overflow:hidden;margin:auto;animation:pvpop .4s cubic-bezier(.34,1.56,.64,1);}
   .mh{display:flex;align-items:center;gap:13px;padding:18px 20px;border-bottom:1px solid var(--gb);}
   .mh img{width:46px;height:60px;object-fit:cover;border-radius:5px;flex:none;background:var(--bg3);}
   .mh .mt{font-family:'Cinzel',serif;font-size:16px;color:var(--tx);font-weight:700;line-height:1.2;}
@@ -152,8 +152,12 @@
   .gbox button{width:100%;margin-top:12px;background:var(--gold);color:#000;border:none;border-radius:8px;padding:12px;font-weight:700;letter-spacing:1px;cursor:pointer;font-family:'DM Sans',sans-serif;}
   .gerr{color:var(--red);font-size:12px;margin-top:10px;min-height:16px;}
   /* ===== card preview (lightbox) ===== */
-  .card .thumb{cursor:pointer;}
-  .pv-modal{position:relative;max-width:900px;width:100%;background:var(--bg2);border:1px solid var(--gb);border-radius:14px;overflow:hidden;margin:auto;}
+  .card .thumb{cursor:pointer;transition:transform .18s ease;}
+  .card .thumb:active{transform:scale(.96);}
+  .pv-modal{position:relative;max-width:900px;width:100%;background:var(--bg2);border:1px solid var(--gb);border-radius:14px;overflow:hidden;margin:auto;animation:pvpop .44s cubic-bezier(.34,1.56,.64,1);transform-origin:center center;}
+  #pvov.on{animation:pvfade .28s ease;}
+  @keyframes pvpop{0%{transform:scale(.62);opacity:0;}55%{transform:scale(1.05);opacity:1;}78%{transform:scale(.985);}100%{transform:scale(1);opacity:1;}}
+  @keyframes pvfade{from{opacity:0;}to{opacity:1;}}
   .pv-grid{display:flex;}
   .pv-imgwrap{flex:0 0 46%;background:var(--bg3);display:flex;align-items:center;justify-content:center;padding:18px;}
   .pv-imgwrap img{width:100%;height:auto;max-height:76vh;object-fit:contain;border-radius:8px;display:block;}
@@ -307,7 +311,9 @@
     </div>
     <div class="mbody">
       <div class="mnote">Fill the details below. After payment we personalize this design and email it to you — usually within a few hours.</div>
-      <div id="mSize" class="mSizeBadge" style="display:none;"></div>
+      <div class="fld" style="margin-top:2px;"><label>Card size <span style="text-transform:none;letter-spacing:0;color:var(--mt2);font-weight:400;">(pick the format you need)</span></label>
+        <div class="szrow" id="mSizes"></div>
+      </div>
       <div class="fld"><label>Name(s) for the card <span class="req">*</span></label><input id="fCouple" placeholder="e.g. Priya &amp; Arjun · Baby Aarav · Ananya's 1st Birthday"></div>
       <div class="row2">
         <div class="fld"><label>Event date <span class="req">*</span></label><input id="fDate" type="date" style="color-scheme:dark;"></div>
@@ -540,8 +546,7 @@ function renderSizeChips(containerId){
 function selectSize(k){
   selSize=k;
   renderSizeChips('pvSizes');
-  var b=document.getElementById('mSize');
-  if(b&&b.style.display!=='none'){b.textContent='Size: '+selSize;}
+  renderSizeChips('mSizes');
 }
 function openPreview(id){
   var c=PUBLISHED.find(function(x){return x.id===id;});
@@ -588,7 +593,7 @@ function openOrder(id){
   boxes.forEach(b=>{b.checked=(b.value==='English');});
   recalc();
   refImg="";const rp=document.getElementById('refPrev');if(rp){rp.classList.remove('on');}const rf=document.getElementById('fRef');if(rf){rf.value='';}
-  var sb=document.getElementById('mSize');if(sb){sb.textContent='Size: '+selSize;sb.style.display='';}
+  renderSizeChips('mSizes');
   document.getElementById('ov').classList.add('on');
   document.body.style.overflow='hidden';
 }
