@@ -49,6 +49,12 @@
   .cattab.on{background:var(--gold);border-color:var(--gold);color:#080810;}
   .vb-cat{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.72);color:var(--gold);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;padding:3px 9px;border-radius:3px;font-weight:700;backdrop-filter:blur(4px);}
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:22px;}
+  .pager{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:8px;margin:34px 0 6px;}
+  .pgbtn{min-width:40px;height:40px;padding:0 12px;border:1px solid var(--gb);background:var(--bg2);color:var(--tx);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:border-color .15s,background .15s,color .15s;}
+  .pgbtn:hover{border-color:var(--gbh);}
+  .pgbtn.on{background:var(--gold);border-color:var(--gold);color:#080810;font-weight:700;}
+  .pgbtn:disabled{opacity:.35;cursor:not-allowed;}
+  .pgbtn.arrow{font-size:17px;}
   .card{background:var(--bg2);border:1px solid var(--gb);border-radius:8px;overflow:hidden;transition:transform .25s,border-color .25s;display:flex;flex-direction:column;}
   .card:hover{transform:translateY(-4px);border-color:var(--gbh);}
   .card .thumb{position:relative;width:100%;aspect-ratio:3/4;overflow:hidden;background:var(--bg3);}
@@ -234,6 +240,7 @@
     <div class="grid" id="grid">
       <div class="empty">Loading designs…</div>
     </div>
+    <div class="pager" id="pager"></div>
   </div>
 </section>
 
@@ -492,7 +499,7 @@ function renderCatTabs(){
     return '<button class="cattab'+(curCat===ct.id?' on':'')+'" onclick="setCat(\''+ct.id+'\')">'+esc(ct.name)+(ct.id==='all'?'':' ('+n+')')+'</button>';
   }).join('');
 }
-function setCat(id){curCat=id;renderCatTabs();renderGrid();}
+function setCat(id){curCat=id;curPage=1;renderCatTabs();renderGrid();}
 function openEditor(id){
   const e=editorBy(id);if(!e)return;
   document.getElementById('edpName').textContent=e.name;
@@ -508,12 +515,24 @@ function openEditor(id){
   document.body.style.overflow='hidden';
 }
 function closeEditor(){document.getElementById('edov').classList.remove('on');document.body.style.overflow='';}
+var PER_PAGE=8;
+var curPage=1;
 function renderGrid(){
   const g=document.getElementById('grid');
   let live=PUBLISHED.filter(c=>c.on!==false);
   if(curCat!=='all')live=live.filter(c=>(c.cat||'others')===curCat);
-  if(!live.length){g.innerHTML='<div class="empty">New designs coming soon here. 💛<br>Meanwhile, browse our <a href="index.html#templates" style="color:var(--gold)">video templates</a>.</div>';return;}
-  g.innerHTML=live.map(c=>
+  const pager=document.getElementById('pager');
+  if(!live.length){
+    g.innerHTML='<div class="empty">New designs coming soon here. 💛<br>Meanwhile, browse our <a href="index.html#templates" style="color:var(--gold)">video templates</a>.</div>';
+    if(pager)pager.innerHTML='';
+    return;
+  }
+  const pages=Math.ceil(live.length/PER_PAGE);
+  if(curPage>pages)curPage=pages;
+  if(curPage<1)curPage=1;
+  const start=(curPage-1)*PER_PAGE;
+  const slice=live.slice(start,start+PER_PAGE);
+  g.innerHTML=slice.map(c=>
     '<div class="card">'+
       '<div class="thumb" onclick="openPreview(\''+c.id+'\')">'+thumbHTML(c)+'<span class="vb-cat">'+esc(catName(c.cat||'others'))+'</span></div>'+
       '<div class="body">'+
@@ -525,6 +544,29 @@ function renderGrid(){
       '</div>'+
     '</div>'
   ).join('');
+  renderPager(pages);
+}
+function pageList(pages,cur){
+  if(pages<=7){var a=[];for(var i=1;i<=pages;i++)a.push(i);return a;}
+  if(cur<=4)return [1,2,3,4,5,'…',pages];
+  if(cur>=pages-3)return [1,'…',pages-4,pages-3,pages-2,pages-1,pages];
+  return [1,'…',cur-1,cur,cur+1,'…',pages];
+}
+function renderPager(pages){
+  const p=document.getElementById('pager');if(!p)return;
+  if(pages<=1){p.innerHTML='';return;}
+  var html='<button class="pgbtn arrow" '+(curPage===1?'disabled':'')+' onclick="goPage('+(curPage-1)+')" aria-label="Previous">‹</button>';
+  pageList(pages,curPage).forEach(function(n){
+    if(n==='…'){html+='<span class="pgbtn" style="border:none;background:none;cursor:default;min-width:24px;">…</span>';}
+    else{html+='<button class="pgbtn'+(n===curPage?' on':'')+'" onclick="goPage('+n+')">'+n+'</button>';}
+  });
+  html+='<button class="pgbtn arrow" '+(curPage===pages?'disabled':'')+' onclick="goPage('+(curPage+1)+')" aria-label="Next">›</button>';
+  p.innerHTML=html;
+}
+function goPage(n){
+  curPage=n;renderGrid();
+  var s=document.getElementById('grid');
+  if(s){var y=s.getBoundingClientRect().top+window.scrollY-90;window.scrollTo({top:y,behavior:'smooth'});}
 }
 
 /* ---------- order modal ---------- */
