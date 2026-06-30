@@ -153,6 +153,8 @@
   .gerr{color:var(--red);font-size:12px;margin-top:10px;min-height:16px;}
   @media(max-width:640px){
     nav{padding:0 14px;}
+    .logo{font-size:13px;gap:6px;letter-spacing:.5px;}
+    .logo img{height:24px;}
     .nav-links{position:fixed;top:60px;left:0;right:0;flex-direction:column;align-items:stretch;gap:0;background:rgba(8,8,16,.98);border-bottom:1px solid var(--gb);padding:6px 0;display:none;}
     .nav-links.open{display:flex;}
     .nl{display:block;padding:13px 18px;border-bottom:1px solid rgba(201,168,76,.07);}
@@ -256,7 +258,7 @@
       <div class="mnote">Fill the details below. After payment we personalize this design and email it to you — usually within a few hours.</div>
       <div class="fld"><label>Name(s) for the card <span class="req">*</span></label><input id="fCouple" placeholder="e.g. Priya &amp; Arjun · Baby Aarav · Ananya's 1st Birthday"></div>
       <div class="row2">
-        <div class="fld"><label>Event date <span class="req">*</span></label><input id="fDate" placeholder="e.g. 24 July 2026"></div>
+        <div class="fld"><label>Event date <span class="req">*</span></label><input id="fDate" type="date" style="color-scheme:dark;"></div>
         <div class="fld"><label>Venue</label><input id="fVenue" placeholder="e.g. The Leela Palace, Bengaluru"></div>
       </div>
       <div class="fld"><label>Language(s) needed <span class="req">*</span> <span style="text-transform:none;letter-spacing:0;color:var(--mt2);font-weight:400;">(pick one or both — price updates)</span></label>
@@ -276,7 +278,7 @@
         <div class="fld"><label>Your name <span class="req">*</span></label><input id="fName" placeholder="Your full name"></div>
         <div class="fld"><label>WhatsApp no. <span class="req">*</span></label><input id="fPhone" inputmode="tel" placeholder="+91 98765 43210"></div>
       </div>
-      <div class="fld"><label>Email (card delivered here) <span class="req">*</span></label><input id="fEmail" inputmode="email" placeholder="you@email.com"></div>
+      <div class="fld"><label>Email (card delivered here) <span class="req">*</span></label><input id="fEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@email.com"></div>
     </div>
     <div class="mfoot">
       <button class="paybtn" id="payBtn" onclick="payNow()">Continue — Pay <span id="payAmt"></span></button>
