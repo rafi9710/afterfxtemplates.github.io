@@ -151,8 +151,39 @@
   .gbox input:focus{border-color:var(--gold);}
   .gbox button{width:100%;margin-top:12px;background:var(--gold);color:#000;border:none;border-radius:8px;padding:12px;font-weight:700;letter-spacing:1px;cursor:pointer;font-family:'DM Sans',sans-serif;}
   .gerr{color:var(--red);font-size:12px;margin-top:10px;min-height:16px;}
+  /* ===== card preview (lightbox) ===== */
+  .card .thumb{cursor:pointer;}
+  .pv-modal{position:relative;max-width:900px;width:100%;background:var(--bg2);border:1px solid var(--gb);border-radius:14px;overflow:hidden;margin:auto;}
+  .pv-grid{display:flex;}
+  .pv-imgwrap{flex:0 0 46%;background:var(--bg3);display:flex;align-items:center;justify-content:center;padding:18px;}
+  .pv-imgwrap img{width:100%;height:auto;max-height:76vh;object-fit:contain;border-radius:8px;display:block;}
+  .pv-info{flex:1;padding:26px 26px 24px;display:flex;flex-direction:column;}
+  .pv-cat{align-self:flex-start;background:var(--gold-dim);color:var(--gold);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:4px 10px;border-radius:4px;margin-bottom:13px;}
+  .pv-title{font-family:'Cinzel',serif;font-size:23px;color:var(--tx);font-weight:700;line-height:1.2;}
+  .pv-by{font-size:12px;color:var(--mt);margin-top:7px;}
+  .pv-by b{color:var(--gold);font-weight:700;}
+  .pv-desc{font-size:13px;color:var(--mt);line-height:1.6;margin:15px 0 0;}
+  .pv-szlabel{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--tx);margin:20px 0 0;}
+  .pv-szhint{font-size:11px;color:var(--mt);margin-top:3px;}
+  .szrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+  .szc{flex:1;min-width:96px;border:1px solid var(--gb);background:var(--bg3);border-radius:8px;padding:9px 8px;cursor:pointer;text-align:center;transition:border-color .15s,background .15s;}
+  .szc:hover{border-color:var(--gbh);}
+  .szc.on{border-color:var(--gold);background:var(--gold-dim);}
+  .szc .szt{font-size:12px;font-weight:700;color:var(--tx);}
+  .szc .szd{font-size:10px;color:var(--mt);margin-top:3px;line-height:1.3;}
+  .pv-price{font-family:'Cinzel',serif;color:var(--gold);font-size:21px;font-weight:700;margin:auto 0 0;padding-top:18px;}
+  .pv-price small{font-size:10px;color:var(--mt);font-weight:400;letter-spacing:1.5px;text-transform:uppercase;display:block;margin-bottom:2px;}
+  .pv-order{margin-top:13px;width:100%;background:var(--gold);color:#000;border:none;padding:13px;border-radius:8px;font-size:14px;font-weight:700;letter-spacing:.5px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s;}
+  .pv-order:hover{background:var(--gold-l);}
+  .pv-x{position:absolute;top:12px;right:14px;z-index:2;background:rgba(0,0,0,.5);border:none;color:#fff;font-size:20px;width:34px;height:34px;border-radius:50%;cursor:pointer;line-height:1;}
+  .mSizeBadge{display:inline-block;background:var(--gold-dim);color:var(--gold);font-size:11px;font-weight:700;padding:3px 10px;border-radius:5px;margin-top:8px;}
   @media(max-width:640px){
     nav{padding:0 14px;}
+    .pv-grid{flex-direction:column;}
+    .pv-imgwrap{flex:none;padding:14px;}
+    .pv-imgwrap img{max-height:48vh;}
+    .pv-info{padding:20px;}
+    .pv-title{font-size:20px;}
     .logo{font-size:13px;gap:6px;letter-spacing:.5px;}
     .logo img{height:24px;}
     .nav-links{position:fixed;top:60px;left:0;right:0;flex-direction:column;align-items:stretch;gap:0;background:rgba(8,8,16,.98);border-bottom:1px solid var(--gb);padding:6px 0;display:none;}
@@ -244,6 +275,26 @@
 </div>
 
 <!-- ORDER MODAL -->
+<div class="ov" id="pvov" onclick="if(event.target===this)closePreview()">
+  <div class="pv-modal">
+    <button class="pv-x" onclick="closePreview()" aria-label="Close">✕</button>
+    <div class="pv-grid">
+      <div class="pv-imgwrap"><img id="pvImg" alt=""></div>
+      <div class="pv-info">
+        <span class="pv-cat" id="pvCat"></span>
+        <div class="pv-title" id="pvTitle"></div>
+        <div class="pv-by" id="pvBy"></div>
+        <div class="pv-desc" id="pvDesc"></div>
+        <div class="pv-szlabel">Which size do you want?</div>
+        <div class="pv-szhint">Pick the format you need — we'll deliver your card in this size.</div>
+        <div class="szrow" id="pvSizes"></div>
+        <div class="pv-price"><small>Price</small><span id="pvPrice"></span></div>
+        <button class="pv-order" id="pvOrder">Customize &amp; Order →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="ov" id="ov" onclick="if(event.target===this)closeOrder()">
   <div class="modal">
     <div class="mh">
@@ -256,6 +307,7 @@
     </div>
     <div class="mbody">
       <div class="mnote">Fill the details below. After payment we personalize this design and email it to you — usually within a few hours.</div>
+      <div id="mSize" class="mSizeBadge" style="display:none;"></div>
       <div class="fld"><label>Name(s) for the card <span class="req">*</span></label><input id="fCouple" placeholder="e.g. Priya &amp; Arjun · Baby Aarav · Ananya's 1st Birthday"></div>
       <div class="row2">
         <div class="fld"><label>Event date <span class="req">*</span></label><input id="fDate" type="date" style="color-scheme:dark;"></div>
@@ -457,12 +509,12 @@ function renderGrid(){
   if(!live.length){g.innerHTML='<div class="empty">New designs coming soon here. 💛<br>Meanwhile, browse our <a href="index.html#templates" style="color:var(--gold)">video templates</a>.</div>';return;}
   g.innerHTML=live.map(c=>
     '<div class="card">'+
-      '<div class="thumb">'+thumbHTML(c)+'<span class="vb-cat">'+esc(catName(c.cat||'others'))+'</span></div>'+
+      '<div class="thumb" onclick="openPreview(\''+c.id+'\')">'+thumbHTML(c)+'<span class="vb-cat">'+esc(catName(c.cat||'others'))+'</span></div>'+
       '<div class="body">'+
         '<div class="ct">'+esc(c.title)+'</div>'+
         (c.desc?'<div class="cd">'+esc(c.desc)+'</div>':'<div class="cd"></div>')+
         '<div class="crow"><span class="cprice">'+cardPriceLabel(c)+'</span>'+
-        '<button class="cbuy" onclick="openOrder(\''+c.id+'\')">Customize &amp; Order →</button></div>'+
+        '<button class="cbuy" onclick="directOrder(\''+c.id+'\')">Customize &amp; Order →</button></div>'+
         (c.editor&&editorName(c.editor)?'<button class="byline" onclick="event.stopPropagation();openEditor(\''+c.editor+'\')">Designed by <b>'+esc(editorName(c.editor))+'</b></button>':'')+
       '</div>'+
     '</div>'
@@ -470,6 +522,59 @@ function renderGrid(){
 }
 
 /* ---------- order modal ---------- */
+/* ---------- card preview lightbox + size selection ---------- */
+var SIZES=[
+  {k:'Mobile Full View',d:'Tall 9:16 — best for WhatsApp & status'},
+  {k:'Half',d:'Compact half-page layout'},
+  {k:'Square',d:'1:1 — great for Instagram posts'}
+];
+var selSize='Mobile Full View';
+var pvCardId='';
+function renderSizeChips(containerId){
+  var el=document.getElementById(containerId);if(!el)return;
+  el.innerHTML=SIZES.map(function(s){
+    return '<div class="szc'+(s.k===selSize?' on':'')+'" onclick="selectSize(\''+s.k.replace(/'/g,"\\'")+'\')">'+
+      '<div class="szt">'+esc(s.k)+'</div><div class="szd">'+esc(s.d)+'</div></div>';
+  }).join('');
+}
+function selectSize(k){
+  selSize=k;
+  renderSizeChips('pvSizes');
+  var b=document.getElementById('mSize');
+  if(b&&b.style.display!=='none'){b.textContent='Size: '+selSize;}
+}
+function openPreview(id){
+  var c=PUBLISHED.find(function(x){return x.id===id;});
+  if(!c)return;
+  pvCardId=id;
+  selSize='Mobile Full View';
+  var im=document.getElementById('pvImg');
+  if(c.thumb){im.src=c.thumb;im.style.display='';}else{im.style.display='none';}
+  document.getElementById('pvCat').textContent=catName(c.cat||'others');
+  document.getElementById('pvTitle').textContent=c.title;
+  var by=document.getElementById('pvBy');
+  if(c.editor&&editorName(c.editor)){by.innerHTML='Designed by <b>'+esc(editorName(c.editor))+'</b>';by.style.display='';}
+  else{by.style.display='none';}
+  var d=document.getElementById('pvDesc');
+  if(c.desc){d.textContent=c.desc;d.style.display='';}else{d.style.display='none';}
+  document.getElementById('pvPrice').textContent=cardPriceLabel(c);
+  renderSizeChips('pvSizes');
+  document.getElementById('pvOrder').onclick=function(){orderFromPreview();};
+  document.getElementById('pvov').classList.add('on');
+  document.body.style.overflow='hidden';
+}
+function closePreview(){
+  document.getElementById('pvov').classList.remove('on');
+  if(!document.getElementById('ov').classList.contains('on'))document.body.style.overflow='';
+}
+function orderFromPreview(){
+  document.getElementById('pvov').classList.remove('on');
+  openOrder(pvCardId);
+}
+function directOrder(id){
+  selSize='Mobile Full View';
+  openOrder(id);
+}
 function openOrder(id){
   currentCard=PUBLISHED.find(c=>c.id===id);
   if(!currentCard)return;
@@ -483,6 +588,7 @@ function openOrder(id){
   boxes.forEach(b=>{b.checked=(b.value==='English');});
   recalc();
   refImg="";const rp=document.getElementById('refPrev');if(rp){rp.classList.remove('on');}const rf=document.getElementById('fRef');if(rf){rf.value='';}
+  var sb=document.getElementById('mSize');if(sb){sb.textContent='Size: '+selSize;sb.style.display='';}
   document.getElementById('ov').classList.add('on');
   document.body.style.overflow='hidden';
 }
@@ -535,7 +641,7 @@ function payNow(){
   /* packed details reach you in the order-alert email (max ~250 chars) */
   let packed=currentCard.title+' | Name: '+couple+' | Date: '+date;
   if(venue)packed+=' | Venue: '+venue;
-  packed+=' | Lang: '+langStr+' | Ph: '+phone;
+  packed+=' | Size: '+selSize+' | Lang: '+langStr+' | Ph: '+phone;
   packed=packed.slice(0,250);
 
   const btn=document.getElementById('payBtn');
@@ -553,7 +659,7 @@ function payNow(){
       key:data.key_id,order_id:data.order_id,amount:data.amount,currency:data.currency,
       name:'AfterFX Templates',description:'Wedding Card — '+oid,image:'https://afterfxtemplates.com/logo.png',
       prefill:{name:name,email:email,contact:phone},theme:{color:'#C9A84C'},
-      handler:function(r){verifyPay(r,{oid,name,email,phone,couple,date,venue,langs,notes,price,title:currentCard.title,cardId:currentCard.id,editorId:(currentCard.editor||''),editorName:editorName(currentCard.editor||''),ref:refImg});}
+      handler:function(r){verifyPay(r,{oid,name,email,phone,couple,date,venue,langs,notes,size:selSize,price,title:currentCard.title,cardId:currentCard.id,editorId:(currentCard.editor||''),editorName:editorName(currentCard.editor||''),ref:refImg});}
     };
     const rzp=new Razorpay(options);
     rzp.on('payment.failed',function(resp){toast('Payment failed: '+((resp.error&&resp.error.description)||'try again'));resetPay(price);});
@@ -581,7 +687,7 @@ function postOrderHook(o){
       order_id:o.oid,payment_id:o.paymentId||'',card_title:o.title,card_id:o.cardId||'',price:o.price,
       editor_id:o.editorId||'',editor_name:o.editorName||'',
       customer_name:o.name,email:o.email,phone:o.phone,couple:o.couple,wedding_date:o.date,venue:o.venue||'',
-      languages:(o.langs||[]).join(', '),notes:o.notes||'',
+      languages:(o.langs||[]).join(', '),notes:(o.size?('Size: '+o.size+(o.notes?(' | '+o.notes):'')):(o.notes||'')),
       reference_image:refRaw,reference_filename:refRaw?('reference-'+o.oid+'.jpg'):''
     })}).catch(function(){});
   }catch(e){}
@@ -589,7 +695,7 @@ function postOrderHook(o){
 
 function showSuccess(o){
   const lang=(o.langs||[]).join(', ');
-  const det='Hi AfterFX Templates! I just paid for an invitation card.%0A%0AOrder: '+o.oid+'%0ADesign: '+o.title+'%0AName: '+o.couple+'%0ADate: '+o.date+(o.venue?'%0AVenue: '+o.venue:'')+'%0ALanguage: '+lang+(o.notes?'%0ANotes: '+o.notes:'')+'%0A%0A(Attaching any reference images here.)';
+  const det='Hi AfterFX Templates! I just paid for an invitation card.%0A%0AOrder: '+o.oid+'%0ADesign: '+o.title+'%0AName: '+o.couple+'%0ADate: '+o.date+(o.venue?'%0AVenue: '+o.venue:'')+'%0ASize: '+(o.size||'Mobile Full View')+'%0ALanguage: '+lang+(o.notes?'%0ANotes: '+o.notes:'')+'%0A%0A(Attaching any reference images here.)';
   const wa='https://wa.me/'+WA+'?text='+det.replace(/ /g,'%20');
   const html=
   '<div id="okOv" style="position:fixed;inset:0;z-index:1300;background:rgba(0,0,0,.85);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px;">'+
