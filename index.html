@@ -150,7 +150,14 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:60px;display:flex;ali
 .pag button.on{background:var(--gold);border-color:var(--gold);color:#080810;}
 .pag button:disabled{opacity:.35;cursor:default;}
 .pag .dots{color:var(--mt);padding:0 4px;}
-.vc{background:var(--bg2);border:1px solid var(--gb);border-radius:6px;overflow:hidden;transition:all .3s;}
+.vc{background:var(--bg2);border:1px solid var(--gb);border-radius:6px;overflow:hidden;transition:all .3s;cursor:pointer;}
+.vc.selected{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),0 10px 26px rgba(201,168,76,.25);}
+.vquick{position:absolute;top:10px;right:10px;display:flex;flex-direction:column;gap:8px;opacity:0;transform:translateX(6px);transition:.2s;z-index:3;}
+.vc:hover .vquick{opacity:1;transform:translateX(0);}
+.vqbtn{width:32px;height:32px;border-radius:50%;background:rgba(8,8,16,.72);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;cursor:pointer;transition:.18s;}
+.vqbtn:hover{background:var(--gold);color:#080810;border-color:var(--gold);}
+.vqbtn.saved{background:var(--gold);color:#080810;border-color:var(--gold);}
+.vqbtn.buy{font-size:15px;}
 .vc:hover{border-color:var(--gbh);transform:translateY(-4px);box-shadow:0 14px 40px rgba(0,0,0,.5);}
 .vt{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;background:var(--bg3);}
 .vt img{width:100%;height:100%;object-fit:cover;transition:transform .4s;}
@@ -994,7 +1001,8 @@ function renderGrid(){
   el.innerHTML=visible.map(v=>{
     const inc=cart.find(c=>c.id===v.id);
     const co=v.customizeOnly;
-    return`<div class="vc">
+    const saved=wishlist.indexOf(v.id)>=0;
+    return`<div class="vc" onclick="selectCard(this)">
       <div class="vt" onclick="window.open('${v.url}','_blank')" style="cursor:pointer">
         <img src="${v.thumb}" alt="${v.title}" loading="lazy" onerror="this.parentElement.style.background='var(--bg4)'">
         <div class="pb"><div class="pi">▶</div></div>
@@ -1002,6 +1010,10 @@ function renderGrid(){
         <div class="vb-or">${vOrient(v)==='v'?'\u2195 Vertical':vOrient(v)==='both'?'\u2194\u2195 Both':'\u2194 Horizontal'}</div>
         ${isNew(v)?'<div class="vb-new">★ New</div>':''}
         ${co?'<div class="vb-co">Customize Only</div>':''}
+        <div class="vquick" onclick="event.stopPropagation()">
+          <button class="vqbtn ${saved?'saved':''}" onclick="event.stopPropagation();toggleSave('${v.id}',this)" title="${saved?'Remove from wishlist':'Add to wishlist'}">${saved?'★':'☆'}</button>
+          ${co?'':`<button class="vqbtn buy" onclick="event.stopPropagation();quickBuy('${v.id}','${v.title.replace(/'/g,"\\'")}','${v.thumb}',${v.price},'${v.url}')" title="Quick buy — go to checkout">⬇</button>`}
+        </div>
       </div>
       <div class="vbody">
         <div class="vtitle">${v.title}</div>
@@ -1073,6 +1085,29 @@ function customizeWA(title,url){
   window.open(`https://wa.me/919739909710?text=${encodeURIComponent(msg)}`,'_blank');
 }
 
+var wishlist=JSON.parse(localStorage.getItem('afx_wishlist')||'[]');
+function saveWishlist(){localStorage.setItem('afx_wishlist',JSON.stringify(wishlist));}
+function toggleSave(id,btn){
+  const idx=wishlist.indexOf(id);
+  if(idx>=0){
+    wishlist.splice(idx,1);
+    if(btn){btn.classList.remove('saved');btn.textContent='☆';btn.title='Add to wishlist';}
+    showToast('Removed from wishlist');
+  }else{
+    wishlist.push(id);
+    if(btn){btn.classList.add('saved');btn.textContent='★';btn.title='Remove from wishlist';}
+    showToast('★ Saved to wishlist');
+  }
+  saveWishlist();
+}
+function quickBuy(id,title,thumb,price,url){
+  addCart(id,title,thumb,price,url);
+  openCart();
+}
+function selectCard(el){
+  document.querySelectorAll('.vc.selected').forEach(function(c){c.classList.remove('selected');});
+  el.classList.add('selected');
+}
 function addCart(id,title,thumb,price,url){
   if(cart.find(c=>c.id===id))return;
   if(cartQty()>=MAX_CART){bigOrderNotice();return;}
