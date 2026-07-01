@@ -374,6 +374,7 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
     <a class="nl" href="admin.html" title="Admin Panel" style="opacity:.4;font-size:10px;">⚙</a>
   </div>
   <div class="nav-actions">
+    <button class="cart-btn" onclick="openWishlist()">★ <span class="cart-label">Wishlist</span> <span class="cnum" id="wnum">0</span></button>
     <button class="cart-btn" onclick="openCart()">🛒 <span class="cart-label">Cart</span> <span class="cnum" id="cnum">0</span></button>
     <button class="navtoggle" id="navToggle" onclick="toggleMenu()" aria-label="Open menu">☰</button>
   </div>
@@ -640,6 +641,17 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
     </div>
     <div class="cpb" id="cpb"></div>
     <div id="cpf"></div>
+  </div>
+</div>
+
+<!-- WISHLIST OVERLAY -->
+<div class="overlay" id="wishlistOverlay" onclick="wishOvClick(event)">
+  <div class="cpanel">
+    <div class="cph">
+      <h3>★ Your Wishlist</h3>
+      <button class="cpc" onclick="closeWishlist()">✕</button>
+    </div>
+    <div class="cpb" id="wpb"></div>
   </div>
 </div>
 
@@ -1087,6 +1099,10 @@ function customizeWA(title,url){
 
 var wishlist=JSON.parse(localStorage.getItem('afx_wishlist')||'[]');
 function saveWishlist(){localStorage.setItem('afx_wishlist',JSON.stringify(wishlist));}
+function updateWishCount(){
+  const el=document.getElementById('wnum');
+  if(el)el.textContent=wishlist.length;
+}
 function toggleSave(id,btn){
   const idx=wishlist.indexOf(id);
   if(idx>=0){
@@ -1099,7 +1115,36 @@ function toggleSave(id,btn){
     showToast('★ Saved to wishlist');
   }
   saveWishlist();
+  updateWishCount();
 }
+function removeWish(id){
+  wishlist=wishlist.filter(w=>w!==id);
+  saveWishlist();updateWishCount();renderWishlist();renderGrid();
+}
+function renderWishlist(){
+  const el=document.getElementById('wpb');
+  if(!el)return;
+  if(!wishlist.length){
+    el.innerHTML=`<div style="color:var(--mt);text-align:center;padding:40px 20px;font-size:13px;">Your wishlist is empty.<br><span style="font-size:12px;">Tap ☆ on any template to save it here.</span></div>`;
+    return;
+  }
+  el.innerHTML=wishlist.map(id=>{
+    const v=videos.find(x=>String(x.id)===String(id));
+    if(!v)return'';
+    return`<div style="display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--gb);">
+      <img src="${v.thumb}" alt="${v.title}" style="width:64px;height:48px;object-fit:cover;border-radius:4px;flex:none;">
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:12.5px;color:#fff;font-weight:600;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${v.title}</div>
+        <div style="font-size:11px;color:var(--gold);margin-top:3px;">₹${v.price}</div>
+      </div>
+      <button class="badd" style="flex:none;width:auto;padding:8px 12px;" onclick="quickBuy('${v.id}','${v.title.replace(/'/g,"\\'")}','${v.thumb}',${v.price},'${v.url}');closeWishlist();">Buy</button>
+      <button class="bshare" style="flex:none;" onclick="removeWish('${v.id}')" title="Remove">✕</button>
+    </div>`;
+  }).join('');
+}
+function openWishlist(){document.getElementById('wishlistOverlay').classList.add('on');renderWishlist();}
+function closeWishlist(){document.getElementById('wishlistOverlay').classList.remove('on');}
+function wishOvClick(e){if(e.target===document.getElementById('wishlistOverlay'))closeWishlist();}
 function quickBuy(id,title,thumb,price,url){
   addCart(id,title,thumb,price,url);
   openCart();
@@ -1433,7 +1478,7 @@ function applyDeepLink(){
   setTimeout(()=>{const el=document.getElementById('templates');if(el)el.scrollIntoView({behavior:'smooth'});},300);
 }
 
-renderPricing();updateCount();
+renderPricing();updateCount();updateWishCount();
 
 (async()=>{
   videos=await fetchVideos();
