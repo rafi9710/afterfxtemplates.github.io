@@ -26,13 +26,16 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--gold:#C9A84C;--gold-l:#E8C96A;--gold-dim:rgba(201,168,76,.13);--gb:rgba(201,168,76,.22);--gbh:rgba(201,168,76,.55);--bg:#080810;--bg2:#0E0E18;--bg3:#14141F;--bg4:#1A1A28;--tx:#EDE8DF;--mt:#7A7468;--mt2:#3A3830;--green:#3DBD72;}
+:root{--gold:#C9A84C;--gold-l:#E8C96A;--gold-dim:rgba(201,168,76,.13);--gb:rgba(201,168,76,.22);--gbh:rgba(201,168,76,.55);--bg:#080810;--bg2:#0E0E18;--bg3:#14141F;--bg4:#1A1A28;--tx:#EDE8DF;--mt:#7A7468;--mt2:#3A3830;--green:#3DBD72;--navbg:rgba(8,8,16,.93);--navbg2:rgba(8,8,16,.98);}
+:root[data-theme="light"]{--gold:#B08A3E;--gold-l:#C9A24B;--gold-dim:rgba(176,138,62,.10);--gb:rgba(176,138,62,.28);--gbh:rgba(176,138,62,.6);--bg:#FAF6EC;--bg2:#FFFFFF;--bg3:#F3EDDD;--bg4:#ECE2C8;--tx:#2A2015;--mt:#8A7A5C;--mt2:#B8A97E;--navbg:rgba(255,255,255,.92);--navbg2:rgba(255,255,255,.97);}
+.theme-toggle{width:34px;height:34px;border-radius:50%;background:var(--bg3);border:1px solid var(--gb);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:15px;cursor:pointer;transition:.2s;flex:none;}
+.theme-toggle:hover{border-color:var(--gold);}
 *{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
 body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;overflow-x:hidden;cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='30' viewBox='0 0 22 30'%3E%3Cpath d='M3 2 L3 23 L8.5 18 L11.8 25.5 L15 24 L11.7 16.8 L18.5 16.5 Z' fill='white' stroke='black' stroke-width='1.6' stroke-linejoin='round'/%3E%3C/svg%3E") 3 2, auto;}
 ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:3px;}
 
 /* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:500;height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:rgba(8,8,16,.93);backdrop-filter:blur(16px);border-bottom:1px solid var(--gb);}
+nav{position:fixed;top:0;left:0;right:0;z-index:500;height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:var(--navbg);backdrop-filter:blur(16px);border-bottom:1px solid var(--gb);}
 .logo{font-family:'Cinzel',serif;font-size:17px;font-weight:700;color:var(--gold);text-decoration:none;letter-spacing:1px;display:flex;align-items:center;gap:10px;}
 .logo img{height:32px;width:auto;display:block;}
 .footer-logo{height:56px;width:auto;margin:0 auto 12px;display:block;}
@@ -318,7 +321,7 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
   .cart-btn{padding:6px 9px;font-size:11px;gap:4px;}
   .cart-label{display:none;}
   .nav-actions{gap:8px;}
-  .nav-links{position:fixed;top:60px;left:0;right:0;flex-direction:column;align-items:stretch;gap:0;background:rgba(8,8,16,.98);backdrop-filter:blur(16px);border-bottom:1px solid var(--gb);padding:6px 0;display:none;box-shadow:0 12px 24px rgba(0,0,0,.4);}
+  .nav-links{position:fixed;top:60px;left:0;right:0;flex-direction:column;align-items:stretch;gap:0;background:var(--navbg2);backdrop-filter:blur(16px);border-bottom:1px solid var(--gb);padding:6px 0;display:none;box-shadow:0 12px 24px rgba(0,0,0,.4);}
   .nav-links.open{display:flex;}
   .nl{display:block;padding:14px 20px;font-size:13px;border-bottom:1px solid rgba(201,168,76,.07);}
   .sec{padding:56px 14px;}.nr,.pw,.csec{padding:60px 14px;}
@@ -374,6 +377,7 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
     <a class="nl" href="admin.html" title="Admin Panel" style="opacity:.4;font-size:10px;">⚙</a>
   </div>
   <div class="nav-actions">
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle light/dark mode" aria-label="Toggle light or dark mode">🌙</button>
     <button class="cart-btn" onclick="openWishlist()">★ <span class="cart-label">Wishlist</span> <span class="cnum" id="wnum">0</span></button>
     <button class="cart-btn" onclick="openCart()">🛒 <span class="cart-label">Cart</span> <span class="cnum" id="cnum">0</span></button>
     <button class="navtoggle" id="navToggle" onclick="toggleMenu()" aria-label="Open menu">☰</button>
@@ -1097,6 +1101,17 @@ function customizeWA(title,url){
   window.open(`https://wa.me/919739909710?text=${encodeURIComponent(msg)}`,'_blank');
 }
 
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme',t);
+  const btn=document.getElementById('themeToggle');
+  if(btn)btn.textContent=t==='light'?'☀️':'🌙';
+  localStorage.setItem('afx_theme',t);
+}
+function toggleTheme(){
+  const cur=document.documentElement.getAttribute('data-theme')==='light'?'light':'dark';
+  applyTheme(cur==='light'?'dark':'light');
+}
+applyTheme(localStorage.getItem('afx_theme')||'dark');
 var wishlist=JSON.parse(localStorage.getItem('afx_wishlist')||'[]');
 function saveWishlist(){localStorage.setItem('afx_wishlist',JSON.stringify(wishlist));}
 function updateWishCount(){
