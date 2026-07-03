@@ -45,6 +45,17 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:60px;display:flex;ali
 .navtoggle{display:none;background:none;border:none;color:var(--gold);font-size:24px;line-height:1;cursor:pointer;padding:4px 6px;}
 .nl{color:var(--mt);font-size:12px;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;font-weight:500;transition:color .2s;}
 .nl:hover{color:var(--gold);}
+/* MORE DROPDOWN */
+.navdd{position:relative;display:flex;align-items:center;}
+.navdd-trigger{color:var(--mt);font-size:12px;letter-spacing:1.5px;text-transform:uppercase;font-weight:500;cursor:pointer;transition:color .2s;display:flex;align-items:center;gap:5px;user-select:none;background:none;border:none;font-family:'DM Sans',sans-serif;padding:0;}
+.navdd-trigger:hover,.navdd:hover .navdd-trigger,.navdd.open .navdd-trigger{color:var(--gold);}
+.navdd-caret{width:11px;height:11px;fill:currentColor;transition:transform .25s;}
+.navdd:hover .navdd-caret,.navdd.open .navdd-caret{transform:rotate(180deg);}
+.navdd-menu{position:absolute;top:calc(100% + 14px);left:50%;transform:translateX(-50%);min-width:172px;background:var(--bg2);border:1px solid var(--gb);border-radius:7px;box-shadow:0 16px 34px rgba(0,0,0,.55);padding:6px;display:none;z-index:600;}
+.navdd-menu::before{content:'';position:absolute;top:-14px;left:0;right:0;height:14px;}
+.navdd:hover .navdd-menu,.navdd.open .navdd-menu{display:block;}
+.navdd-menu .nl{display:block;padding:11px 14px;border-radius:5px;letter-spacing:1px;transition:background .18s,color .18s;}
+.navdd-menu .nl:hover{background:var(--gold-dim);color:var(--gold);}
 .cart-btn{display:flex;align-items:center;gap:8px;background:var(--gold);color:#000;border:none;padding:7px 16px;border-radius:3px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:background .2s;}
 .cart-btn:hover{background:var(--gold-l);}
 .cnum{background:#000;color:var(--gold);border-radius:50%;width:17px;height:17px;font-size:10px;display:flex;align-items:center;justify-content:center;font-weight:800;}
@@ -324,6 +335,11 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
   .nav-links{position:fixed;top:60px;left:0;right:0;flex-direction:column;align-items:stretch;gap:0;background:var(--navbg2);backdrop-filter:blur(16px);border-bottom:1px solid var(--gb);padding:6px 0;display:none;box-shadow:0 12px 24px rgba(0,0,0,.4);}
   .nav-links.open{display:flex;}
   .nl{display:block;padding:14px 20px;font-size:13px;border-bottom:1px solid rgba(201,168,76,.07);}
+  .navdd{flex-direction:column;align-items:stretch;}
+  .navdd-trigger{justify-content:space-between;padding:14px 20px;font-size:13px;border-bottom:1px solid rgba(201,168,76,.07);width:100%;}
+  .navdd-menu{position:static;transform:none;display:block;min-width:0;background:transparent;border:none;box-shadow:none;padding:0;}
+  .navdd-menu::before{display:none;}
+  .navdd-menu .nl{padding:14px 20px 14px 40px;border-radius:0;background:rgba(201,168,76,.04);}
   .sec{padding:56px 14px;}.nr,.pw,.csec{padding:60px 14px;}
   .pgrid{grid-template-columns:repeat(2,1fr);}
   .cpanel{width:100vw;}.hstats{gap:22px;}
@@ -374,6 +390,14 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
     <a class="nl" href="#benefits">Why Us</a>
     <a class="nl" href="about.html">About</a>
     <a class="nl" href="#contact">Contact</a>
+    <div class="navdd" id="moreDd">
+      <button type="button" class="navdd-trigger" onclick="toggleMore(event)">More
+        <svg class="navdd-caret" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+      </button>
+      <div class="navdd-menu">
+        <a class="nl" href="fonts.html">🔤&nbsp;&nbsp;Fonts</a>
+      </div>
+    </div>
     <a class="nl" href="admin.html" title="Admin Panel" style="opacity:.4;font-size:10px;">⚙</a>
   </div>
   <div class="nav-actions">
@@ -1247,6 +1271,14 @@ function toggleMenu(){
 }
 document.getElementById('navLinks').addEventListener('click',function(e){
   if(e.target.classList.contains('nl')) this.classList.remove('open');
+});
+function toggleMore(e){
+  e.stopPropagation();
+  document.getElementById('moreDd').classList.toggle('open');
+}
+document.addEventListener('click',function(){
+  var dd=document.getElementById('moreDd');
+  if(dd) dd.classList.remove('open');
 });
 
 function onTc(v){
