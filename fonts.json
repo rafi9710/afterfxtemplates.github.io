@@ -1,0 +1,695 @@
+{
+  "version": 1,
+  "fonts": [
+    {
+      "name": "Aaradhan",
+      "file": "fonts/telugu/AARADHAN.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Abhilash",
+      "file": "fonts/telugu/ABHILASH.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Ajantha",
+      "file": "fonts/telugu/AJANTHA_.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Akshara",
+      "file": "fonts/telugu/AKSHARA_.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Amrutha",
+      "file": "fonts/telugu/AMRUTHA_.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Anjali",
+      "file": "fonts/telugu/ANJALI__.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Anupb",
+      "file": "fonts/telugu/ANUPB___.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Anupeb",
+      "file": "fonts/telugu/ANUPEB__.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Anupm",
+      "file": "fonts/telugu/ANUPM___.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Anupt",
+      "file": "fonts/telugu/ANUPT___.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Anusha",
+      "file": "fonts/telugu/ANUSHA__.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Anuso",
+      "file": "fonts/telugu/ANUSO___.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Anust",
+      "file": "fonts/telugu/ANUST___.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Apoorva",
+      "file": "fonts/telugu/APOORVA_.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Ashwini",
+      "file": "fonts/telugu/ASHWINI_.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Avanthi",
+      "file": "fonts/telugu/AVANTHI_.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Bapubold",
+      "file": "fonts/telugu/BAPUBOLD.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Bapub",
+      "file": "fonts/telugu/BAPUB___.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Bapus",
+      "file": "fonts/telugu/BAPUS___.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Bharghav",
+      "file": "fonts/telugu/BHARGHAV.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Bhavya",
+      "file": "fonts/telugu/BHAVYA__.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Brahma",
+      "file": "fonts/telugu/BRAHMA__.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Brahs",
+      "file": "fonts/telugu/BRAHS___.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Chans",
+      "file": "fonts/telugu/CHANS___.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Charitha",
+      "file": "fonts/telugu/CHARITHA.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Deepika",
+      "file": "fonts/telugu/DEEPIKA_.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Dharani",
+      "file": "fonts/telugu/DHARANI_.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Dhurjati",
+      "file": "fonts/telugu/dhurjati.ttf",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Din 8",
+      "file": "fonts/telugu/DINEIGHT.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Din 11",
+      "file": "fonts/telugu/DINELEVE.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Din 5",
+      "file": "fonts/telugu/DINFIVE_.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Din 4",
+      "file": "fonts/telugu/DINFOUR_.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Din 9",
+      "file": "fonts/telugu/DINNINE_.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Din 1",
+      "file": "fonts/telugu/DINONE__.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Din 7",
+      "file": "fonts/telugu/DINSEVEN.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Din 6",
+      "file": "fonts/telugu/DINSIX__.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Din 10",
+      "file": "fonts/telugu/DINTEN__.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Din 13",
+      "file": "fonts/telugu/DINTHIRT.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Din 3",
+      "file": "fonts/telugu/DINTHREE.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Din 12",
+      "file": "fonts/telugu/DINTWELV.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Din 2",
+      "file": "fonts/telugu/DINTWO__.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Geetha",
+      "file": "fonts/telugu/GEETHA__.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Gidugu",
+      "file": "fonts/telugu/Gidugu.ttf",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Gowtbl",
+      "file": "fonts/telugu/GOWTBL__.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Gowtb",
+      "file": "fonts/telugu/GOWTB___.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Gowteb",
+      "file": "fonts/telugu/GOWTEB__.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Gowtm",
+      "file": "fonts/telugu/GOWTM___.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Gowtn",
+      "file": "fonts/telugu/GOWTN___.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Gowtt",
+      "file": "fonts/telugu/GOWTT___.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Gurajada",
+      "file": "fonts/telugu/Gurajada.ttf",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Harsha",
+      "file": "fonts/telugu/HARSHA__.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Hiranya",
+      "file": "fonts/telugu/HIRANYA_.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Jyothi",
+      "file": "fonts/telugu/JYOTHI__.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Kalaanja",
+      "file": "fonts/telugu/KALAANJA.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Keerf",
+      "file": "fonts/telugu/KEERF___.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Kranthi",
+      "file": "fonts/telugu/KRANTHI_.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Kusuma",
+      "file": "fonts/telugu/KUSUMA__.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Maanasa",
+      "file": "fonts/telugu/MAANASA_.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Madhubal",
+      "file": "fonts/telugu/MADHUBAL.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Mallanna",
+      "file": "fonts/telugu/mallanna.ttf",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Mandali",
+      "file": "fonts/telugu/Mandali-Regular.ttf",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Meens",
+      "file": "fonts/telugu/MEENS___.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Mohini",
+      "file": "fonts/telugu/MOHINI__.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "NATS",
+      "file": "fonts/telugu/NATS.ttf",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Natyamay",
+      "file": "fonts/telugu/NATYAMAY.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Neelima",
+      "file": "fonts/telugu/NEELIMA_.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "NTR",
+      "file": "fonts/telugu/NTR.ttf",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Padmini",
+      "file": "fonts/telugu/PADMINI_.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Pallb",
+      "file": "fonts/telugu/PALLB___.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Pallm",
+      "file": "fonts/telugu/PALLM___.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Pallt",
+      "file": "fonts/telugu/PALLT___.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Peddana",
+      "file": "fonts/telugu/Peddana-Regular.ttf",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Prabhava",
+      "file": "fonts/telugu/PRABHAVA.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Pragathi",
+      "file": "fonts/telugu/PRAGATHI.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Pragi",
+      "file": "fonts/telugu/PRAGI___.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Pragn",
+      "file": "fonts/telugu/PRAGN___.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Prags",
+      "file": "fonts/telugu/PRAGS___.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Praveena",
+      "file": "fonts/telugu/PRAVEENA.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Preethi",
+      "file": "fonts/telugu/PREETHI_.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Pridhvi",
+      "file": "fonts/telugu/PRIDHVI_.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Priyaank",
+      "file": "fonts/telugu/PRIYAANK.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Priyb",
+      "file": "fonts/telugu/PRIYB___.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Rachana",
+      "file": "fonts/telugu/RACHANA_.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Rachb",
+      "file": "fonts/telugu/RACHB___.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Ramabhadra",
+      "file": "fonts/telugu/ramabhadra.ttf",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Ramab",
+      "file": "fonts/telugu/RAMAB___.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Ramasm",
+      "file": "fonts/telugu/RAMASM__.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Ramas",
+      "file": "fonts/telugu/RAMAS___.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Ravali",
+      "file": "fonts/telugu/RAVALI__.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Reshma",
+      "file": "fonts/telugu/RESHMA__.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Rohini",
+      "file": "fonts/telugu/ROHINI__.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Saagari",
+      "file": "fonts/telugu/SAAGARI_.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Sanghavi",
+      "file": "fonts/telugu/SANGHAVI.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Sowmya",
+      "file": "fonts/telugu/SOWMYA__.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Sravya",
+      "file": "fonts/telugu/SRAVYA__.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Srujana",
+      "file": "fonts/telugu/SRUJANA_.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Subhadra",
+      "file": "fonts/telugu/SUBHADRA.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Suchithr",
+      "file": "fonts/telugu/SUCHITHR.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Sujatha",
+      "file": "fonts/telugu/SUJATHA_.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Suneetha",
+      "file": "fonts/telugu/SUNEETHA.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Supriya",
+      "file": "fonts/telugu/SUPRIYA_.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Suranna",
+      "file": "fonts/telugu/suranna.ttf",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Tejafont",
+      "file": "fonts/telugu/TEJAFONT.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Telunb",
+      "file": "fonts/telugu/TELUNB__.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Telunt",
+      "file": "fonts/telugu/TELUNT__.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Tenali Ramakrishna",
+      "file": "fonts/telugu/TenaliRamakrishna-Regular.ttf",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Thripura",
+      "file": "fonts/telugu/THRIPURA.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Timmana",
+      "file": "fonts/telugu/TimmanaRegular.ttf",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Udayam",
+      "file": "fonts/telugu/UDAYAM__.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Vaibhav",
+      "file": "fonts/telugu/VAIBHAV_.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Vasantha",
+      "file": "fonts/telugu/VASANTHA.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Vasundha",
+      "file": "fonts/telugu/VASUNDHA.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Veenaa",
+      "file": "fonts/telugu/VEENAA__.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Vikaas",
+      "file": "fonts/telugu/VIKAAS__.TTF",
+      "category": "Telugu",
+      "on": true
+    },
+    {
+      "name": "Sree Krushnadevaraya",
+      "file": "fonts/telugu/Sree Krushnadevaraya.otf",
+      "category": "Telugu",
+      "on": true
+    }
+  ]
+}
