@@ -67,15 +67,15 @@
 .wa-float{position:fixed;bottom:96px;right:26px;z-index:520;display:flex;flex-direction:column;align-items:flex-end;gap:10px;animation:waIn .5s ease;}
 .wa-float.hide{display:none;}
 @keyframes waIn{from{opacity:0;transform:translateY(20px) scale(.85);}to{opacity:1;transform:translateY(0) scale(1);}}
-.wa-btn{width:56px;height:56px;border-radius:50%;background:rgba(14,14,24,.7);backdrop-filter:blur(10px);border:1px solid var(--gb);box-shadow:0 8px 24px rgba(0,0,0,.45),0 0 0 0 rgba(201,168,76,.5);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .2s,background .2s,border-color .2s;animation:waPulse 2.6s infinite;}
-.wa-btn:hover{transform:translateY(-3px) scale(1.05);background:var(--gold);border-color:var(--gold);}
-.wa-btn svg{width:27px;height:27px;fill:var(--gold);transition:fill .2s;}
-.wa-btn:hover svg{fill:#0a0a12;}
+.wafloat-btn{width:56px;height:56px;border-radius:50%;background:rgba(14,14,24,.7);backdrop-filter:blur(10px);border:1px solid var(--gb);box-shadow:0 8px 24px rgba(0,0,0,.45),0 0 0 0 rgba(201,168,76,.5);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .2s,background .2s,border-color .2s;animation:waPulse 2.6s infinite;}
+.wafloat-btn:hover{transform:translateY(-3px) scale(1.05);background:var(--gold);border-color:var(--gold);}
+.wafloat-btn svg{width:27px;height:27px;fill:var(--gold);transition:fill .2s;}
+.wafloat-btn:hover svg{fill:#0a0a12;}
 @keyframes waPulse{0%{box-shadow:0 8px 24px rgba(0,0,0,.45),0 0 0 0 rgba(201,168,76,.5);}70%{box-shadow:0 8px 24px rgba(0,0,0,.45),0 0 0 14px rgba(201,168,76,0);}100%{box-shadow:0 8px 24px rgba(0,0,0,.45),0 0 0 0 rgba(201,168,76,0);}}
 .wa-tooltip{background:var(--bg2);border:1px solid var(--gb);color:var(--tx);padding:10px 14px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:12px;line-height:1.4;box-shadow:0 10px 28px rgba(0,0,0,.4);opacity:0;transform:translateY(6px);transition:opacity .3s,transform .3s;pointer-events:none;max-width:190px;}
 .wa-tooltip b{display:block;color:var(--gold);font-family:'Cinzel',serif;font-size:12.5px;margin-bottom:2px;font-weight:700;}
 .wa-tooltip.show{opacity:1;transform:translateY(0);}
-@media (max-width:640px){.wa-float{bottom:86px;right:16px;}.wa-btn{width:50px;height:50px;}.wa-btn svg{width:23px;height:23px;}.wa-tooltip{max-width:160px;font-size:11px;}}
+@media (max-width:640px){.wa-float{bottom:86px;right:16px;}.wafloat-btn{width:50px;height:50px;}.wafloat-btn svg{width:23px;height:23px;}.wa-tooltip{max-width:160px;font-size:11px;}}
 /* ===== LIVE PURCHASE NOTIFICATION (new) ===== */
 .pnotif{position:fixed;bottom:26px;left:26px;max-width:280px;display:flex;gap:12px;align-items:flex-start;background:rgba(14,14,24,.85);backdrop-filter:blur(10px);border:1px solid var(--gb);border-radius:12px;padding:13px 16px;box-shadow:0 14px 32px rgba(0,0,0,.5);z-index:510;opacity:0;transform:translateY(16px);transition:opacity .4s ease,transform .4s ease;pointer-events:none;}
 .pnotif.show{opacity:1;transform:translateY(0);}
@@ -761,7 +761,7 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
 <!-- FLOATING WHATSAPP SUPPORT -->
 <div id="waFloat" class="wa-float">
   <div class="wa-tooltip" id="waTooltip"></div>
-  <button class="wa-btn" onclick="waFloatClick()" aria-label="Chat on WhatsApp">
+  <button class="wafloat-btn" id="waFloatBtn" onclick="waFloatClick()" aria-label="Chat on WhatsApp">
     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
   </button>
 </div>
@@ -1941,7 +1941,7 @@ function waTooltipSet(title,sub){
 }
 function initWaFloat(){
   const tip=document.getElementById('waTooltip');
-  const btn=document.querySelector('.wa-btn');
+  const btn=document.getElementById('waFloatBtn');
   if(!tip || !btn) return;
   const clicked=parseInt(localStorage.getItem('afx_wa_clicks')||'0',10)>0;
   const initial=clicked
