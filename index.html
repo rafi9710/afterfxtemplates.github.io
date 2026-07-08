@@ -30,6 +30,62 @@
 :root[data-theme="light"]{--gold:#B08A3E;--gold-l:#C9A24B;--gold-dim:rgba(176,138,62,.10);--gb:rgba(176,138,62,.28);--gbh:rgba(176,138,62,.6);--bg:#FAF6EC;--bg2:#FFFFFF;--bg3:#F3EDDD;--bg4:#ECE2C8;--tx:#2A2015;--mt:#8A7A5C;--mt2:#B8A97E;--navbg:rgba(255,255,255,.92);--navbg2:rgba(255,255,255,.97);}
 .theme-toggle{width:34px;height:34px;border-radius:50%;background:var(--bg3);border:1px solid var(--gb);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:15px;cursor:pointer;transition:.2s;flex:none;}
 .theme-toggle:hover{border-color:var(--gold);}
+/* ===== LIVE SEARCH SUGGESTIONS (new) ===== */
+.searchsug{position:absolute;top:calc(100% + 8px);left:0;right:0;background:var(--bg2);border:1px solid var(--gb);border-radius:9px;box-shadow:0 20px 40px rgba(0,0,0,.5);z-index:850;max-height:0;opacity:0;overflow:hidden;transform:translateY(-6px);transition:max-height .22s ease,opacity .18s ease,transform .18s ease;pointer-events:none;}
+.searchsug.open{max-height:420px;opacity:1;transform:translateY(0);pointer-events:auto;overflow-y:auto;}
+.searchsug-item{display:flex;align-items:center;gap:12px;padding:9px 14px;cursor:pointer;transition:background .15s;border-bottom:1px solid var(--gb);}
+.searchsug-item:last-child{border-bottom:none;}
+.searchsug-item:hover,.searchsug-item.active{background:var(--gold-dim);}
+.searchsug-item img{width:42px;height:32px;object-fit:cover;border-radius:4px;flex:none;background:var(--bg4);}
+.ssi-txt{min-width:0;flex:1;}
+.ssi-title{font-size:13px;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ssi-title mark{background:transparent;color:var(--gold);font-weight:700;}
+.ssi-cat{font-size:10px;color:var(--mt);text-transform:uppercase;letter-spacing:.5px;margin-top:2px;}
+.searchsug-empty{padding:24px 16px;text-align:center;color:var(--mt);font-size:13px;animation:sseIn .3s ease;}
+.searchsug-empty .sse-ic{font-size:24px;margin-bottom:8px;}
+@keyframes sseIn{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}
+.searchsug-hist-head{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--mt);border-bottom:1px solid var(--gb);}
+.searchsug-clear{background:none;border:none;color:var(--gold);font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;text-transform:none;letter-spacing:0;}
+.searchsug-item.hist .ssi-histic{font-size:15px;color:var(--mt);width:42px;text-align:center;flex:none;}
+.nores-anim{animation:sseIn .35s ease;}
+@media (max-width:640px){.searchsug{max-height:340px;}.searchsug.open{max-height:340px;}}
+/* ===== LIVE PERSONALIZATION PREVIEW (new) ===== */
+@keyframes ppvIn{from{opacity:0;transform:translateY(14px) scale(.97);}to{opacity:1;transform:translateY(0) scale(1);}}
+.ppv-line{font-family:'Cinzel',serif;color:#F0DFA0;text-shadow:0 2px 10px rgba(0,0,0,.85);transition:opacity .2s;}
+.ppv-big{font-size:clamp(18px,5vw,26px);font-weight:700;letter-spacing:.5px;line-height:1.25;word-break:break-word;}
+.ppv-sub{font-size:12px;color:#E9DDBB;letter-spacing:1px;margin-top:2px;font-family:'DM Sans',sans-serif;}
+.ppv-tiny{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#D8C68C;font-family:'DM Sans',sans-serif;margin-bottom:2px;}
+.ppv-amp{font-family:'Cinzel',serif;font-size:14px;color:#D8C68C;margin:2px 0;}
+@keyframes ppvPulse{0%{opacity:.35;transform:scale(.985);}100%{opacity:1;transform:scale(1);}}
+.ppv-pulse{animation:ppvPulse .28s ease;}
+@keyframes ppvGenerate{0%{opacity:0;transform:scale(.9) translateY(6px);}60%{opacity:1;}100%{opacity:1;transform:scale(1) translateY(0);}}
+.ppv-generate{animation:ppvGenerate .45s cubic-bezier(.2,.9,.3,1.2);}
+.ppv-input{width:100%;background:var(--bg3);border:1px solid var(--gb);color:var(--tx);padding:10px 12px;border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;transition:.2s;}
+.ppv-input:focus{border-color:var(--gold);}
+@media (max-width:480px){.ppv-big{font-size:18px;}}
+/* ===== FLOATING WHATSAPP SUPPORT (new) ===== */
+.wa-float{position:fixed;bottom:96px;right:26px;z-index:520;display:flex;flex-direction:column;align-items:flex-end;gap:10px;animation:waIn .5s ease;}
+.wa-float.hide{display:none;}
+@keyframes waIn{from{opacity:0;transform:translateY(20px) scale(.85);}to{opacity:1;transform:translateY(0) scale(1);}}
+.wa-btn{width:56px;height:56px;border-radius:50%;background:rgba(14,14,24,.7);backdrop-filter:blur(10px);border:1px solid var(--gb);box-shadow:0 8px 24px rgba(0,0,0,.45),0 0 0 0 rgba(201,168,76,.5);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .2s,background .2s,border-color .2s;animation:waPulse 2.6s infinite;}
+.wa-btn:hover{transform:translateY(-3px) scale(1.05);background:var(--gold);border-color:var(--gold);}
+.wa-btn svg{width:27px;height:27px;fill:var(--gold);transition:fill .2s;}
+.wa-btn:hover svg{fill:#0a0a12;}
+@keyframes waPulse{0%{box-shadow:0 8px 24px rgba(0,0,0,.45),0 0 0 0 rgba(201,168,76,.5);}70%{box-shadow:0 8px 24px rgba(0,0,0,.45),0 0 0 14px rgba(201,168,76,0);}100%{box-shadow:0 8px 24px rgba(0,0,0,.45),0 0 0 0 rgba(201,168,76,0);}}
+.wa-tooltip{background:var(--bg2);border:1px solid var(--gb);color:var(--tx);padding:10px 14px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:12px;line-height:1.4;box-shadow:0 10px 28px rgba(0,0,0,.4);opacity:0;transform:translateY(6px);transition:opacity .3s,transform .3s;pointer-events:none;max-width:190px;}
+.wa-tooltip b{display:block;color:var(--gold);font-family:'Cinzel',serif;font-size:12.5px;margin-bottom:2px;font-weight:700;}
+.wa-tooltip.show{opacity:1;transform:translateY(0);}
+@media (max-width:640px){.wa-float{bottom:86px;right:16px;}.wa-btn{width:50px;height:50px;}.wa-btn svg{width:23px;height:23px;}.wa-tooltip{max-width:160px;font-size:11px;}}
+/* ===== LIVE PURCHASE NOTIFICATION (new) ===== */
+.pnotif{position:fixed;bottom:26px;left:26px;max-width:280px;display:flex;gap:12px;align-items:flex-start;background:rgba(14,14,24,.85);backdrop-filter:blur(10px);border:1px solid var(--gb);border-radius:12px;padding:13px 16px;box-shadow:0 14px 32px rgba(0,0,0,.5);z-index:510;opacity:0;transform:translateY(16px);transition:opacity .4s ease,transform .4s ease;pointer-events:none;}
+.pnotif.show{opacity:1;transform:translateY(0);}
+.pnotif-ic{font-size:22px;line-height:1;flex:none;margin-top:1px;}
+.pnotif-line1{font-size:13px;color:var(--tx);font-weight:700;}
+.pnotif-line1 span{color:var(--mt);font-weight:500;}
+.pnotif-line2{font-size:12.5px;color:var(--mt);margin-top:2px;}
+.pnotif-line2 b{color:var(--gold);font-weight:700;}
+.pnotif-time{font-size:10.5px;color:var(--mt2);margin-top:4px;letter-spacing:.5px;}
+@media (max-width:640px){.pnotif{left:12px;bottom:12px;max-width:230px;padding:11px 13px;}}
 *{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
 body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;overflow-x:hidden;cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='30' viewBox='0 0 22 30'%3E%3Cpath d='M3 2 L3 23 L8.5 18 L11.8 25.5 L15 24 L11.7 16.8 L18.5 16.5 Z' fill='white' stroke='black' stroke-width='1.6' stroke-linejoin='round'/%3E%3C/svg%3E") 3 2, auto;}
 ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:3px;}
@@ -183,6 +239,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:60px;display:flex;ali
 .vb-or{position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,.75);color:#fff;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;padding:3px 9px;border-radius:2px;font-weight:600;backdrop-filter:blur(4px);}
 .vb-new{position:absolute;top:8px;right:8px;background:var(--gold);color:#000;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;padding:3px 9px;border-radius:2px;font-weight:800;box-shadow:0 0 0 0 rgba(201,168,76,.6);animation:newpulse 2s infinite;}
 @keyframes newpulse{0%{box-shadow:0 0 0 0 rgba(201,168,76,.55);}70%{box-shadow:0 0 0 7px rgba(201,168,76,0);}100%{box-shadow:0 0 0 0 rgba(201,168,76,0);}}
+.vb-trend{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.75);color:var(--gold);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;padding:3px 9px;border-radius:2px;font-weight:800;backdrop-filter:blur(4px);border:1px solid var(--gb);animation:trendpulse 2s infinite;}
+@keyframes trendpulse{0%{box-shadow:0 0 0 0 rgba(201,168,76,.5);}70%{box-shadow:0 0 0 6px rgba(201,168,76,0);}100%{box-shadow:0 0 0 0 rgba(201,168,76,0);}}
 .vbody{padding:14px 16px;}
 .vtitle{font-size:13px;font-weight:600;color:var(--tx);line-height:1.4;margin-bottom:6px;}
 .vmeta{font-size:11px;color:var(--mt);display:flex;align-items:center;justify-content:space-between;}
@@ -469,6 +527,16 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
       </div>
     </div>
   </div>
+  <div id="recentSection" style="display:none;margin-bottom:34px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+      <div>
+        <div class="sl">Continue Browsing</div>
+        <div class="st" style="font-size:20px;">Recently Viewed</div>
+      </div>
+      <button onclick="clearRecentlyViewed()" style="background:none;border:1px solid var(--gb);color:var(--mt);font-size:11px;letter-spacing:1px;text-transform:uppercase;padding:7px 14px;border-radius:3px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.2s;" onmouseover="this.style.color='var(--gold)';this.style.borderColor='var(--gold)'" onmouseout="this.style.color='var(--mt)';this.style.borderColor='var(--gb)'">Clear</button>
+    </div>
+    <div class="vgrid" id="rvgrid"></div>
+  </div>
   <div class="megasearch">
     <div class="sortdd catdd" id="catdd">
       <button class="ms-catbtn" id="catbtn" onclick="toggleCat(event)"><span class="ms-catpre">Category:</span> <b id="catlabel">All Templates</b><svg class="sortcaret" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg></button>
@@ -479,6 +547,7 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
       <svg class="si" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/></svg>
       <input type="text" id="searchbox" class="ms-searchbox" placeholder="Search templates… e.g. wedding, barasala" oninput="onSearch(this.value)" autocomplete="off">
       <button class="searchclear" id="searchclear" onclick="clearSearch()" aria-label="Clear search">&times;</button>
+      <div class="searchsug" id="searchsug"></div>
     </div>
   </div>
   <div class="tabs" id="orienttabs"></div>
@@ -689,6 +758,22 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
   <div class="ctx">Added to cart!<small id="ctName"></small></div>
   <button class="ctv" onclick="openCart()">🛒 View Cart</button>
 </div>
+<!-- FLOATING WHATSAPP SUPPORT -->
+<div id="waFloat" class="wa-float">
+  <div class="wa-tooltip" id="waTooltip"></div>
+  <button class="wa-btn" onclick="waFloatClick()" aria-label="Chat on WhatsApp">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+  </button>
+</div>
+<!-- LIVE PURCHASE NOTIFICATION -->
+<div id="purchaseNotif" class="pnotif">
+  <div class="pnotif-ic">🛒</div>
+  <div>
+    <div class="pnotif-line1"><b id="pnName"></b> <span id="pnCity"></span></div>
+    <div class="pnotif-line2">purchased <b id="pnTemplate"></b></div>
+    <div class="pnotif-time" id="pnTime"></div>
+  </div>
+</div>
 <button class="scrollfab" id="scrollfab" onclick="scrollFab()" title="Scroll" aria-label="Scroll up or down">↓</button>
 
 <script>
@@ -795,6 +880,26 @@ const PRICING = [
 ];
 
 let videos=[], filter='all', orient='all', search='', cart=JSON.parse(localStorage.getItem('afx_c')||'[]'), tcAccepted=false;
+/* ===== NEW: recently viewed + search suggestions/history state ===== */
+let recentlyViewed=JSON.parse(localStorage.getItem('afx_recent')||'[]');
+let searchHistory=JSON.parse(localStorage.getItem('afx_search_history')||'[]');
+let sugIndex=-1, sugList=[];
+/* ===== TRENDING badge state — auto, based on stored views/clicks (new) ===== */
+let viewCounts=JSON.parse(localStorage.getItem('afx_views')||'{}');
+let TRENDING_IDS=new Set();
+function bumpViews(id){
+  id=String(id);
+  viewCounts[id]=(viewCounts[id]||0)+1;
+  localStorage.setItem('afx_views', JSON.stringify(viewCounts));
+  computeTrending();
+}
+function computeTrending(){
+  const entries=Object.keys(viewCounts).map(function(id){ return [id, viewCounts[id]]; });
+  entries.sort(function(a,b){ return b[1]-a[1]; });
+  TRENDING_IDS=new Set(entries.slice(0,10).map(function(e){ return e[0]; }));
+}
+function isTrending(v){ return TRENDING_IDS.has(String(v.id)); }
+computeTrending(); // populate from any existing stored view history before first render
 
 function detectCat(t){
   const tl=t.toLowerCase();
@@ -951,6 +1056,7 @@ function setFilter(f){
   search='';
   const sb=document.getElementById('searchbox'); if(sb) sb.value='';
   const sc=document.getElementById('searchclear'); if(sc) sc.style.display='none';
+  closeSuggestions();
   renderTabs(); renderGrid(); syncURL();
 }
 
@@ -958,6 +1064,7 @@ function onSearch(val){
   search=val; curPage=1;
   document.getElementById('searchclear').style.display = val ? 'block' : 'none';
   renderTabs(); renderGrid();
+  updateSuggestions(val);
 }
 
 function clearSearch(){
@@ -966,6 +1073,127 @@ function clearSearch(){
   document.getElementById('searchclear').style.display='none';
   curPage=1;
   renderTabs(); renderGrid();
+  closeSuggestions();
+}
+
+/* ===== Live search suggestions + search history (new) ===== */
+function escapeHTML(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function highlightMatch(text,q){
+  if(!q) return escapeHTML(text);
+  const idx=text.toLowerCase().indexOf(q.toLowerCase());
+  if(idx<0) return escapeHTML(text);
+  return escapeHTML(text.slice(0,idx))+'<mark>'+escapeHTML(text.slice(idx,idx+q.length))+'</mark>'+escapeHTML(text.slice(idx+q.length));
+}
+let sugTimer=null;
+function updateSuggestions(val){
+  clearTimeout(sugTimer);
+  sugTimer=setTimeout(function(){ _updateSuggestions(val); }, 80); // debounced for perf with hundreds of templates
+}
+function _updateSuggestions(val){
+  const box=document.getElementById('searchsug');
+  if(!box) return;
+  const q=val.trim().toLowerCase();
+  sugIndex=-1;
+  if(!q){ renderHistoryPanel(); return; }
+  const starts=[], contains=[];
+  for(let i=0;i<videos.length;i++){
+    const v=videos[i], t=v.title.toLowerCase();
+    if(t.startsWith(q)) starts.push(v);
+    else if(t.includes(q)) contains.push(v);
+    if(starts.length+contains.length>=40) break; // cap scan for perf
+  }
+  sugList=starts.concat(contains).slice(0,8);
+  if(!sugList.length){
+    box.innerHTML='<div class="searchsug-empty nores-anim"><div class="sse-ic">🔍</div>No matches for "'+escapeHTML(val)+'"</div>';
+    box.classList.add('open');
+    return;
+  }
+  box.innerHTML=sugList.map(function(v,i){
+    return '<div class="searchsug-item" data-i="'+i+'" onmousedown="chooseSuggestion('+i+')">'
+      +'<img src="'+v.thumb+'" alt="" loading="lazy">'
+      +'<div class="ssi-txt"><div class="ssi-title">'+highlightMatch(v.title,val.trim())+'</div>'
+      +'<div class="ssi-cat">'+v.cat.charAt(0).toUpperCase()+v.cat.slice(1)+'</div></div></div>';
+  }).join('');
+  box.classList.add('open');
+}
+function chooseSuggestion(i){
+  const v=sugList[i];
+  if(!v) return;
+  const sb=document.getElementById('searchbox');
+  addSearchHistory(sb?sb.value.trim():'');
+  closeSuggestions();
+  if(sb) sb.value='';
+  search=''; const sc=document.getElementById('searchclear'); if(sc) sc.style.display='none';
+  curPage=1; renderTabs();
+  enterFocus(v.id);
+  const el=document.getElementById('templates'); if(el) el.scrollIntoView({behavior:'smooth'});
+}
+function highlightActive(items){
+  items.forEach(function(it,i){ it.classList.toggle('active', i===sugIndex); });
+  if(sugIndex>=0 && items[sugIndex]) items[sugIndex].scrollIntoView({block:'nearest'});
+}
+function closeSuggestions(){
+  const box=document.getElementById('searchsug');
+  if(box){ box.classList.remove('open'); box.innerHTML=''; }
+  sugIndex=-1; sugList=[];
+}
+function sugKeydown(e){
+  const box=document.getElementById('searchsug');
+  const items=box?box.querySelectorAll('.searchsug-item'):[];
+  if(e.key==='ArrowDown'){
+    if(!items.length) return;
+    e.preventDefault();
+    sugIndex=(sugIndex+1)%items.length;
+    highlightActive(items);
+  }else if(e.key==='ArrowUp'){
+    if(!items.length) return;
+    e.preventDefault();
+    sugIndex=(sugIndex-1+items.length)%items.length;
+    highlightActive(items);
+  }else if(e.key==='Enter'){
+    if(sugIndex>=0 && sugList[sugIndex]){
+      e.preventDefault();
+      chooseSuggestion(sugIndex);
+    }else{
+      const val=e.target.value.trim();
+      if(val) addSearchHistory(val);
+      closeSuggestions();
+    }
+  }else if(e.key==='Escape'){
+    closeSuggestions();
+    e.target.blur();
+  }
+}
+function addSearchHistory(q){
+  q=(q||'').trim();
+  if(!q) return;
+  searchHistory=searchHistory.filter(function(s){ return s.toLowerCase()!==q.toLowerCase(); });
+  searchHistory.unshift(q);
+  searchHistory=searchHistory.slice(0,5);
+  localStorage.setItem('afx_search_history', JSON.stringify(searchHistory));
+}
+function clearSearchHistory(){
+  searchHistory=[];
+  localStorage.removeItem('afx_search_history');
+  renderHistoryPanel();
+}
+function applyHistory(i){
+  const h=searchHistory[i];
+  if(!h) return;
+  const sb=document.getElementById('searchbox');
+  if(sb) sb.value=h;
+  onSearch(h);
+}
+function renderHistoryPanel(){
+  const box=document.getElementById('searchsug');
+  if(!box) return;
+  if(!searchHistory.length){ closeSuggestions(); return; }
+  box.innerHTML='<div class="searchsug-hist-head">Recent Searches<button onclick="clearSearchHistory()" class="searchsug-clear">Clear</button></div>'
+    +searchHistory.map(function(h,i){
+      return '<div class="searchsug-item hist" onmousedown="applyHistory('+i+')"><span class="ssi-histic">🕑</span><div class="ssi-txt"><div class="ssi-title">'+escapeHTML(h)+'</div></div></div>';
+    }).join('');
+  box.classList.add('open');
+  sugList=[]; sugIndex=-1;
 }
 
 const PAGE_SIZE=12;
@@ -998,6 +1226,193 @@ function isNew(v){
   const t=Date.parse(v.addedAt);
   if(isNaN(t)) return false;
   return (Date.now()-t) <= NEW_DAYS*86400000;
+}
+
+/* ===== Reusable card markup (identical design) — used by main grid + Recently Viewed ===== */
+function buildCardHTML(v, idPrefix){
+  idPrefix = idPrefix || '';
+  const inc=cart.find(c=>c.id===v.id);
+  const co=v.customizeOnly;
+  const saved=wishlist.indexOf(v.id)>=0;
+  return`<div class="vc" onclick="selectCard(this)">
+      <div class="vt" onclick="openTemplate('${v.id}')" style="cursor:pointer">
+        <img src="${v.thumb}" alt="${v.title}" loading="lazy" onerror="this.parentElement.style.background='var(--bg4)'">
+        <div class="pb"><div class="pi">▶</div></div>
+        <div class="vb2">${v.cat.charAt(0).toUpperCase()+v.cat.slice(1)}</div>
+        <div class="vb-or">${vOrient(v)==='v'?'\u2195 Vertical':vOrient(v)==='both'?'\u2194\u2195 Both':'\u2194 Horizontal'}</div>
+        ${isNew(v)?'<div class="vb-new">★ New</div>':''}
+        ${isTrending(v)?'<div class="vb-trend">🔥 Trending</div>':''}
+        ${co?'<div class="vb-co">Customize Only</div>':''}
+        <div class="vquick" onclick="event.stopPropagation()">
+          <button class="vqbtn ${saved?'saved':''}" onclick="event.stopPropagation();toggleSave('${v.id}',this)" title="${saved?'Remove from wishlist':'Add to wishlist'}">${saved?'★':'☆'}</button>
+          <button class="vqbtn preview" onclick="event.stopPropagation();openPersonalize('${v.id}')" title="Preview with your details">✨</button>
+          ${co?'':`<button class="vqbtn buy" onclick="event.stopPropagation();quickBuy('${v.id}','${v.title.replace(/'/g,"\\'")}','${v.thumb}',${v.price},'${v.url}')" title="Quick buy — go to checkout">⬇</button>`}
+        </div>
+      </div>
+      <div class="vbody">
+        <div class="vtitle">${v.title}</div>
+        <div class="vmeta">${co
+          ? `<span class="vprice" style="font-size:13px;">Customize Only</span><span style="font-size:10px;color:var(--mt)">Personalized Service</span>`
+          : `<span class="vprice">₹${v.price}</span><span style="font-size:10px;color:var(--mt)">Editable project file</span>`}</div>
+        ${co?'':`<button class="customlink" onclick="customizeWA('${v.title.replace(/'/g,"\\'")}','${v.url}')">🎬 Don't have After Effects? Get a ready-made video →</button>`}
+        <div class="vacts">
+          ${co
+            ? `<button class="badd" onclick="customizeWA('${v.title.replace(/'/g,"\\'")}','${v.url}')">✦ Customize</button>`
+            : `<button class="badd ${inc?'done':''}" onclick="addCart('${v.id}','${v.title.replace(/'/g,"\\'")}','${v.thumb}',${v.price},'${v.url}')" id="ab${idPrefix}${v.id}">${inc?'✓ Added':'+ Buy Project File'}</button>`}
+          <button class="bwatch" onclick="openTemplate('${v.id}')">▶ Watch</button>
+          <button class="bshare" onclick="shareTemplate('${v.id}','${v.title.replace(/'/g,"\\'")}')" title="Share this template">↗</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ===== Recently Viewed tracking ===== */
+function openTemplate(id){
+  const v=videos.find(x=>String(x.id)===String(id));
+  trackRecentView(id);
+  if(v) window.open(v.url,'_blank');
+}
+function trackRecentView(id){
+  id=String(id);
+  bumpViews(id);
+  recentlyViewed=recentlyViewed.filter(x=>x!==id);
+  recentlyViewed.unshift(id);
+  recentlyViewed=recentlyViewed.slice(0,8);
+  localStorage.setItem('afx_recent', JSON.stringify(recentlyViewed));
+  renderRecentlyViewed();
+}
+function clearRecentlyViewed(){
+  recentlyViewed=[];
+  localStorage.removeItem('afx_recent');
+  renderRecentlyViewed();
+}
+function renderRecentlyViewed(){
+  const sec=document.getElementById('recentSection');
+  const grid=document.getElementById('rvgrid');
+  if(!sec||!grid) return;
+  const items=recentlyViewed.map(id=>videos.find(v=>String(v.id)===id)).filter(Boolean);
+  if(!items.length){ sec.style.display='none'; grid.innerHTML=''; return; }
+  sec.style.display='';
+  grid.innerHTML=items.map(v=>buildCardHTML(v,'rv-')).join('');
+}
+
+/* ===== LIVE PERSONALIZATION PREVIEW (new) — offline, pure JS, no backend ===== */
+const PPV_FIELDS = {
+  wedding:    {fields:[{key:'bride',label:'Bride Name',sample:'Ananya'},{key:'groom',label:'Groom Name',sample:'Rahul'},{key:'date',label:'Wedding Date',sample:'15th Dec 2026'}], layout:'couple'},
+  christian:  {fields:[{key:'bride',label:'Bride Name',sample:'Ananya'},{key:'groom',label:'Groom Name',sample:'Rahul'},{key:'date',label:'Wedding Date',sample:'15th Dec 2026'}], layout:'couple'},
+  engagement: {fields:[{key:'bride',label:'Bride',sample:'Ananya'},{key:'groom',label:'Groom',sample:'Rahul'},{key:'date',label:'Engagement Date',sample:'15th Dec 2026'}], layout:'couple'},
+  birthday:   {fields:[{key:'name',label:'Child Name',sample:'Aarav'},{key:'age',label:'Age',sample:'5'},{key:'date',label:'Date',sample:'20th Aug 2026'}], layout:'birthday'},
+  namereveal: {fields:[{key:'name',label:'Baby Name',sample:'Aisha'}], layout:'single'},
+  cradle:     {fields:[{key:'name',label:'Baby Name',sample:'Aisha'},{key:'date',label:'Date',sample:'20th Aug 2026'}], layout:'naming'},
+  babyshower: {fields:[{key:'name',label:'Baby / Mom Name',sample:'Aisha'},{key:'date',label:'Date',sample:'20th Aug 2026'}], layout:'naming'},
+};
+const PPV_DEFAULT = {fields:[{key:'name',label:'Your Name',sample:'Priya'},{key:'date',label:'Event Date',sample:'20th Aug 2026'}], layout:'naming'};
+function ppvConfig(cat){ return PPV_FIELDS[cat] || PPV_DEFAULT; }
+
+function ppvRenderHTML(cat, cfg, vals){
+  const g=function(k){
+    const f=cfg.fields.find(function(x){return x.key===k;});
+    const v=vals[k];
+    return (v!==undefined && v!=='') ? v : (f?f.sample:'');
+  };
+  if(cfg.layout==='couple'){
+    return '<div class="ppv-line ppv-big" data-k="bride">'+escapeHTML(g('bride'))+'</div>'
+      +'<div class="ppv-amp">&amp;</div>'
+      +'<div class="ppv-line ppv-big" data-k="groom">'+escapeHTML(g('groom'))+'</div>'
+      +'<div class="ppv-line ppv-sub" data-k="date">'+escapeHTML(g('date'))+'</div>';
+  }
+  if(cfg.layout==='birthday'){
+    return '<div class="ppv-line ppv-tiny">Happy Birthday</div>'
+      +'<div class="ppv-line ppv-big" data-k="name">'+escapeHTML(g('name'))+'</div>'
+      +'<div class="ppv-line ppv-sub">Turning '+escapeHTML(g('age'))+' &nbsp;•&nbsp; '+escapeHTML(g('date'))+'</div>';
+  }
+  if(cfg.layout==='single'){
+    return '<div class="ppv-line ppv-tiny">Introducing</div>'
+      +'<div class="ppv-line ppv-big" data-k="name">'+escapeHTML(g('name'))+'</div>';
+  }
+  const lead=(cat==='cradle'||cat==='babyshower')?'Naming Ceremony of':'Celebrating';
+  return '<div class="ppv-line ppv-tiny">'+lead+'</div>'
+    +'<div class="ppv-line ppv-big" data-k="name">'+escapeHTML(g('name'))+'</div>'
+    +'<div class="ppv-line ppv-sub" data-k="date">'+escapeHTML(g('date'))+'</div>';
+}
+
+let ppvCurrent=null;
+function openPersonalize(id){
+  closePersonalize();
+  const v=videos.find(function(x){return String(x.id)===String(id);});
+  if(!v) return;
+  const cfg=ppvConfig(v.cat);
+  ppvCurrent={id:v.id, cat:v.cat, cfg:cfg, values:{}};
+  const formHTML=cfg.fields.map(function(f){
+    return '<div style="margin-bottom:12px;">'
+      +'<label style="display:block;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--mt);margin-bottom:6px;">'+escapeHTML(f.label)+'</label>'
+      +'<input type="text" class="ppv-input" data-k="'+f.key+'" placeholder="'+escapeHTML(f.sample)+'" oninput="ppvUpdate(this)">'
+      +'</div>';
+  }).join('');
+  const buyLabel=v.customizeOnly?'✦ Love it? Get a Custom Quote':('Love it? Buy This Template — ₹'+v.price);
+  const buyAction=v.customizeOnly
+    ? "customizeWA('"+v.title.replace(/'/g,"\\'")+"','"+v.url+"');closePersonalize();"
+    : "quickBuy('"+v.id+"','"+v.title.replace(/'/g,"\\'")+"','"+v.thumb+"',"+v.price+",'"+v.url+"');closePersonalize();";
+  const html='<div id="ppvOv" style="position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.82);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:16px;" onclick="if(event.target.id===\'ppvOv\')closePersonalize()">'
+    +'<div style="max-width:440px;width:100%;max-height:92vh;overflow-y:auto;background:var(--bg2);border:1px solid var(--gb);border-radius:14px;padding:26px 24px;font-family:\'DM Sans\',sans-serif;animation:ppvIn .25s ease;">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">'
+        +'<div><div style="font-size:10px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin-bottom:3px;">✨ Live Preview</div>'
+        +'<h3 style="font-family:\'Cinzel\',serif;color:var(--tx);font-size:17px;margin:0;">Preview With Your Details</h3></div>'
+        +'<button onclick="closePersonalize()" style="background:none;border:none;color:var(--mt);font-size:22px;cursor:pointer;line-height:1;padding:2px 6px;">&times;</button>'
+      +'</div>'
+      +'<div style="position:relative;width:100%;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:var(--bg3);margin-bottom:18px;border:1px solid var(--gb);">'
+        +'<img src="'+v.thumb+'" alt="" style="width:100%;height:100%;object-fit:cover;">'
+        +'<div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.1) 0%,rgba(0,0,0,.72) 100%);"></div>'
+        +'<div id="ppvText" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:16px;text-align:center;">'
+          +ppvRenderHTML(v.cat, cfg, {})
+        +'</div>'
+      +'</div>'
+      +'<div id="ppvForm">'+formHTML+'</div>'
+      +'<div style="display:flex;gap:10px;margin-top:6px;">'
+        +'<button onclick="ppvReset()" style="flex:1;background:transparent;border:1px solid var(--gb);color:var(--mt);padding:12px;border-radius:8px;font-weight:600;font-size:12px;letter-spacing:.5px;cursor:pointer;font-family:\'DM Sans\',sans-serif;text-transform:uppercase;">↺ Reset</button>'
+        +'<button onclick="ppvGenerate()" style="flex:2;background:linear-gradient(135deg,#C9A84C,#a6852f);color:#0a0a12;border:none;padding:12px;border-radius:8px;font-weight:700;font-size:13px;letter-spacing:.5px;cursor:pointer;font-family:\'DM Sans\',sans-serif;text-transform:uppercase;">✨ Generate Preview</button>'
+      +'</div>'
+      +'<p style="color:var(--mt);font-size:10.5px;line-height:1.5;margin:14px 0 12px;text-align:center;">This is a live text preview on the template thumbnail. Your finished video will have this personalization professionally animated by us.</p>'
+      +'<button onclick="'+buyAction+'" style="width:100%;background:var(--bg3);border:1px solid var(--gb);color:var(--gold);padding:11px;border-radius:8px;font-weight:700;font-size:12.5px;cursor:pointer;font-family:\'DM Sans\',sans-serif;">'+buyLabel+'</button>'
+    +'</div>'
+  +'</div>';
+  const d=document.createElement('div');
+  d.innerHTML=html;
+  document.body.appendChild(d.firstElementChild);
+  syncFloatUI();
+}
+function closePersonalize(){
+  const el=document.getElementById('ppvOv');
+  if(el) el.remove();
+  ppvCurrent=null;
+  syncFloatUI();
+}
+function ppvRerender(){
+  if(!ppvCurrent) return;
+  const box=document.getElementById('ppvText');
+  if(!box) return;
+  box.innerHTML=ppvRenderHTML(ppvCurrent.cat, ppvCurrent.cfg, ppvCurrent.values);
+  box.classList.remove('ppv-pulse'); void box.offsetWidth; box.classList.add('ppv-pulse');
+}
+function ppvUpdate(input){
+  if(!ppvCurrent) return;
+  const k=input.getAttribute('data-k');
+  ppvCurrent.values[k]=input.value;
+  ppvRerender();
+}
+function ppvReset(){
+  if(!ppvCurrent) return;
+  ppvCurrent.values={};
+  const form=document.getElementById('ppvForm');
+  if(form) form.querySelectorAll('input').forEach(function(i){ i.value=''; });
+  ppvRerender();
+}
+function ppvGenerate(){
+  if(!ppvCurrent) return;
+  ppvRerender();
+  const box=document.getElementById('ppvText');
+  if(box){ box.classList.remove('ppv-generate'); void box.offsetWidth; box.classList.add('ppv-generate'); }
+  showToast('✨ Preview updated with your details!');
 }
 
 function renderGrid(){
@@ -1038,39 +1453,7 @@ function renderGrid(){
   if(curPage<1) curPage=1;
   const start=(curPage-1)*PAGE_SIZE;
   const visible=list.slice(start,start+PAGE_SIZE);
-  el.innerHTML=visible.map(v=>{
-    const inc=cart.find(c=>c.id===v.id);
-    const co=v.customizeOnly;
-    const saved=wishlist.indexOf(v.id)>=0;
-    return`<div class="vc" onclick="selectCard(this)">
-      <div class="vt" onclick="window.open('${v.url}','_blank')" style="cursor:pointer">
-        <img src="${v.thumb}" alt="${v.title}" loading="lazy" onerror="this.parentElement.style.background='var(--bg4)'">
-        <div class="pb"><div class="pi">▶</div></div>
-        <div class="vb2">${v.cat.charAt(0).toUpperCase()+v.cat.slice(1)}</div>
-        <div class="vb-or">${vOrient(v)==='v'?'\u2195 Vertical':vOrient(v)==='both'?'\u2194\u2195 Both':'\u2194 Horizontal'}</div>
-        ${isNew(v)?'<div class="vb-new">★ New</div>':''}
-        ${co?'<div class="vb-co">Customize Only</div>':''}
-        <div class="vquick" onclick="event.stopPropagation()">
-          <button class="vqbtn ${saved?'saved':''}" onclick="event.stopPropagation();toggleSave('${v.id}',this)" title="${saved?'Remove from wishlist':'Add to wishlist'}">${saved?'★':'☆'}</button>
-          ${co?'':`<button class="vqbtn buy" onclick="event.stopPropagation();quickBuy('${v.id}','${v.title.replace(/'/g,"\\'")}','${v.thumb}',${v.price},'${v.url}')" title="Quick buy — go to checkout">⬇</button>`}
-        </div>
-      </div>
-      <div class="vbody">
-        <div class="vtitle">${v.title}</div>
-        <div class="vmeta">${co
-          ? `<span class="vprice" style="font-size:13px;">Customize Only</span><span style="font-size:10px;color:var(--mt)">Personalized Service</span>`
-          : `<span class="vprice">₹${v.price}</span><span style="font-size:10px;color:var(--mt)">Editable project file</span>`}</div>
-        ${co?'':`<button class="customlink" onclick="customizeWA('${v.title.replace(/'/g,"\\'")}','${v.url}')">🎬 Don't have After Effects? Get a ready-made video →</button>`}
-        <div class="vacts">
-          ${co
-            ? `<button class="badd" onclick="customizeWA('${v.title.replace(/'/g,"\\'")}','${v.url}')">✦ Customize</button>`
-            : `<button class="badd ${inc?'done':''}" onclick="addCart('${v.id}','${v.title.replace(/'/g,"\\'")}','${v.thumb}',${v.price},'${v.url}')" id="ab${v.id}">${inc?'✓ Added':'+ Buy Project File'}</button>`}
-          <button class="bwatch" onclick="window.open('${v.url}','_blank')">▶ Watch</button>
-          <button class="bshare" onclick="shareTemplate('${v.id}','${v.title.replace(/'/g,"\\'")}')" title="Share this template">↗</button>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
+  el.innerHTML=visible.map(v=>buildCardHTML(v)).join('');
   renderPagination(totalPages);
   if(pcEl){
     pcEl.style.display='block';
@@ -1155,6 +1538,7 @@ function toggleSave(id,btn){
   }
   saveWishlist();
   updateWishCount();
+  renderRecentlyViewed();
 }
 function removeWish(id){
   wishlist=wishlist.filter(w=>w!==id);
@@ -1181,8 +1565,8 @@ function renderWishlist(){
     </div>`;
   }).join('');
 }
-function openWishlist(){document.getElementById('wishlistOverlay').classList.add('on');renderWishlist();}
-function closeWishlist(){document.getElementById('wishlistOverlay').classList.remove('on');}
+function openWishlist(){document.getElementById('wishlistOverlay').classList.add('on');renderWishlist();syncFloatUI();}
+function closeWishlist(){document.getElementById('wishlistOverlay').classList.remove('on');syncFloatUI();}
 function wishOvClick(e){if(e.target===document.getElementById('wishlistOverlay'))closeWishlist();}
 function quickBuy(id,title,thumb,price,url){
   addCart(id,title,thumb,price,url);
@@ -1199,6 +1583,7 @@ function addCart(id,title,thumb,price,url){
   saveCart();updateCount();
   const btn=document.getElementById('ab'+id);
   if(btn){btn.textContent='✓ Added';btn.classList.add('done');}
+  renderRecentlyViewed();
   showCartToast(title);
 }
 
@@ -1214,16 +1599,16 @@ function changeQty(id,d){
   if(d>0 && cartQty()>=MAX_CART){bigOrderNotice();return;}
   item.qty=Math.max(0,item.qty+d);
   if(item.qty===0)cart=cart.filter(c=>c.id!==id);
-  saveCart();updateCount();renderCart();renderGrid();
+  saveCart();updateCount();renderCart();renderGrid();renderRecentlyViewed();
 }
 
 function removeItem(id){
   cart=cart.filter(c=>c.id!==id);
-  saveCart();updateCount();renderCart();renderGrid();
+  saveCart();updateCount();renderCart();renderGrid();renderRecentlyViewed();
 }
 
-function openCart(){document.getElementById('overlay').classList.add('on');renderCart();}
-function closeCart(){document.getElementById('overlay').classList.remove('on');}
+function openCart(){document.getElementById('overlay').classList.add('on');renderCart();syncFloatUI();}
+function closeCart(){document.getElementById('overlay').classList.remove('on');syncFloatUI();}
 function ovClick(e){if(e.target===document.getElementById('overlay'))closeCart();}
 
 function renderCart(){
@@ -1421,12 +1806,13 @@ function showPaySuccess(o, paymentId){
           <a href="https://t.me/+egZdhZelWuRmY2U1" target="_blank" style="flex:1;text-align:center;background:var(--bg3);border:1px solid var(--gb);color:var(--tx);text-decoration:none;padding:9px 4px;border-radius:7px;font-size:11px;font-weight:600;font-family:'DM Sans',sans-serif;">Telegram</a>
         </div>
       </div>
-      <button onclick="var x=document.getElementById('okOv');if(x)x.remove();" style="width:100%;background:linear-gradient(135deg,#C9A84C,#a6852f);color:#0a0a12;border:none;padding:13px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;">Done</button>
+      <button onclick="var x=document.getElementById('okOv');if(x)x.remove();syncFloatUI();" style="width:100%;background:linear-gradient(135deg,#C9A84C,#a6852f);color:#0a0a12;border:none;padding:13px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;">Done</button>
     </div>
   </div>`;
   const d=document.createElement('div');
   d.innerHTML=html;
   document.body.appendChild(d.firstElementChild);
+  syncFloatUI();
 }
 
 function nrWA(){
@@ -1504,6 +1890,7 @@ function shareCategory(){
 
 function enterFocus(id){
   focusId=String(id);
+  trackRecentView(id);
   ['.megasearch','#orienttabs','#tabs','.sortbar','.howbar'].forEach(s=>{const e=document.querySelector(s);if(e)e.style.display='none';});
   const fb=document.getElementById('focusbar'); if(fb)fb.style.display='block';
   curPage=1; renderGrid();
@@ -1525,11 +1912,117 @@ function applyDeepLink(){
   setTimeout(()=>{const el=document.getElementById('templates');if(el)el.scrollIntoView({behavior:'smooth'});},300);
 }
 
+/* ===== FLOATING WHATSAPP SUPPORT (new) — pure JS, no backend ===== */
+const WA_MSG='Hi AfterFX Templates,\nI need help selecting the right template.';
+function anyModalOpen(){
+  const ov=document.getElementById('overlay');
+  const wv=document.getElementById('wishlistOverlay');
+  const ct=document.getElementById('cartToast');
+  if(ov && ov.classList.contains('on')) return true;
+  if(wv && wv.classList.contains('on')) return true;
+  if(ct && ct.classList.contains('on')) return true;
+  if(document.getElementById('ppvOv')) return true;
+  if(document.getElementById('okOv')) return true;
+  return false;
+}
+function syncFloatUI(){
+  const wa=document.getElementById('waFloat');
+  if(wa) wa.classList.toggle('hide', anyModalOpen());
+}
+function waFloatClick(){
+  const n=(parseInt(localStorage.getItem('afx_wa_clicks')||'0',10))+1;
+  localStorage.setItem('afx_wa_clicks', String(n));
+  window.open('https://wa.me/919739909710?text='+encodeURIComponent(WA_MSG),'_blank');
+}
+function waTooltipSet(title,sub){
+  const tip=document.getElementById('waTooltip');
+  if(!tip) return;
+  tip.innerHTML='<b>'+title+'</b><span>'+sub+'</span>';
+}
+function initWaFloat(){
+  const tip=document.getElementById('waTooltip');
+  const btn=document.querySelector('.wa-btn');
+  if(!tip || !btn) return;
+  const clicked=parseInt(localStorage.getItem('afx_wa_clicks')||'0',10)>0;
+  const initial=clicked
+    ? {t:'👋 Welcome back!', s:'Need more templates?'}
+    : {t:'Need Help?', s:'Chat on WhatsApp'};
+  waTooltipSet(initial.t, initial.s);
+  tip.classList.add('show');
+  setTimeout(function(){ tip.classList.remove('show'); }, 5000);
+  btn.addEventListener('mouseenter', function(){
+    waTooltipSet('Need help choosing', 'a template?');
+    tip.classList.add('show');
+  });
+  btn.addEventListener('mouseleave', function(){
+    tip.classList.remove('show');
+  });
+}
+
+/* ===== LIVE PURCHASE NOTIFICATION (new) — pure JS, no backend ===== */
+const PN_NAMES=['Rahul','Sai Kiran','Ramesh','Lakshmi','Sowjanya','Mahesh','Anil','Karthik','Priya','Harsha','Keerthi','Divya'];
+const PN_CITIES=['Hyderabad','Vijayawada','Vizag','Warangal','Bangalore','Chennai','Mumbai','Pune','Tirupati','Guntur','Rajahmundry'];
+const PN_TEMPLATES=['Wedding Invitation','Engagement Invitation','Half Saree','Naming Ceremony','Baby Name Reveal','Birthday Invitation','Cradle Ceremony'];
+const PN_TIMES=['Just now','2 min ago','5 min ago','9 min ago','15 min ago'];
+let pnLast=null, pnTimer=null;
+function pnRandom(){
+  let combo, tries=0;
+  do{
+    combo={
+      name:PN_NAMES[Math.floor(Math.random()*PN_NAMES.length)],
+      city:PN_CITIES[Math.floor(Math.random()*PN_CITIES.length)],
+      tmpl:PN_TEMPLATES[Math.floor(Math.random()*PN_TEMPLATES.length)],
+      time:PN_TIMES[Math.floor(Math.random()*PN_TIMES.length)]
+    };
+    tries++;
+  }while(pnLast && tries<8 && combo.name===pnLast.name && combo.city===pnLast.city && combo.tmpl===pnLast.tmpl && combo.time===pnLast.time);
+  pnLast=combo;
+  return combo;
+}
+function scheduleNextNotif(){
+  clearTimeout(pnTimer);
+  const delay=20000+Math.random()*20000; // 20–40s
+  pnTimer=setTimeout(showPurchaseNotif, delay);
+}
+function showPurchaseNotif(){
+  if(anyModalOpen()){ scheduleNextNotif(); return; } // paused — resumes automatically next tick
+  const box=document.getElementById('purchaseNotif');
+  if(!box){ scheduleNextNotif(); return; }
+  const c=pnRandom();
+  document.getElementById('pnName').textContent=c.name;
+  document.getElementById('pnCity').textContent='from '+c.city;
+  document.getElementById('pnTemplate').textContent=c.tmpl;
+  document.getElementById('pnTime').textContent=c.time;
+  box.classList.add('show');
+  setTimeout(function(){ box.classList.remove('show'); }, 4200);
+  scheduleNextNotif();
+}
+
 renderPricing();updateCount();updateWishCount();
+
+/* ===== bind live-search keyboard nav + outside-click close (new) ===== */
+(function(){
+  const sb=document.getElementById('searchbox');
+  if(sb){
+    sb.addEventListener('keydown', sugKeydown);
+    sb.addEventListener('focus', function(){
+      if(!sb.value.trim()) renderHistoryPanel(); else _updateSuggestions(sb.value);
+    });
+  }
+  document.addEventListener('click', function(e){
+    const wrap=document.querySelector('.ms-searchwrap');
+    if(wrap && !wrap.contains(e.target)) closeSuggestions();
+  });
+  document.addEventListener('keydown', function(e){
+    if(e.key==='Escape' && document.getElementById('ppvOv')) closePersonalize();
+  });
+  initWaFloat();
+  scheduleNextNotif();
+})();
 
 (async()=>{
   videos=await fetchVideos();
-  if(videos.length){readFilterParams();renderSortMenu();renderOrientTabs();renderTabs();renderGrid();applyDeepLink();}
+  if(videos.length){readFilterParams();renderSortMenu();renderOrientTabs();renderTabs();renderGrid();applyDeepLink();renderRecentlyViewed();}
   else{
     document.getElementById('vgrid').innerHTML=`<div style="color:var(--mt);text-align:center;padding:48px;grid-column:1/-1;font-size:14px;"><div style="font-size:34px;margin-bottom:12px">📦</div><div style="margin-bottom:14px">Templates coming soon!</div><a href="https://youtube.com/@afterfxtemplates" target="_blank" class="bg" style="display:inline-flex">▶ Watch on YouTube</a></div>`;
     document.getElementById('tabs').innerHTML='';
