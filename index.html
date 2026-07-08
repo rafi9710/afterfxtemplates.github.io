@@ -1865,14 +1865,29 @@ function aiCustomizeAnswer(){
 function aiRefundAnswer(){
   return {text:'Since these are instantly-delivered digital files, we don\'t offer refunds after download — but if something\'s wrong with your order, our team will sort it out on WhatsApp.', sug:['Chat on WhatsApp']};
 }
+function aiHowToOrderAnswer(){
+  return {text:'Ordering is quick 👇<br>1️⃣ Pick a template you like<br>2️⃣ Add it to cart (add more for bulk discounts)<br>3️⃣ Pay securely online<br>4️⃣ Your download link is emailed instantly<br><br>No account needed!', sug:['What\'s the price?','How do I pay?']};
+}
+function aiPaymentAnswer(){
+  return {text:'Payments are 100% secure via Razorpay — pay with UPI (GPay / PhonePe / Paytm), credit/debit card, or net banking. Your download link is emailed right after payment.', sug:['How to order?','What\'s the price?']};
+}
+function aiLanguageAnswer(){
+  return {text:'Many templates come in regional languages like Telugu, Hindi and more, and the text is editable. Tell us which language you need and our team can confirm the exact template on WhatsApp.', sug:['Do you customize?','Chat on WhatsApp']};
+}
+function aiCardsAnswer(){
+  return {text:'Yes! Along with video templates, we also design personalized <b>invitation card posters</b>. You\'ll find them on the <b>Invitation Cards</b> page in our menu — or our team can help you on WhatsApp.', sug:['Chat on WhatsApp','💍 Wedding']};
+}
 const AI_FAQ=[
-  {kw:['hi','hello','hey','namaste'], get:aiGreetAnswer},
-  {kw:['discount','bundle','save','offer','bulk'], get:aiDiscountAnswer},
-  {kw:['price','cost','₹','rate','how much','charges','pricing'], get:aiPricingAnswer},
-  {kw:['receive','download','deliver','after payment','how do i get','how will i get'], get:aiDeliveryAnswer},
-  {kw:['after effects','ae version','which version','software','compatible'], get:aiAeAnswer},
-  {kw:['customize','custom','personalize','edit for me','ready made','ready-made','project file'], get:aiCustomizeAnswer},
-  {kw:['refund','cancel','return'], get:aiRefundAnswer}
+  {kw:['discount','bundle','save','offer','bulk','combo'], get:aiDiscountAnswer},
+  {kw:['how to order','how do i order','how to buy','how do i buy','place order','ordering','purchase','how it works','how does it work'], get:aiHowToOrderAnswer},
+  {kw:['price','cost','rate','how much','charges','pricing','rupees'], get:aiPricingAnswer},
+  {kw:['payment','upi','gpay','phonepe','paytm','netbanking','razorpay','credit card','debit card','pay online','how to pay','how do i pay'], get:aiPaymentAnswer},
+  {kw:['receive','download','deliver','delivery','after payment','how do i get','how will i get'], get:aiDeliveryAnswer},
+  {kw:['after effects','ae version','which version','software','compatible','open the file'], get:aiAeAnswer},
+  {kw:['language','telugu','hindi','tamil','kannada','regional'], get:aiLanguageAnswer},
+  {kw:['customize','custom','personalize','edit for me','ready made','ready-made','project file','my details','my names'], get:aiCustomizeAnswer},
+  {kw:['invitation card','poster','printed card','card design'], get:aiCardsAnswer},
+  {kw:['refund','cancel','return','money back'], get:aiRefundAnswer}
 ];
 function aiMatchFaq(m){
   for(let i=0;i<AI_FAQ.length;i++){
@@ -1882,6 +1897,34 @@ function aiMatchFaq(m){
     }
   }
   return null;
+}
+/* whole-message greeting (so "which"/"chaturthi" never trip it) */
+function aiIsGreeting(m){
+  return /^\s*(hi+|hey+|hello+|hii+|hlo|helo|namaste|namaskaram|vanakkam|good\s+(morning|afternoon|evening|night)|start|menu|yo)\s*[!.,]*\s*$/.test(m);
+}
+function aiIsSmallTalk(m){
+  return /^\s*(thanks|thank you|thankyou|thx|ty|ok|okay|k|great|nice|good|cool|super|perfect|done|bye|goodbye|👍|🙏)\s*[!.,]*\s*$/.test(m);
+}
+/* connect to a human — the "please hold on, connecting to our team" handoff */
+function aiConnectToTeam(msg){
+  aiTypeThenSay('That\'s a great question — let me connect you with our team so you get the most accurate answer. 🙏<br>Please hold on, connecting you to our team…');
+  setTimeout(function(){
+    aiAddMsg('<a class="ai-wa-cta" href="'+AI_WA+'?text='+encodeURIComponent('Hi AfterFX Templates, I have a question: '+msg)+'" target="_blank">💬 Continue on WhatsApp</a>','bot',['What\'s the price?','See more categories']);
+  }, 1200);
+}
+/* main brain: answer ONLY what's asked; hand off when unsure (offline, no API) */
+function aiLocalRespond(msg, m){
+  if(aiIsGreeting(m)){ const g=aiGreetAnswer(); aiTypeThenSay(g.text, g.sug); return; }
+  if(aiIsSmallTalk(m)){ aiTypeThenSay('You\'re welcome! 😊 Anything else I can help you with?', ['What\'s the price?','💍 Wedding']); return; }
+  const faq=aiMatchFaq(m);
+  if(faq){ aiTypeThenSay(faq.text, faq.sug); return; }
+  const results=aiSearchTemplates(msg,4);
+  if(results.length){
+    aiTypeThenSay('Here are some templates that match your search 👇');
+    setTimeout(function(){ aiAddMsg(aiRenderResultCards(results),'bot',['What\'s the price?','Chat on WhatsApp']); }, 950);
+    return;
+  }
+  aiConnectToTeam(msg);
 }
 
 /* ---------- smart search over templates.json (live `videos` catalog) ---------- */
@@ -2104,14 +2147,17 @@ function aiHandleInput(msg){
   aiAddMsg(escapeHTML(msg),'user');
   const m=msg.toLowerCase();
   if(m==='see more categories'){ aiTypeThenSay('Here are all our categories — tap one:'); return; }
-  for(let i=0;i<AI_CATS.length;i++){
-    const c=AI_CATS[i];
-    for(let j=0;j<c.kw.length;j++){
-      if(m.indexOf(c.kw[j])>=0){ aiApplyCategory(c); return; }
+  /* category detection — skipped for plain greetings so "hi" never filters the grid */
+  if(!aiIsGreeting(m)){
+    for(let i=0;i<AI_CATS.length;i++){
+      const c=AI_CATS[i];
+      for(let j=0;j<c.kw.length;j++){
+        if(m.indexOf(c.kw[j])>=0){ aiApplyCategory(c); return; }
+      }
     }
   }
-  if(/contact|whatsapp|call\b|phone|number|talk to (someone|team)/.test(m)){ aiShowContact(); return; }
-  aiAskGemini(msg);
+  if(/contact|whatsapp|call\b|phone|number|talk to (someone|team)|talk to (a )?human|human|real person|agent/.test(m)){ aiShowContact(); return; }
+  aiLocalRespond(msg, m);
 }
 function aiInputKey(e){
   if(e.key==='Enter'){
