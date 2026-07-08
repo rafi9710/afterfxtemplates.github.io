@@ -89,6 +89,21 @@
 .ai-input:focus{border-color:var(--gold);}
 .ai-send{width:36px;height:36px;border-radius:50%;background:var(--gold);color:#0a0a12;border:none;cursor:pointer;font-size:14px;flex:none;transition:.2s;}
 .ai-send:hover{background:var(--gold-l);}
+.ai-msg-wrap{display:flex;flex-direction:column;max-width:92%;}
+.ai-msg-wrap.bot{align-self:flex-start;}
+.ai-msg-wrap.user{align-self:flex-end;align-items:flex-end;}
+.ai-time{font-size:9.5px;color:var(--mt2);margin-top:3px;padding:0 3px;}
+.ai-suggest{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px;}
+.ai-sugchip{background:var(--bg3);border:1px solid var(--gb);color:var(--gold);font-size:10.5px;padding:5px 11px;border-radius:14px;cursor:pointer;transition:.15s;font-family:'DM Sans',sans-serif;}
+.ai-sugchip:hover{background:var(--gold-dim);border-color:var(--gold);}
+.ai-results{display:flex;flex-direction:column;gap:8px;margin-top:9px;width:100%;}
+.ai-card{display:flex;gap:10px;background:var(--bg3);border:1px solid var(--gb);border-radius:10px;padding:8px;align-items:center;}
+.ai-card img{width:56px;height:42px;object-fit:cover;border-radius:6px;flex:none;background:var(--bg4);}
+.ai-card-body{flex:1;min-width:0;}
+.ai-card-title{font-size:11.5px;color:var(--tx);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ai-card-price{font-size:11px;color:var(--gold);font-weight:700;margin-top:2px;}
+.ai-card-btn{margin-top:5px;background:var(--gold);color:#0a0a12;border:none;padding:5px 10px;border-radius:5px;font-size:10px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;text-transform:uppercase;letter-spacing:.3px;}
+.ai-card-btn:hover{background:var(--gold-l);}
 @media (max-width:480px){.ai-chat{right:16px;bottom:148px;width:calc(100vw - 32px);}.ai-float{right:16px;}.ai-label{display:none;}.ai-launcher{padding:6px;border-radius:50%;}}
 *{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
 body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;overflow-x:hidden;cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='30' viewBox='0 0 22 30'%3E%3Cpath d='M3 2 L3 23 L8.5 18 L11.8 25.5 L15 24 L11.7 16.8 L18.5 16.5 Z' fill='white' stroke='black' stroke-width='1.6' stroke-linejoin='round'/%3E%3C/svg%3E") 3 2, auto;}
@@ -1804,35 +1819,115 @@ function applyDeepLink(){
 }
 
 /* ===== AFTERFX AI ASSISTANT (new) — offline, pure JS, no backend, no API ===== */
+/* Reads live site data (PRICING, CATS, videos catalog) — never hardcodes duplicate numbers. */
 const AI_WA='https://wa.me/919739909710';
 const AI_CATS=[
-  {label:'💍 Wedding', cat:'wedding'},
-  {label:'👶 Baby Name Reveal', cat:'namereveal'},
-  {label:'🎂 Birthday', cat:'birthday'},
-  {label:'💑 Engagement', cat:'engagement'},
-  {label:'🌸 Half Saree', cat:'halfsaree'},
-  {label:'🕌 Muslim', cat:'others'},
-  {label:'✝ Christian', cat:'christian'},
-  {label:'🎉 Reception', cat:'others'}
-];
-const AI_FAQ=[
-  {kw:['price','cost','₹','rate','how much','charges'],
-   a:'Our templates are ₹300 each — and the more you buy, the cheaper it gets: 5 templates → ₹200 each, 10 → ₹175 each, 20 → ₹150 each. Both horizontal & vertical are included.'},
-  {kw:['receive','download','file','deliver','after payment','how do i get'],
-   a:'Instant delivery! Right after payment your download link is sent to your email within about a minute — just check Spam/Promotions too if you don\'t see it.'},
-  {kw:['customize','custom','personalize','edit for me','ready made','ready-made'],
-   a:'Yes! If you don\'t use After Effects, we can personalize and deliver a ready-made video for you. Tap the WhatsApp button below and share your requirement.'},
-  {kw:['after effects','ae version','which version','software'],
-   a:'Our templates work with recent versions of Adobe After Effects. If you\'re not sure your version will open a file, message us on WhatsApp with the template name and we\'ll confirm.'},
-  {kw:['refund','cancel','return'],
-   a:'Since these are instantly delivered digital files, we don\'t offer refunds after download — but if something\'s wrong with your order, message us on WhatsApp and we\'ll sort it out.'},
-  {kw:['bulk','wholesale','discount','offer'],
-   a:'Yes — bulk pricing kicks in automatically in your cart: 5 templates → ₹200 each, 10 → ₹175 each, 20 → ₹150 each (50% off). For more than 20, message us on WhatsApp for a custom bundle.'},
-  {kw:['hi','hello','hey','namaste'],
-   a:'Hi there! 👋 I can help you find the perfect invitation template, explain pricing, or connect you with our team. What are you celebrating?'}
+  {label:'💍 Wedding', cat:'wedding', kw:['wedding','shaadi','marriage']},
+  {label:'👶 Baby Name Reveal', cat:null, scroll:'name-reveal', kw:['name reveal','namereveal','baby name']},
+  {label:'🎂 Birthday', cat:'birthday', kw:['birthday','bday']},
+  {label:'💑 Engagement', cat:'engagement', kw:['engagement','ring ceremony']},
+  {label:'🌸 Half Saree', cat:'halfsaree', kw:['half saree','halfsaree','saree function']},
+  {label:'🕌 Muslim', cat:'others', kw:['muslim','nikah','walima']},
+  {label:'✝ Christian', cat:'christian', kw:['christian']},
+  {label:'🎉 Reception', cat:'others', kw:['reception']}
 ];
 let aiOpen=false, aiUnread=1, aiGreeted=false;
 
+/* ---------- dynamic knowledge (pulled from live site data, never duplicated) ---------- */
+function aiCategoryCount(catId){
+  return videos.filter(function(v){ return v.cat===catId; }).length;
+}
+function aiGreetAnswer(){
+  return {text:'Hi there! 👋 I can help you find the perfect invitation template, explain pricing, or connect you with our team. What are you celebrating?', sug:['💍 Wedding','🎂 Birthday','👶 Baby Name Reveal']};
+}
+function aiPricingAnswer(){
+  const lines=PRICING.map(function(p){
+    return p.qty===1 ? ('• 1 template — ₹'+p.price) : ('• '+p.qty+' templates — ₹'+p.price+' ('+p.off.replace('🔥','').trim()+')');
+  }).join('<br>');
+  return {text:'Here\'s our pricing straight from the site:<br>'+lines+'<br><br>Bulk pricing applies automatically in your cart — no code needed.', sug:['What\'s the discount?','💍 Wedding']};
+}
+function aiDiscountAnswer(){
+  const best=PRICING[PRICING.length-1];
+  const per=(best.price/best.qty).toFixed(0);
+  return {text:'The more you buy, the more you save! At '+best.qty+' templates it\'s just ₹'+per+' each ('+best.off.replace('🔥','').trim()+'). Discounts apply automatically in your cart.', sug:['What\'s the price?','Chat on WhatsApp']};
+}
+function aiDeliveryAnswer(){
+  return {text:'Instant delivery! Right after payment, your download link is emailed to you within about a minute — just check Spam/Promotions if you don\'t see it.', sug:['What\'s the price?','Do you customize?']};
+}
+function aiAeAnswer(){
+  return {text:'Our project files work with recent versions of Adobe After Effects. If you\'re unsure your version can open a specific template, our team can confirm on WhatsApp.', sug:['Do you customize?','Chat on WhatsApp']};
+}
+function aiCustomizeAnswer(){
+  const total=videos.length;
+  const customOnly=videos.filter(function(v){ return v.customizeOnly; }).length;
+  return {text:'We offer two options:<br>📁 <b>Editable Project File</b> — ₹'+STD_PRICE+', edit your own details in After Effects.<br>🎬 <b>Ready-Made Video</b> — we personalize and deliver a finished video for you, no software needed.<br><br>Of our '+total+' templates, '+customOnly+' are personalized-service only — the rest you can buy and download instantly.', sug:['Chat on WhatsApp','💍 Wedding']};
+}
+function aiRefundAnswer(){
+  return {text:'Since these are instantly-delivered digital files, we don\'t offer refunds after download — but if something\'s wrong with your order, our team will sort it out on WhatsApp.', sug:['Chat on WhatsApp']};
+}
+const AI_FAQ=[
+  {kw:['hi','hello','hey','namaste'], get:aiGreetAnswer},
+  {kw:['discount','bundle','save','offer','bulk'], get:aiDiscountAnswer},
+  {kw:['price','cost','₹','rate','how much','charges','pricing'], get:aiPricingAnswer},
+  {kw:['receive','download','deliver','after payment','how do i get','how will i get'], get:aiDeliveryAnswer},
+  {kw:['after effects','ae version','which version','software','compatible'], get:aiAeAnswer},
+  {kw:['customize','custom','personalize','edit for me','ready made','ready-made','project file'], get:aiCustomizeAnswer},
+  {kw:['refund','cancel','return'], get:aiRefundAnswer}
+];
+function aiMatchFaq(m){
+  for(let i=0;i<AI_FAQ.length;i++){
+    const f=AI_FAQ[i];
+    for(let j=0;j<f.kw.length;j++){
+      if(m.indexOf(f.kw[j])>=0) return f.get();
+    }
+  }
+  return null;
+}
+
+/* ---------- smart search over templates.json (live `videos` catalog) ---------- */
+const AI_STOPWORDS=['i','need','a','an','the','for','my','to','want','looking','please','video','invitation','template','templates','with','of','in','on','and','me','some','show','find','you','have','got'];
+function aiTokenize(q){
+  return q.toLowerCase().replace(/[^a-z0-9 ]/g,' ').split(/\s+/).filter(function(w){ return w && AI_STOPWORDS.indexOf(w)===-1; });
+}
+function aiSearchTemplates(query, limit){
+  const words=aiTokenize(query);
+  if(!words.length || !videos.length) return [];
+  const scored=[];
+  for(let i=0;i<videos.length;i++){
+    const v=videos[i];
+    const t=v.title.toLowerCase();
+    const catLabel=((CATS.find(function(c){ return c.id===v.cat; }))||{}).label||'';
+    let score=0;
+    for(let j=0;j<words.length;j++){
+      const w=words[j];
+      if(t.indexOf(w)>=0) score+=2;
+      if(catLabel.toLowerCase().indexOf(w)>=0) score+=1;
+    }
+    if(score>0) scored.push({v:v,score:score});
+  }
+  scored.sort(function(a,b){ return b.score-a.score; });
+  return scored.slice(0, limit||6).map(function(x){ return x.v; });
+}
+function aiRenderResultCards(list){
+  if(!list.length) return '';
+  return '<div class="ai-results">'+list.map(function(v){
+    return '<div class="ai-card">'
+      +'<img src="'+v.thumb+'" alt="" loading="lazy">'
+      +'<div class="ai-card-body">'
+        +'<div class="ai-card-title">'+escapeHTML(v.title)+'</div>'
+        +'<div class="ai-card-price">'+(v.customizeOnly?'Customize Only':('₹'+v.price))+'</div>'
+        +'<button class="ai-card-btn" onclick="aiViewTemplate(\''+v.id+'\')">View Template</button>'
+      +'</div>'
+    +'</div>';
+  }).join('')+'</div>';
+}
+function aiViewTemplate(id){
+  toggleAiChat();
+  enterFocus(id);
+  setTimeout(function(){ const el=document.getElementById('templates'); if(el) el.scrollIntoView({behavior:'smooth'}); }, 300);
+}
+
+/* ---------- chat window UI ---------- */
 function toggleAiChat(){
   aiOpen=!aiOpen;
   const chat=document.getElementById('aiChat');
@@ -1843,8 +1938,8 @@ function toggleAiChat(){
     aiUpdateBadge();
     if(!aiGreeted){
       aiGreeted=true;
-      aiRenderQuick();
-      aiTypeThenSay('Hi! I\'m the AfterFX AI Assistant. 👋<br>What are you celebrating? Pick one below, or just ask me a question.');
+      const g=aiGreetAnswer();
+      aiTypeThenSay(g.text, g.sug, 500);
     }
   }
 }
@@ -1854,16 +1949,38 @@ function aiUpdateBadge(){
   if(aiUnread>0){ b.textContent=String(aiUnread); b.classList.remove('hide'); }
   else{ b.classList.add('hide'); }
 }
-function aiAddMsg(text, who){
+function aiTimeNow(){
+  const d=new Date();
+  let h=d.getHours(), m=d.getMinutes();
+  const ampm=h>=12?'PM':'AM';
+  h=h%12; if(h===0) h=12;
+  return h+':'+(m<10?'0':'')+m+' '+ampm;
+}
+function aiAddMsg(html, who, suggestions){
   const body=document.getElementById('aiBody');
   if(!body) return;
-  const el=document.createElement('div');
-  el.className='ai-msg '+(who||'bot');
-  el.innerHTML=text;
-  body.appendChild(el);
+  const wrap=document.createElement('div');
+  wrap.className='ai-msg-wrap '+(who||'bot');
+  const bubble=document.createElement('div');
+  bubble.className='ai-msg '+(who||'bot');
+  bubble.innerHTML=html;
+  wrap.appendChild(bubble);
+  const time=document.createElement('div');
+  time.className='ai-time';
+  time.textContent=aiTimeNow();
+  wrap.appendChild(time);
+  if(suggestions && suggestions.length){
+    const sg=document.createElement('div');
+    sg.className='ai-suggest';
+    sg.innerHTML=suggestions.map(function(s){
+      return '<button class="ai-sugchip" onclick="aiSuggestionClick(\''+s.replace(/'/g,"\\'")+'\')">'+escapeHTML(s)+'</button>';
+    }).join('');
+    wrap.appendChild(sg);
+  }
+  body.appendChild(wrap);
   body.scrollTop=body.scrollHeight;
 }
-function aiTypeThenSay(text, delay){
+function aiTypeThenSay(html, suggestions, delay){
   const body=document.getElementById('aiBody');
   if(!body) return;
   const t=document.createElement('div');
@@ -1875,47 +1992,80 @@ function aiTypeThenSay(text, delay){
   setTimeout(function(){
     const cur=document.getElementById('aiTypingNow');
     if(cur) cur.remove();
-    aiAddMsg(text,'bot');
+    aiAddMsg(html,'bot',suggestions);
     if(!aiOpen){ aiUnread++; aiUpdateBadge(); }
-  }, delay || 700);
+  }, delay || (600+Math.random()*400));
 }
-function aiRenderQuick(extra){
+function aiSuggestionClick(text){
+  aiHandleInput(text);
+}
+function aiRenderQuick(){
   const q=document.getElementById('aiQuick');
   if(!q) return;
-  let html=AI_CATS.map(function(c){
-    return '<div class="ai-chip" onclick="aiPickCategory(\''+c.cat+'\',\''+c.label.replace(/'/g,"\\'")+'\')">'+c.label+'</div>';
+  q.innerHTML=AI_CATS.map(function(c,i){
+    return '<div class="ai-chip" onclick="aiPickCategory('+i+')">'+c.label+'</div>';
   }).join('');
-  q.innerHTML=html;
 }
-function aiPickCategory(cat, label){
-  aiAddMsg(label,'user');
-  setFilter(cat);
-  const el=document.getElementById('templates');
-  if(el) el.scrollIntoView({behavior:'smooth'});
-  aiTypeThenSay('Here you go — showing '+label.replace(/^[^ ]+ /,'')+' templates for you below. 🎬 Want anything else?');
+function aiPickCategory(i){
+  const c=AI_CATS[i];
+  if(!c) return;
+  aiAddMsg(c.label,'user');
+  aiApplyCategory(c);
 }
-function aiMatchFaq(msg){
+function aiApplyCategory(c){
+  if(c.scroll){
+    const el=document.getElementById(c.scroll);
+    if(el) el.scrollIntoView({behavior:'smooth'});
+    toggleAiChat();
+    aiTypeThenSay('Taking you to our Baby Name Reveal section — it\'s a fully personalized cinematic service. 🎬', ['Chat on WhatsApp']);
+    return;
+  }
+  setFilter(c.cat);
+  const el=document.getElementById('templates'); if(el) el.scrollIntoView({behavior:'smooth'});
+  const n=aiCategoryCount(c.cat);
+  aiTypeThenSay('Showing '+c.label.replace(/^[^ ]+ /,'')+' templates below'+(n?(' — '+n+' available'):'')+'. 🎬', ['What\'s the price?','See more categories']);
+}
+function aiShowContact(){
+  aiTypeThenSay('Sure! Our team is on WhatsApp and happy to help. 💬<br><a class="ai-wa-cta" href="'+AI_WA+'?text='+encodeURIComponent('Hi AfterFX Templates, I have a question.')+'" target="_blank">💬 Chat on WhatsApp</a>');
+}
+function aiShowUnknown(){
+  aiTypeThenSay('I\'m not completely sure.<br>Our team can help you.<br><a class="ai-wa-cta" href="'+AI_WA+'?text='+encodeURIComponent('Hi AfterFX Templates, I have a question: ')+'" target="_blank">💬 Chat on WhatsApp</a>');
+}
+
+/* ---------- intent router ---------- */
+function aiRouteIntent(msg){
   const m=msg.toLowerCase();
-  for(let i=0;i<AI_FAQ.length;i++){
-    const f=AI_FAQ[i];
-    for(let j=0;j<f.kw.length;j++){
-      if(m.indexOf(f.kw[j])>=0) return f.a;
+  if(m==='see more categories'){ return {type:'showcats'}; }
+  for(let i=0;i<AI_CATS.length;i++){
+    const c=AI_CATS[i];
+    for(let j=0;j<c.kw.length;j++){
+      if(m.indexOf(c.kw[j])>=0) return {type:'category', c:c};
     }
   }
-  return null;
+  const faq=aiMatchFaq(m);
+  if(faq) return {type:'faq', data:faq};
+  if(/contact|whatsapp|call\b|phone|number|talk to (someone|team)/.test(m)) return {type:'contact'};
+  const results=aiSearchTemplates(msg,6);
+  if(results.length) return {type:'search', results:results};
+  return {type:'unknown'};
 }
-function aiShowHandoff(){
-  aiTypeThenSay('I\'ll connect you with our team.<br><a class="ai-wa-cta" href="'+AI_WA+'?text='+encodeURIComponent('Hi AfterFX Templates, I have a question.')+'" target="_blank">💬 Chat on WhatsApp</a>');
+function aiProcessRoute(route, msg){
+  if(route.type==='showcats'){
+    aiTypeThenSay('Here are all our categories — tap one:');
+    return;
+  }
+  if(route.type==='category'){ aiApplyCategory(route.c); return; }
+  if(route.type==='faq'){ aiTypeThenSay(route.data.text, route.data.sug); return; }
+  if(route.type==='contact'){ aiShowContact(); return; }
+  if(route.type==='search'){ aiTypeThenSay('Here\'s what I found for "'+escapeHTML(msg)+'":'+aiRenderResultCards(route.results)); return; }
+  aiShowUnknown();
 }
 function aiHandleInput(msg){
   msg=(msg||'').trim();
   if(!msg) return;
   aiAddMsg(escapeHTML(msg),'user');
-  const ans=aiMatchFaq(msg);
-  if(ans) aiTypeThenSay(ans);
-  else{
-    setTimeout(function(){ aiShowHandoff(); }, 750);
-  }
+  const route=aiRouteIntent(msg);
+  aiProcessRoute(route, msg);
 }
 function aiInputKey(e){
   if(e.key==='Enter'){
