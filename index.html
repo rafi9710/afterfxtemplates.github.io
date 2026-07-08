@@ -2028,44 +2028,90 @@ function aiApplyCategory(c){
 function aiShowContact(){
   aiTypeThenSay('Sure! Our team is on WhatsApp and happy to help. 💬<br><a class="ai-wa-cta" href="'+AI_WA+'?text='+encodeURIComponent('Hi AfterFX Templates, I have a question.')+'" target="_blank">💬 Chat on WhatsApp</a>');
 }
-function aiShowUnknown(){
-  aiTypeThenSay('I\'m not completely sure.<br>Our team can help you.<br><a class="ai-wa-cta" href="'+AI_WA+'?text='+encodeURIComponent('Hi AfterFX Templates, I have a question: ')+'" target="_blank">💬 Chat on WhatsApp</a>');
+
+/* ---------- Gemini engine (via secure Vercel proxy — key never touches the browser) ---------- */
+const AI_BACKEND = 'https://afterfx-api.vercel.app/api/ai-chat';
+let aiHistory=[];
+function aiBuildKnowledge(){
+  const catCounts=CATS.filter(function(c){ return c.id!=='all'; }).map(function(c){
+    return {label:c.label, count:aiCategoryCount(c.id)};
+  }).filter(function(c){ return c.count>0; });
+  return {
+    pricing: PRICING,
+    categories: catCounts,
+    totalTemplates: videos.length,
+    customizeOnlyCount: videos.filter(function(v){ return v.customizeOnly; }).length,
+    stdPrice: (typeof STD_PRICE!=='undefined'?STD_PRICE:300),
+    waNumber: '+91 97399 09710'
+  };
+}
+function aiShowTyping(){
+  const body=document.getElementById('aiBody');
+  if(!body || document.getElementById('aiTypingNow')) return;
+  const t=document.createElement('div');
+  t.className='ai-typing';
+  t.id='aiTypingNow';
+  t.innerHTML='<span></span><span></span><span></span>';
+  body.appendChild(t);
+  body.scrollTop=body.scrollHeight;
+}
+function aiFinishTyping(html, suggestions){
+  const cur=document.getElementById('aiTypingNow');
+  if(cur) cur.remove();
+  aiAddMsg(html,'bot',suggestions);
+  if(!aiOpen){ aiUnread++; aiUpdateBadge(); }
+}
+function aiOfflineFallback(msg){
+  // Gemini unreachable (offline / not configured yet / rate-limited) — fall back
+  // to the same grounded local FAQ answers so the assistant never goes silent.
+  const ans=aiMatchFaq(msg.toLowerCase());
+  if(ans) return ans;
+  return {text:'I\'m having trouble reaching our AI service right now.<br>Our team can help you.<br><a class="ai-wa-cta" href="'+AI_WA+'?text='+encodeURIComponent('Hi AfterFX Templates, I have a question: ')+'" target="_blank">💬 Chat on WhatsApp</a>'};
+}
+async function aiAskGemini(msg){
+  aiShowTyping();
+  let handled=false;
+  try{
+    const ctrl=(typeof AbortController!=='undefined')?new AbortController():null;
+    const timer=ctrl?setTimeout(function(){ ctrl.abort(); },12000):null;
+    const r=await fetch(AI_BACKEND,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ message:msg, history:aiHistory.slice(-6), knowledge:aiBuildKnowledge() }),
+      signal: ctrl?ctrl.signal:undefined
+    });
+    if(timer) clearTimeout(timer);
+    if(!r.ok) throw new Error('bad status '+r.status);
+    const data=await r.json();
+    if(!data || !data.reply) throw new Error('empty reply');
+    aiFinishTyping(data.reply);
+    aiHistory.push({role:'user',text:msg});
+    aiHistory.push({role:'model',text:data.reply});
+    handled=true;
+  }catch(err){
+    const fb=aiOfflineFallback(msg);
+    aiFinishTyping(fb.text, fb.sug);
+  }
+  // Always also surface real catalog matches (deterministic — Gemini never invents template data)
+  const results=aiSearchTemplates(msg,4);
+  if(results.length) aiAddMsg(aiRenderResultCards(results),'bot');
 }
 
-/* ---------- intent router ---------- */
-function aiRouteIntent(msg){
-  const m=msg.toLowerCase();
-  if(m==='see more categories'){ return {type:'showcats'}; }
-  for(let i=0;i<AI_CATS.length;i++){
-    const c=AI_CATS[i];
-    for(let j=0;j<c.kw.length;j++){
-      if(m.indexOf(c.kw[j])>=0) return {type:'category', c:c};
-    }
-  }
-  const faq=aiMatchFaq(m);
-  if(faq) return {type:'faq', data:faq};
-  if(/contact|whatsapp|call\b|phone|number|talk to (someone|team)/.test(m)) return {type:'contact'};
-  const results=aiSearchTemplates(msg,6);
-  if(results.length) return {type:'search', results:results};
-  return {type:'unknown'};
-}
-function aiProcessRoute(route, msg){
-  if(route.type==='showcats'){
-    aiTypeThenSay('Here are all our categories — tap one:');
-    return;
-  }
-  if(route.type==='category'){ aiApplyCategory(route.c); return; }
-  if(route.type==='faq'){ aiTypeThenSay(route.data.text, route.data.sug); return; }
-  if(route.type==='contact'){ aiShowContact(); return; }
-  if(route.type==='search'){ aiTypeThenSay('Here\'s what I found for "'+escapeHTML(msg)+'":'+aiRenderResultCards(route.results)); return; }
-  aiShowUnknown();
-}
+/* ---------- input handling ---------- */
 function aiHandleInput(msg){
   msg=(msg||'').trim();
   if(!msg) return;
   aiAddMsg(escapeHTML(msg),'user');
-  const route=aiRouteIntent(msg);
-  aiProcessRoute(route, msg);
+  const m=msg.toLowerCase();
+  if(m==='see more categories'){ aiTypeThenSay('Here are all our categories — tap one:'); return; }
+  for(let i=0;i<AI_CATS.length;i++){
+    const c=AI_CATS[i];
+    for(let j=0;j<c.kw.length;j++){
+      if(m.indexOf(c.kw[j])>=0){ aiApplyCategory(c); return; }
+    }
+  }
+  if(/contact|whatsapp|call\b|phone|number|talk to (someone|team)/.test(m)){ aiShowContact(); return; }
+  aiAskGemini(msg);
 }
 function aiInputKey(e){
   if(e.key==='Enter'){
