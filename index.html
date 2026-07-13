@@ -434,8 +434,8 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
 .vb-co{position:absolute;top:10px;right:10px;background:var(--gold);color:#000;font-size:9px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;padding:4px 8px;border-radius:3px;}
 
 /* ===== PUSH NOTIFICATION PROMPT ===== */
-#pushBar{position:fixed;left:26px;bottom:-260px;z-index:530;width:min(420px,calc(100vw - 52px));background:var(--bg2);border:1px solid var(--gbh);border-radius:14px;box-shadow:0 18px 46px rgba(0,0,0,.5);padding:16px 18px 15px;display:flex;align-items:flex-start;gap:13px;opacity:0;transition:bottom .5s cubic-bezier(.2,.8,.25,1),opacity .4s ease;box-sizing:border-box;}
-#pushBar.show{bottom:26px;opacity:1;}
+#pushBar{position:fixed;left:26px;bottom:-260px;z-index:530;width:min(420px,calc(100vw - 52px));background:var(--bg2);border:1px solid var(--gbh);border-radius:14px;box-shadow:0 18px 46px rgba(0,0,0,.5);padding:16px 18px 15px;display:flex;align-items:flex-start;gap:13px;opacity:0;pointer-events:none;transition:bottom .5s cubic-bezier(.2,.8,.25,1),opacity .4s ease;box-sizing:border-box;}
+#pushBar.show{bottom:26px;opacity:1;pointer-events:auto;}
 #pushBar .pb-ic{flex:0 0 42px;height:42px;border-radius:11px;background:var(--gold-dim);border:1px solid var(--gb);display:flex;align-items:center;justify-content:center;font-size:20px;animation:pbRing 3s ease-in-out infinite;}
 @keyframes pbRing{0%,70%,100%{transform:rotate(0);}75%{transform:rotate(12deg);}80%{transform:rotate(-10deg);}85%{transform:rotate(8deg);}90%{transform:rotate(-6deg);}95%{transform:rotate(3deg);}}
 #pushBar .pb-tx{flex:1;min-width:0;}
@@ -1986,6 +1986,8 @@ const BUNDLE_EMOJI   = {5:'\ud83c\udf89', 10:'\ud83d\udd25', 20:'\u2b50'};
 let bundleDismissed  = sessionStorage.getItem('afx_bundle_dismissed') || '';  // tier the user closed
 let bundleLastTier   = 0;      // highest tier already celebrated this session
 let bcTimer          = null;
+let bundleHideTimer  = null;
+const BUNDLE_VISIBLE_MS = 8000;   // auto-hide: a fixed card must never block the grid underneath
 
 /* Single source of truth for every bundle calculation. */
 function bundleState(){
@@ -2054,7 +2056,24 @@ function renderBundleNudge(){
 
   document.getElementById('bnFill').style.width = st.pct + '%';
   el.classList.add('show');
+
+  /* Auto-hide. A position:fixed card sits ON TOP of the template grid, so if it
+     stayed forever it would swallow clicks on whatever card is underneath it.
+     It re-appears on the next cart change — exactly when it's useful again. */
+  clearTimeout(bundleHideTimer);
+  bundleHideTimer = setTimeout(() => el.classList.remove('show'), BUNDLE_VISIBLE_MS);
 }
+
+/* Keep it open while the user is actually reading/hovering it. */
+(function bindBundleHover(){
+  const el = document.getElementById('bundleNudge');
+  if(!el) return;
+  el.addEventListener('mouseenter', () => clearTimeout(bundleHideTimer));
+  el.addEventListener('mouseleave', () => {
+    clearTimeout(bundleHideTimer);
+    bundleHideTimer = setTimeout(() => el.classList.remove('show'), 2500);
+  });
+})();
 
 /* Celebrate the moment a tier is unlocked (2s, then auto-hide). */
 function celebrateBundle(tier){
@@ -2107,6 +2126,26 @@ function dismissBundleNudge(){
 function bundleNudgeCta(){
   const t = document.getElementById('templates');
   if(t) t.scrollIntoView({behavior:'smooth'});
+}
+
+/* HARD SAFETY NET — a full-screen fixed overlay must never linger and swallow
+   clicks. Any click anywhere tears the celebration down immediately, even if
+   its timer somehow failed. Capture phase, so it runs before anything else. */
+document.addEventListener('click', function(){
+  const wrap = document.getElementById('bundleCelebrate');
+  if(wrap && wrap.classList.contains('on')){
+    if(bcTimer) clearTimeout(bcTimer);
+    wrap.classList.remove('on');
+    stopConfetti(document.getElementById('bcCfx'));
+  }
+}, true);
+
+/* Diagnostic helper — run afxWhatBlocks() in the console, then hover a button. */
+function afxWhatBlocks(){
+  document.addEventListener('click', function(e){
+    console.log('CLICK LANDED ON →', e.target.tagName, '#'+(e.target.id||'-'), '.'+(e.target.className||'-'));
+  }, true);
+  console.log('OK — ab koi bhi BUY button dabao, yahan dikhega click kahan gaya.');
 }
 
 function nrWA(){
@@ -2629,8 +2668,13 @@ function pushShowBar(){
   if(!b) return;
   b.classList.add('show');
   document.body.classList.add('pb-open');
+  /* Auto-hide after 20s — a fixed bar must not block the grid underneath.
+     No dismiss flag is set, so it can still appear on a later visit. */
+  clearTimeout(window.__pushHideTimer);
+  window.__pushHideTimer = setTimeout(pushHideBar, 20000);
 }
 function pushHideBar(){
+  clearTimeout(window.__pushHideTimer);
   const b=document.getElementById('pushBar');
   if(b) b.classList.remove('show');
   document.body.classList.remove('pb-open');
