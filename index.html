@@ -1625,8 +1625,10 @@ function removeItem(id){
   saveCart();updateCount();renderCart();renderGrid();renderRecentlyViewed();bundleUpdate();
 }
 
-function openCart(){document.getElementById('overlay').classList.add('on');renderCart();bundleUpdate();}
-function closeCart(){document.getElementById('overlay').classList.remove('on');bundleUpdate();}
+/* Only refresh the nudge here — never run the celebration path, or opening the
+   cart could drop a full-screen overlay on top of the cart panel itself. */
+function openCart(){document.getElementById('overlay').classList.add('on');renderCart();renderBundleNudge();}
+function closeCart(){document.getElementById('overlay').classList.remove('on');renderBundleNudge();}
 function ovClick(e){if(e.target===document.getElementById('overlay'))closeCart();}
 
 function renderCart(){
@@ -1667,7 +1669,7 @@ function renderCart(){
 
   /* Inline "almost there" hint inside the cart panel */
   const nearHint = (st.next && st.needed <= 3 && st.stdQty > 0)
-    ? `<div style="background:rgba(126,224,168,.08);border:1px solid rgba(126,224,168,.3);border-radius:6px;padding:9px 12px;margin-bottom:11px;font-size:12px;color:var(--tx);line-height:1.5;">✨ Add <b style="color:var(--gold);">${st.needed} more</b> → ${st.next.qty} templates for <b style="color:var(--gold);">${rup(st.next.price)}</b>${st.saving>0?` · <b style="color:#7ee0a8;">pay ${rup(st.saving)} less</b>`:` · <b style="color:#7ee0a8;">only ${rup(st.each)} each</b>`}</div>`
+    ? `<div style="background:rgba(126,224,168,.08);border:1px solid rgba(126,224,168,.3);border-radius:6px;padding:9px 12px;margin-bottom:11px;font-size:12px;color:var(--tx);line-height:1.5;">✨ Add <b style="color:var(--gold);">${st.needed} more</b> → ${st.next.qty}-template bundle, cart total <b style="color:var(--gold);">${rup(st.nextCost)}</b>${st.saving>0?` · <b style="color:#7ee0a8;">pay ${rup(st.saving)} less</b>`:` · <b style="color:#7ee0a8;">only ${rup(st.each)} each</b>`}</div>`
     : '';
 
   /* Subtotal / Bundle Discount / Final Total */
@@ -1988,6 +1990,7 @@ let bundleLastTier   = 0;      // highest tier already celebrated this session
 let bcTimer          = null;
 let bundleHideTimer  = null;
 const BUNDLE_VISIBLE_MS = 8000;   // auto-hide: a fixed card must never block the grid underneath
+let bundleSeeded     = false;     // seeded from the restored cart before any UI can fire
 
 /* Single source of truth for every bundle calculation. */
 function bundleState(){
@@ -2079,6 +2082,9 @@ function renderBundleNudge(){
 function celebrateBundle(tier){
   const wrap = document.getElementById('bundleCelebrate');
   if(!wrap) return;
+  /* Never throw a full-screen overlay over the open cart panel. */
+  const ov = document.getElementById('overlay');
+  if(ov && ov.classList.contains('on')) return;
   /* Real saving for THIS cart — works for mixed carts too, since premium
      items simply have no discount to claim. */
   const save = Math.max(0, cartBase() - cartTotal());
@@ -2099,6 +2105,15 @@ function celebrateBundle(tier){
 /* Called after EVERY cart mutation — the single hook. */
 function bundleUpdate(){
   const st = bundleState();
+
+  /* First run of the session: the cart was restored from localStorage, so its
+     tier is pre-existing — record it, don't celebrate it. */
+  if(!bundleSeeded){
+    bundleSeeded = true;
+    bundleLastTier = st.hitTier ? st.hitTier.qty : 0;
+    renderBundleNudge();
+    return;
+  }
 
   // Unlocked a new (higher) tier? celebrate once.
   if(st.hitTier && st.hitTier.qty > bundleLastTier){
@@ -2632,9 +2647,6 @@ renderPricing();updateCount();updateWishCount();
     document.getElementById('tabs').innerHTML='';
     document.getElementById('orienttabs').innerHTML='';
   }
-  /* Seed bundle state from the restored cart — no celebration replay on load */
-  const _bs = bundleState();
-  bundleLastTier = _bs.hitTier ? _bs.hitTier.qty : 0;
   renderBundleNudge();
 })();
 </script>
