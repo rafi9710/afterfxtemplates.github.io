@@ -183,6 +183,7 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
 
     <!-- STATS -->
     <div class="stats" id="stats"></div>
+    <div id="storageBar" style="margin:14px 0 4px;padding:12px 14px;background:var(--bg2);border:1px solid var(--gb);border-radius:10px;"></div>
 
     <!-- TABS -->
     <div class="tabbar">
@@ -398,7 +399,7 @@ function doBulkImport(){
   });
   setExtras(extras);
   closeBulkModal();
-  renderStats();renderList();
+  renderStats();renderStorageBar();renderList();
   showToast(`✅ Imported ${added} · skipped ${skipped}`);
 }
 
@@ -436,7 +437,7 @@ async function init(){
   document.getElementById('tplList').innerHTML='<div class="empty-state"><div class="em">⏳</div><h3>Loading templates...</h3><p>Reading published catalog</p></div>';
   allVideos=await fetchVideos();
   renderCatOptions(); renderCatManager();
-  renderStats();
+  renderStats();renderStorageBar();
   renderList();
 }
 
@@ -492,17 +493,92 @@ async function fetchVideos(){
   }
 }
 
+/* ========================================================================
+   QUOTA-SAFE STORAGE  (added 2026-07-13)
+   The admin used to store uploaded thumbnails as raw base64 data-URLs.
+   A single 2MB upload became a ~2.7MB string -> localStorage (5MB) filled
+   -> every later setItem threw QuotaExceededError -> the STOREFRONT cart
+   silently stopped saving. Thumbnails are now compressed on upload, and
+   every write goes through afxSet() which never throws.
+   ======================================================================== */
+const THUMB_MAX_W  = 640;    // px — plenty for a 16:9 card
+const THUMB_QUALITY = 0.78;  // JPEG quality
+const THUMB_WARN_KB = 150;   // warn above this
+
+function afxSet(key, value){
+  const str = (typeof value === 'string') ? value : JSON.stringify(value);
+  try { localStorage.setItem(key, str); return true; }
+  catch(err){
+    if(!/quota|exceed/i.test(err && err.name + ' ' + err.message)){
+      console.warn('[afxSet]', key, err); return false;
+    }
+    console.warn('[afxSet] QUOTA FULL saving "'+key+'" — pruning…');
+    // shrink any oversized base64 sitting in other keys
+    for(let i = localStorage.length - 1; i >= 0; i--){
+      const k = localStorage.key(i);
+      if(!k || k === key) continue;
+      const v = localStorage.getItem(k) || '';
+      if(v.length > 150000 && v.includes('data:image')){
+        try{
+          localStorage.setItem(k, v.replace(/"data:image\/[^"]{2000,}"/g,'""'));
+          localStorage.setItem(key, str);
+          return true;
+        }catch(e){}
+      }
+    }
+    try { localStorage.setItem(key, str); return true; } catch(e){}
+    if(typeof showToast === 'function'){
+      showToast('Browser storage is FULL. Click "Fix Storage" below.','err');
+    }
+    console.error('[afxSet] could not save', key);
+    return false;
+  }
+}
+
+/* Shrink a data-URL (or any image URL) down to a small JPEG data-URL. */
+function afxCompressImage(src, maxW, quality){
+  maxW = maxW || THUMB_MAX_W;
+  quality = quality || THUMB_QUALITY;
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      try{
+        let w = img.naturalWidth || img.width, h = img.naturalHeight || img.height;
+        if(!w || !h) return reject(new Error('bad image'));
+        if(w > maxW){ h = Math.round(h * maxW / w); w = maxW; }
+        const c = document.createElement('canvas');
+        c.width = w; c.height = h;
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = '#0a0a10';           // flatten transparency (no PNG bloat)
+        ctx.fillRect(0, 0, w, h);
+        ctx.drawImage(img, 0, 0, w, h);
+        resolve(c.toDataURL('image/jpeg', quality));
+      }catch(e){ reject(e); }
+    };
+    img.onerror = () => reject(new Error('load failed'));
+    img.src = src;
+  });
+}
+
+function afxBytes(str){ return ((str || '').length * 2); }
+function afxStorageTotal(){
+  let t = 0;
+  for(let i = 0; i < localStorage.length; i++) t += afxBytes(localStorage.getItem(localStorage.key(i)));
+  return t;
+}
+
 /* STORAGE */
 function getCustom(){return JSON.parse(localStorage.getItem('afx_custom')||'{}');}
-function setCustom(o){localStorage.setItem('afx_custom',JSON.stringify(o));}
+function setCustom(o){afxSet('afx_custom',o);}
 function getHidden(){return JSON.parse(localStorage.getItem('afx_hidden')||'[]');}
-function setHidden(a){localStorage.setItem('afx_hidden',JSON.stringify(a));}
+function setHidden(a){afxSet('afx_hidden',a);}
 function getExtras(){return JSON.parse(localStorage.getItem('afx_extras')||'[]');}
-function setExtras(a){localStorage.setItem('afx_extras',JSON.stringify(a));}
+function setExtras(a){afxSet('afx_extras',a);}
 function getCustOnly(){return JSON.parse(localStorage.getItem('afx_co')||'[]');}
-function setCustOnly(a){localStorage.setItem('afx_co',JSON.stringify(a));}
+function setCustOnly(a){afxSet('afx_co',a);}
 function getOrder(){return JSON.parse(localStorage.getItem('afx_order')||'[]');}
-function setOrder(a){localStorage.setItem('afx_order',JSON.stringify(a));}
+function setOrder(a){afxSet('afx_order',a);}
 
 /* ── DYNAMIC CATEGORIES (self-serve, stored in localStorage afx_cats) ── */
 const BASE_CATS = [
@@ -519,7 +595,7 @@ const BASE_CATS = [
   {id:'others',label:'Others'},
 ];
 function getCustomCats(){return JSON.parse(localStorage.getItem('afx_cats')||'[]');}
-function setCustomCats(a){localStorage.setItem('afx_cats',JSON.stringify(a));}
+function setCustomCats(a){afxSet('afx_cats',a);}
 function slugifyCat(name){
   return (name||'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'').slice(0,24);
 }
@@ -793,19 +869,108 @@ function setThumbTab(t){
   document.getElementById('pane'+t.charAt(0).toUpperCase()+t.slice(1)).classList.add('on');
 }
 
+/* ROOT-CAUSE FIX (2026-07-13):
+   this used to store the raw file as a base64 data-URL. A 2MB JPEG became a
+   ~2.7MB string in localStorage AND inside templates.json — 6 uploads blew
+   past the 5MB browser quota and killed the storefront cart, and made
+   templates.json a 7MB download for every visitor.
+   Now every upload is resized to 640px wide and re-encoded as JPEG, which
+   lands around 40-90KB. Same visual quality on the card, ~30x smaller. */
 function onFileSelect(e){
   const f=e.target.files[0];
   if(!f) return;
-  if(f.size>2*1024*1024){
-    showToast('Image too large. Max 2MB.','err');
-    return;
-  }
+  if(!/^image\//.test(f.type)){ showToast('Please choose an image file.','err'); return; }
+  if(f.size>8*1024*1024){ showToast('Image too large. Max 8MB.','err'); return; }
+
+  showToast('Compressing image…');
   const r=new FileReader();
   r.onload=ev=>{
-    currentThumb=ev.target.result;
-    updatePreviewImg(currentThumb);
+    afxCompressImage(ev.target.result, THUMB_MAX_W, THUMB_QUALITY)
+      .then(small=>{
+        const kb = Math.round(small.length*2/1024);
+        if(kb > 400){
+          // still fat (huge source) — squeeze harder
+          return afxCompressImage(small, 480, 0.68);
+        }
+        return small;
+      })
+      .then(small=>{
+        currentThumb = small;
+        updatePreviewImg(currentThumb);
+        const kb  = Math.round(small.length*2/1024);
+        const raw = Math.round(ev.target.result.length*2/1024);
+        console.log(`[thumb] ${raw} KB -> ${kb} KB`);
+        showToast(`✓ Thumbnail ready (${raw} KB → ${kb} KB)`);
+        renderStats();renderStorageBar();
+      })
+      .catch(err=>{
+        console.warn('[thumb] compress failed, falling back', err);
+        showToast('Could not compress that image — try a JPG/PNG.','err');
+      });
   };
   r.readAsDataURL(f);
+}
+
+/* ── STORAGE HEALTH: meter + one-click repair ───────────────────────── */
+function afxScanStorage(){
+  const rows=[]; let total=0, fat=0;
+  for(let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i), v=localStorage.getItem(k)||'';
+    const b=afxBytes(v); total+=b;
+    const hasB64=v.includes('data:image');
+    if(hasB64 && b>THUMB_WARN_KB*1024) fat++;
+    rows.push({key:k, kb:b/1024, base64:hasB64});
+  }
+  rows.sort((a,b)=>b.kb-a.kb);
+  return {rows, totalMB: total/1048576, fat};
+}
+
+function renderStorageBar(){
+  const el=document.getElementById('storageBar');
+  if(!el) return;
+  const {totalMB, fat}=afxScanStorage();
+  const pct=Math.min(100, Math.round(totalMB/5*100));
+  const state = pct>=85 ? 'danger' : pct>=60 ? 'warn' : 'ok';
+  const colors={ok:'#3ecf8e', warn:'#e8b339', danger:'#e05260'};
+  el.innerHTML=`
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <span style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--mt);font-weight:600;">Browser Storage</span>
+      <div style="flex:1;min-width:140px;height:8px;background:var(--bg3);border-radius:20px;overflow:hidden;">
+        <div style="width:${pct}%;height:100%;background:${colors[state]};transition:width .4s;"></div>
+      </div>
+      <span style="font-size:12px;font-weight:700;color:${colors[state]};">${totalMB.toFixed(2)} / 5 MB</span>
+      ${ (state!=='ok'||fat) ? `<button type="button" onclick="afxRepairStorage()" style="background:${colors[state]};color:#0a0a10;border:none;padding:6px 14px;border-radius:6px;font-weight:700;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;">🔧 Fix Storage</button>` : '' }
+    </div>
+    ${ fat ? `<div style="font-size:11px;color:${colors.danger};margin-top:6px;">⚠ ${fat} oversized thumbnail${fat>1?'s':''} found — click Fix Storage to compress ${fat>1?'them':'it'}.</div>` : '' }
+  `;
+}
+
+/* Compress every oversized base64 thumbnail already saved in this browser. */
+async function afxRepairStorage(){
+  showToast('Repairing storage…');
+  const extras=getExtras();
+  const custom=getCustom();
+  let fixed=0, before=afxScanStorage().totalMB;
+
+  for(const t of extras){
+    if(typeof t.thumb==='string' && t.thumb.startsWith('data:') && afxBytes(t.thumb)>THUMB_WARN_KB*1024){
+      try{ t.thumb=await afxCompressImage(t.thumb); fixed++; }
+      catch(e){ if(t.id && !/^custom_/.test(t.id)) t.thumb='https://i.ytimg.com/vi/'+t.id+'/mqdefault.jpg'; }
+    }
+  }
+  for(const id of Object.keys(custom)){
+    const c=custom[id];
+    if(c && typeof c.thumb==='string' && c.thumb.startsWith('data:') && afxBytes(c.thumb)>THUMB_WARN_KB*1024){
+      try{ c.thumb=await afxCompressImage(c.thumb); fixed++; }
+      catch(e){ delete c.thumb; }
+    }
+  }
+  setExtras(extras);
+  setCustom(custom);
+  const after=afxScanStorage().totalMB;
+  renderStats();renderStorageBar(); renderList(); renderStorageBar();
+  showToast(`✓ Fixed ${fixed} thumbnail${fixed===1?'':'s'} · ${before.toFixed(2)} MB → ${after.toFixed(2)} MB`);
+  if(fixed) showToast('Now click "⬇ Export for Website" and re-upload templates.json','err');
 }
 
 function updatePreview(url){
@@ -893,7 +1058,7 @@ function saveTemplate(){
   }
 
   closeModal();
-  renderStats();
+  renderStats();renderStorageBar();
   renderList();
   showToast('✓ Template saved!');
 }
@@ -904,7 +1069,7 @@ function toggleHide(id){
   if(idx>=0){hidden.splice(idx,1);showToast('✓ Template visible again');}
   else{hidden.push(id);showToast('✓ Template hidden');}
   setHidden(hidden);
-  renderStats();
+  renderStats();renderStorageBar();
   renderList();
 }
 
@@ -913,7 +1078,7 @@ function confirmDeleteExtra(id){
   showConfirm('Delete Custom Template?','This custom template will be permanently removed.',()=>{
     const extras=getExtras().filter(e=>e.id!==id);
     setExtras(extras);
-    renderStats();
+    renderStats();renderStorageBar();
     renderList();
     showToast('✓ Custom template deleted');
   });
@@ -927,7 +1092,7 @@ function confirmReset(){
     localStorage.removeItem('afx_extras');
     localStorage.removeItem('afx_co');
     localStorage.removeItem('afx_order');
-    renderStats();
+    renderStats();renderStorageBar();
     renderList();
     showToast('✓ All customizations reset');
   });

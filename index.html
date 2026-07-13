@@ -911,6 +911,124 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
 
 
 <script>
+/* ========================================================================
+   QUOTA-SAFE STORAGE LAYER  (added 2026-07-13)
+   Root cause of the "Add to cart does nothing" bug:
+   localStorage filled up (base64 thumbnails) -> setItem('afx_c') threw
+   QuotaExceededError -> saveCart() died -> cart never updated.
+   afxSet() never throws. On quota error it prunes disposable keys and
+   retries, so the CART (the thing that earns money) always survives.
+   ======================================================================== */
+/* keys we can throw away to make room, least important first */
+const AFX_DISPOSABLE = ['afx_views','afx_search_history','afx_recent','afx_wishlist'];
+/* keys that must never be auto-deleted */
+const AFX_PROTECTED  = ['afx_c','afx_theme','afx_extras','afx_custom','afx_wcards'];
+
+function afxSet(key, value){
+  const str = (typeof value === 'string') ? value : JSON.stringify(value);
+  try { localStorage.setItem(key, str); return true; }
+  catch(err){
+    if(!/quota|exceed/i.test(err && err.name + ' ' + err.message)) {
+      console.warn('[afxSet] failed:', key, err); return false;
+    }
+    console.warn('[afxSet] QUOTA FULL while saving "'+key+'" — pruning…');
+    /* 1. drop disposable keys one by one and retry */
+    for(const k of AFX_DISPOSABLE){
+      if(k === key) continue;
+      if(localStorage.getItem(k) === null) continue;
+      localStorage.removeItem(k);
+      console.warn('[afxSet] pruned', k);
+      try { localStorage.setItem(key, str); afxAfterPrune(k); return true; } catch(e){}
+    }
+    /* 2. last resort: strip oversized base64 thumbs out of any remaining key */
+    for(let i = localStorage.length - 1; i >= 0; i--){
+      const k = localStorage.key(i);
+      if(!k || k === key) continue;
+      const v = localStorage.getItem(k) || '';
+      if(v.length > 200000 && v.includes('data:image')){
+        try {
+          const slim = v.replace(/"data:image\/[^"]{2000,}"/g, '""');
+          localStorage.setItem(k, slim);
+          console.warn('[afxSet] stripped base64 images from', k);
+          localStorage.setItem(key, str);
+          return true;
+        } catch(e){ try{ localStorage.removeItem(k); }catch(e2){} }
+      }
+    }
+    /* 3. still stuck: keep the cart alive in memory, tell the user */
+    try { localStorage.setItem(key, str); return true; } catch(e){}
+    console.error('[afxSet] could not save "'+key+'" even after pruning.');
+    if(key === 'afx_c' && typeof showToast === 'function'){
+      showToast('Your browser storage is full — cart saved for this session only.','err');
+    }
+    return false;
+  }
+}
+function afxAfterPrune(k){
+  /* keep in-memory state in sync with whatever we just deleted */
+  if(k === 'afx_views')          { try{ viewCounts = {}; }catch(e){} }
+  if(k === 'afx_recent')         { try{ recentlyViewed = []; }catch(e){} }
+  if(k === 'afx_search_history') { try{ searchHistory = []; }catch(e){} }
+  if(k === 'afx_wishlist')       { try{ wishlist = []; }catch(e){} }
+}
+/* one-time self-heal: shrink anything huge already sitting in this browser */
+(function afxStorageSelfHeal(){
+  try{
+    let total = 0, offenders = [];
+    for(let i = 0; i < localStorage.length; i++){
+      const k = localStorage.key(i);
+      const v = localStorage.getItem(k) || '';
+      total += v.length * 2;
+      if(v.length > 150000 && v.includes('data:image')) offenders.push(k);
+    }
+    if(total < 3.5 * 1024 * 1024 && !offenders.length) return;
+    console.warn('[afx] storage at', (total/1048576).toFixed(2), 'MB — self-healing…');
+    offenders.forEach(k => {
+      const v = localStorage.getItem(k) || '';
+      /* replace fat base64 thumbs with the YouTube thumb derived from the id */
+      let slim = v;
+      try{
+        const arr = JSON.parse(v);
+        if(Array.isArray(arr)){
+          arr.forEach(o => {
+            if(o && typeof o.thumb === 'string' && o.thumb.startsWith('data:') && o.id && !/^custom_/.test(o.id)){
+              o.thumb = 'https://i.ytimg.com/vi/' + o.id + '/mqdefault.jpg';
+            } else if(o && typeof o.thumb === 'string' && o.thumb.length > 120000){
+              o.thumb = '';
+            }
+          });
+          slim = JSON.stringify(arr);
+        }
+      }catch(e){
+        slim = v.replace(/"data:image\/[^"]{2000,}"/g, '""');
+      }
+      try{ localStorage.setItem(k, slim); console.warn('[afx] shrank', k, (v.length/1024|0)+'KB ->', (slim.length/1024|0)+'KB'); }
+      catch(e){ try{ localStorage.removeItem(k); }catch(e2){} }
+    });
+    /* still over budget? drop the disposables */
+    let t2 = 0;
+    for(let i = 0; i < localStorage.length; i++) t2 += (localStorage.getItem(localStorage.key(i))||'').length * 2;
+    if(t2 > 4.2 * 1024 * 1024){
+      ['afx_views','afx_search_history','afx_recent'].forEach(k => { try{ localStorage.removeItem(k); }catch(e){} });
+      console.warn('[afx] pruned disposable keys');
+    }
+  }catch(e){ console.warn('[afx] self-heal skipped', e); }
+})();
+/* dev helper: afxStorage() in the console shows what is eating space */
+window.afxStorage = function(){
+  let t = 0, rows = [];
+  for(let i = 0; i < localStorage.length; i++){
+    const k = localStorage.key(i), v = localStorage.getItem(k) || '';
+    const kb = v.length * 2 / 1024; t += kb;
+    rows.push({ key: k, size: kb.toFixed(1) + ' KB', base64: v.includes('data:image') });
+  }
+  rows.sort((a,b) => parseFloat(b.size) - parseFloat(a.size));
+  console.table(rows);
+  console.log('TOTAL:', (t/1024).toFixed(2), 'MB / ~5 MB');
+  return (t/1024).toFixed(2) + ' MB';
+};
+/* ===================== END QUOTA-SAFE STORAGE LAYER ===================== */
+
 const YT_CHANNEL_ID = 'UC0Bt76u7WpzjCS_C3vuGBeQ';
 const PROXY = 'https://api.allorigins.win/get?url=';
 const RSS = `https://www.youtube.com/feeds/videos.xml?channel_id=${YT_CHANNEL_ID}`;
@@ -1024,7 +1142,7 @@ let TRENDING_IDS=new Set();
 function bumpViews(id){
   id=String(id);
   viewCounts[id]=(viewCounts[id]||0)+1;
-  localStorage.setItem('afx_views', JSON.stringify(viewCounts));
+  afxSet('afx_views', viewCounts);
   computeTrending();
 }
 function computeTrending(){
@@ -1304,7 +1422,7 @@ function addSearchHistory(q){
   searchHistory=searchHistory.filter(function(s){ return s.toLowerCase()!==q.toLowerCase(); });
   searchHistory.unshift(q);
   searchHistory=searchHistory.slice(0,5);
-  localStorage.setItem('afx_search_history', JSON.stringify(searchHistory));
+  afxSet('afx_search_history', searchHistory);
 }
 function clearSearchHistory(){
   searchHistory=[];
@@ -1411,7 +1529,7 @@ function trackRecentView(id){
   recentlyViewed=recentlyViewed.filter(x=>x!==id);
   recentlyViewed.unshift(id);
   recentlyViewed=recentlyViewed.slice(0,8);
-  localStorage.setItem('afx_recent', JSON.stringify(recentlyViewed));
+  afxSet('afx_recent', recentlyViewed);
   renderRecentlyViewed();
 }
 function clearRecentlyViewed(){
@@ -1492,7 +1610,7 @@ function bundleOrder(qty,price){
   showToast(`Pick any ${qty} templates — bundle price ₹${price.toLocaleString('en-IN')} applies automatically in your cart!`);
 }
 
-function saveCart(){localStorage.setItem('afx_c',JSON.stringify(cart));}
+function saveCart(){afxSet('afx_c',cart);}
 function updateCount(){document.getElementById('cnum').textContent=cart.reduce((s,c)=>s+c.qty,0);}
 
 /* ===== BULK PRICING ===== */
@@ -1529,7 +1647,7 @@ function applyTheme(t){
   document.documentElement.setAttribute('data-theme',t);
   const btn=document.getElementById('themeToggle');
   if(btn)btn.textContent=t==='light'?'☀️':'🌙';
-  localStorage.setItem('afx_theme',t);
+  afxSet('afx_theme',t);
 }
 function toggleTheme(){
   const cur=document.documentElement.getAttribute('data-theme')==='light'?'light':'dark';
@@ -1537,7 +1655,7 @@ function toggleTheme(){
 }
 applyTheme(localStorage.getItem('afx_theme')||'dark');
 var wishlist=JSON.parse(localStorage.getItem('afx_wishlist')||'[]');
-function saveWishlist(){localStorage.setItem('afx_wishlist',JSON.stringify(wishlist));}
+function saveWishlist(){afxSet('afx_wishlist',wishlist);}
 function updateWishCount(){
   const el=document.getElementById('wnum');
   if(el)el.textContent=wishlist.length;
@@ -2692,7 +2810,7 @@ function pushHideBar(){
   document.body.classList.remove('pb-open');
 }
 function pushAllow(){
-  localStorage.setItem(PUSH_KEY,'1');
+  afxSet(PUSH_KEY,'1');
   pushHideBar();
   window.OneSignalDeferred = window.OneSignalDeferred || [];
   OneSignalDeferred.push(async function(OneSignal){
@@ -2705,7 +2823,7 @@ function pushAllow(){
   });
 }
 function pushLater(){
-  localStorage.setItem(PUSH_KEY,'1');
+  afxSet(PUSH_KEY,'1');
   pushHideBar();
 }
 
