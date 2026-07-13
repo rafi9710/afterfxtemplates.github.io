@@ -432,6 +432,27 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
 .incl-i{display:flex;align-items:center;gap:11px;font-size:14px;color:var(--tx);}
 .incl-i span{width:22px;height:22px;border-radius:50%;background:var(--gold);color:#000;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;}
 .vb-co{position:absolute;top:10px;right:10px;background:var(--gold);color:#000;font-size:9px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;padding:4px 8px;border-radius:3px;}
+
+/* ===== PUSH NOTIFICATION PROMPT ===== */
+#pushBar{position:fixed;left:26px;bottom:-260px;z-index:530;width:min(420px,calc(100vw - 52px));background:var(--bg2);border:1px solid var(--gbh);border-radius:14px;box-shadow:0 18px 46px rgba(0,0,0,.5);padding:16px 18px 15px;display:flex;align-items:flex-start;gap:13px;opacity:0;transition:bottom .5s cubic-bezier(.2,.8,.25,1),opacity .4s ease;box-sizing:border-box;}
+#pushBar.show{bottom:26px;opacity:1;}
+#pushBar .pb-ic{flex:0 0 42px;height:42px;border-radius:11px;background:var(--gold-dim);border:1px solid var(--gb);display:flex;align-items:center;justify-content:center;font-size:20px;animation:pbRing 3s ease-in-out infinite;}
+@keyframes pbRing{0%,70%,100%{transform:rotate(0);}75%{transform:rotate(12deg);}80%{transform:rotate(-10deg);}85%{transform:rotate(8deg);}90%{transform:rotate(-6deg);}95%{transform:rotate(3deg);}}
+#pushBar .pb-tx{flex:1;min-width:0;}
+#pushBar .pb-t{font-family:'Cinzel',serif;font-size:14px;font-weight:700;color:var(--gold);margin:1px 0 5px;line-height:1.3;}
+#pushBar .pb-s{font-size:12.5px;color:var(--mt);line-height:1.55;margin:0 0 12px;}
+#pushBar .pb-btns{display:flex;gap:8px;}
+#pushBar button{font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:700;border-radius:7px;padding:9px 16px;cursor:pointer;border:1px solid transparent;transition:all .2s;letter-spacing:.2px;}
+#pushBar .pb-yes{background:var(--gold);color:#0a0a12;}
+#pushBar .pb-yes:hover{filter:brightness(1.12);transform:translateY(-1px);}
+#pushBar .pb-no{background:transparent;color:var(--mt);border-color:var(--gb);}
+#pushBar .pb-no:hover{color:var(--tx);border-color:var(--gbh);}
+@media (max-width:560px){
+  #pushBar{left:16px;width:calc(100vw - 32px);}
+  #pushBar.show{bottom:16px;}
+  body.pb-open .scrollfab{bottom:210px;}
+  body.pb-open .ai-float{bottom:270px;}
+}
 </style>
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-EH9THNF49G"></script>
@@ -801,6 +822,20 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
   </div>
 </div>
 <button class="scrollfab" id="scrollfab" onclick="scrollFab()" title="Scroll" aria-label="Scroll up or down">↓</button>
+
+<!-- ===== PUSH NOTIFICATION PROMPT BAR ===== -->
+<div id="pushBar" role="dialog" aria-label="Enable notifications">
+  <div class="pb-ic">🔔</div>
+  <div class="pb-tx">
+    <div class="pb-t">Never Miss a New Template</div>
+    <p class="pb-s">Get notified the moment we add new invitation templates &amp; special offers. No spam — only new drops.</p>
+    <div class="pb-btns">
+      <button class="pb-yes" onclick="pushAllow()">Allow Notifications</button>
+      <button class="pb-no" onclick="pushLater()">Not now</button>
+    </div>
+  </div>
+</div>
+
 
 
 <script>
@@ -2205,6 +2240,71 @@ renderPricing();updateCount();updateWishCount();
     document.getElementById('tabs').innerHTML='';
     document.getElementById('orienttabs').innerHTML='';
   }
+})();
+</script>
+
+<!-- ===== ONESIGNAL WEB PUSH ===== -->
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+window.OneSignalDeferred = window.OneSignalDeferred || [];
+OneSignalDeferred.push(async function(OneSignal){
+  try{
+    await OneSignal.init({
+      appId: "072621ec-d475-4e24-a738-3c76cbbba1d2",
+      serviceWorkerPath: "OneSignalSDKWorker.js",
+      serviceWorkerParam: { scope: "/" },
+      autoResubscribe: true
+    });
+  }catch(e){ console.warn('OneSignal init failed', e); }
+});
+
+/* ---- Custom gold permission bar ---- */
+const PUSH_KEY = 'afx_push_asked';
+
+function pushCanAsk(){
+  if(!('Notification' in window)) return false;            // browser support nahi
+  if(Notification.permission !== 'default') return false;   // pehle hi allow/block ho chuka
+  if(localStorage.getItem(PUSH_KEY)) return false;          // pehle dikha chuke hain
+  return true;
+}
+function pushShowBar(){
+  const b=document.getElementById('pushBar');
+  if(!b) return;
+  b.classList.add('show');
+  document.body.classList.add('pb-open');
+}
+function pushHideBar(){
+  const b=document.getElementById('pushBar');
+  if(b) b.classList.remove('show');
+  document.body.classList.remove('pb-open');
+}
+function pushAllow(){
+  localStorage.setItem(PUSH_KEY,'1');
+  pushHideBar();
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  OneSignalDeferred.push(async function(OneSignal){
+    try{
+      await OneSignal.Notifications.requestPermission();
+      if(typeof Notification!=='undefined' && Notification.permission==='granted'){
+        if(typeof showToast==='function') showToast('🔔 You\'re subscribed! We\'ll notify you about new templates.');
+      }
+    }catch(e){ console.warn('push permission error', e); }
+  });
+}
+function pushLater(){
+  localStorage.setItem(PUSH_KEY,'1');
+  pushHideBar();
+}
+
+/* 15 sec baad, ya user 900px scroll kare tab — jo pehle ho */
+(function(){
+  if(!pushCanAsk()) return;
+  let fired=false;
+  const go=()=>{ if(fired) return; fired=true; if(pushCanAsk()) pushShowBar(); };
+  setTimeout(go, 15000);
+  window.addEventListener('scroll', function onScr(){
+    if(window.scrollY > 900){ window.removeEventListener('scroll', onScr); go(); }
+  }, { passive:true });
 })();
 </script>
 </body>
