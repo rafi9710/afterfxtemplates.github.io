@@ -453,6 +453,54 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
   body.pb-open .scrollfab{bottom:210px;}
   body.pb-open .ai-float{bottom:270px;}
 }
+
+/* ===== SMART BUNDLE GENERATOR ===== */
+#bundleNudge{position:fixed;left:26px;bottom:26px;z-index:540;width:min(370px,calc(100vw - 52px));box-sizing:border-box;padding:16px 17px 15px;border-radius:16px;background:linear-gradient(150deg,rgba(30,26,12,.86),rgba(14,14,22,.9));backdrop-filter:blur(16px) saturate(140%);-webkit-backdrop-filter:blur(16px) saturate(140%);border:1px solid rgba(201,168,76,.42);box-shadow:0 16px 44px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.04) inset;opacity:0;transform:translateY(26px) scale(.96);pointer-events:none;transition:opacity .4s ease,transform .5s cubic-bezier(.2,.9,.3,1),bottom .4s ease;}
+#bundleNudge.show{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;}
+:root[data-theme="light"] #bundleNudge{background:linear-gradient(150deg,rgba(255,252,242,.92),rgba(246,240,226,.95));border-color:rgba(176,138,62,.45);box-shadow:0 16px 44px rgba(120,100,50,.18);}
+#bundleNudge .bn-x{position:absolute;top:9px;right:10px;width:22px;height:22px;border:none;background:transparent;color:var(--mt2);font-size:15px;line-height:1;cursor:pointer;border-radius:5px;padding:0;transition:.2s;}
+#bundleNudge .bn-x:hover{color:var(--tx);background:rgba(255,255,255,.07);}
+#bundleNudge .bn-head{display:flex;align-items:center;gap:9px;margin-bottom:9px;padding-right:20px;}
+#bundleNudge .bn-em{font-size:19px;line-height:1;flex:none;}
+#bundleNudge .bn-msg{font-size:12.8px;color:var(--tx);line-height:1.5;font-family:'DM Sans',sans-serif;}
+#bundleNudge .bn-msg b{color:var(--gold);font-weight:700;}
+#bundleNudge .bn-meta{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;font-family:'DM Sans',sans-serif;}
+#bundleNudge .bn-cnt{font-size:11.5px;color:var(--mt);letter-spacing:.3px;}
+#bundleNudge .bn-cnt b{color:var(--gold);font-weight:700;font-size:13px;}
+#bundleNudge .bn-save{font-size:11px;font-weight:700;color:#7ee0a8;letter-spacing:.2px;}
+:root[data-theme="light"] #bundleNudge .bn-save{color:#1e8f52;}
+#bundleNudge .bn-track{height:8px;border-radius:99px;background:rgba(255,255,255,.09);overflow:hidden;position:relative;}
+:root[data-theme="light"] #bundleNudge .bn-track{background:rgba(0,0,0,.08);}
+#bundleNudge .bn-fill{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#8a6f27,#C9A84C 55%,#F2E6C2);transition:width .65s cubic-bezier(.25,1,.35,1);position:relative;}
+#bundleNudge .bn-fill::after{content:"";position:absolute;inset:0;border-radius:99px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent);transform:translateX(-100%);animation:bnShine 2.4s ease-in-out infinite;}
+@keyframes bnShine{0%{transform:translateX(-100%);}60%,100%{transform:translateX(220%);}}
+#bundleNudge .bn-cta{width:100%;margin-top:12px;padding:9px;border:none;border-radius:9px;background:linear-gradient(135deg,#C9A84C,#a6852f);color:#0a0a12;font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:700;cursor:pointer;transition:.2s;letter-spacing:.2px;}
+#bundleNudge .bn-cta:hover{filter:brightness(1.12);transform:translateY(-1px);}
+@media (max-width:560px){
+  #bundleNudge{left:16px;width:calc(100vw - 32px);bottom:16px;}
+  body.pb-open #bundleNudge{bottom:190px;}
+}
+@media (min-width:561px){
+  body.pb-open #bundleNudge{bottom:170px;}
+}
+
+/* ===== BUNDLE UNLOCK CELEBRATION ===== */
+#bundleCelebrate{position:fixed;inset:0;z-index:880;display:none;align-items:center;justify-content:center;pointer-events:none;}
+#bundleCelebrate.on{display:flex;}
+#bundleCelebrate canvas{position:absolute;inset:0;width:100%;height:100%;}
+#bundleCelebrate .bc-card{position:relative;text-align:center;padding:26px 34px;border-radius:18px;background:linear-gradient(150deg,rgba(32,27,12,.9),rgba(14,14,22,.94));backdrop-filter:blur(18px) saturate(150%);-webkit-backdrop-filter:blur(18px) saturate(150%);border:1px solid rgba(201,168,76,.5);box-shadow:0 22px 60px rgba(0,0,0,.55);opacity:0;transform:scale(.8);animation:bcPop .5s cubic-bezier(.2,1.5,.4,1) forwards;}
+:root[data-theme="light"] #bundleCelebrate .bc-card{background:linear-gradient(150deg,rgba(255,252,242,.95),rgba(244,236,218,.96));border-color:rgba(176,138,62,.5);}
+@keyframes bcPop{to{opacity:1;transform:scale(1);}}
+#bundleCelebrate .bc-em{font-size:38px;margin-bottom:6px;line-height:1;}
+#bundleCelebrate .bc-t{font-family:'Cinzel',serif;font-size:19px;color:var(--gold);margin-bottom:5px;letter-spacing:.5px;}
+#bundleCelebrate .bc-s{font-family:'DM Sans',sans-serif;font-size:13.5px;color:var(--tx);}
+#bundleCelebrate .bc-s b{color:#7ee0a8;font-weight:700;}
+:root[data-theme="light"] #bundleCelebrate .bc-s b{color:#1e8f52;}
+@media (prefers-reduced-motion:reduce){
+  #bundleNudge,#bundleNudge .bn-fill{transition:none;}
+  #bundleNudge .bn-fill::after{animation:none;}
+  #bundleCelebrate .bc-card{animation:none;opacity:1;transform:none;}
+}
 </style>
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-EH9THNF49G"></script>
@@ -822,6 +870,30 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
   </div>
 </div>
 <button class="scrollfab" id="scrollfab" onclick="scrollFab()" title="Scroll" aria-label="Scroll up or down">↓</button>
+
+<!-- ===== SMART BUNDLE GENERATOR ===== -->
+<div id="bundleNudge" role="status" aria-live="polite">
+  <button class="bn-x" onclick="dismissBundleNudge()" aria-label="Close suggestion">✕</button>
+  <div class="bn-head">
+    <span class="bn-em" id="bnEmoji" aria-hidden="true">🎉</span>
+    <div class="bn-msg" id="bnMsg"></div>
+  </div>
+  <div class="bn-meta">
+    <span class="bn-cnt" id="bnCount"></span>
+    <span class="bn-save" id="bnSave"></span>
+  </div>
+  <div class="bn-track"><div class="bn-fill" id="bnFill"></div></div>
+  <button class="bn-cta" onclick="bundleNudgeCta()">Browse templates</button>
+</div>
+
+<div id="bundleCelebrate" aria-hidden="true">
+  <canvas id="bcCfx"></canvas>
+  <div class="bc-card">
+    <div class="bc-em">🎉</div>
+    <div class="bc-t" id="bcTitle">Bundle Unlocked!</div>
+    <div class="bc-s" id="bcSub"></div>
+  </div>
+</div>
 
 <!-- ===== PUSH NOTIFICATION PROMPT BAR ===== -->
 <div id="pushBar" role="dialog" aria-label="Enable notifications">
@@ -1439,10 +1511,13 @@ function splitCart(){
   cart.forEach(c=>{ if(c.price===STD_PRICE) stdQty+=c.qty; else premium+=c.price*c.qty; });
   return {stdQty,premium};
 }
-function cartBase(){return cart.reduce((s,c)=>s+c.price*c.qty,0);}    // before discount
+function cartBase(){return cart.reduce((s,c)=>s+c.price*c.qty,0);}    // list price, before discount
+/* Bundle tier is decided by the TOTAL number of items in the cart (premium items
+   count toward unlocking the bundle), but the discounted rate only applies to
+   standard STD_PRICE templates — premium/custom items always bill at full price. */
 function cartTotal(){
   const {stdQty,premium}=splitCart();
-  return Math.round(stdQty*tierRate(stdQty))+premium;                 // discount only on std ₹200 items
+  return Math.round(stdQty*tierRate(cartQty()))+premium;
 }
 
 function customizeWA(title,url){
@@ -1527,6 +1602,7 @@ function addCart(id,title,thumb,price,url){
   if(btn){btn.textContent='✓ Added';btn.classList.add('done');}
   renderRecentlyViewed();
   showCartToast(title);
+  bundleUpdate();
 }
 
 function bigOrderNotice(){
@@ -1541,16 +1617,16 @@ function changeQty(id,d){
   if(d>0 && cartQty()>=MAX_CART){bigOrderNotice();return;}
   item.qty=Math.max(0,item.qty+d);
   if(item.qty===0)cart=cart.filter(c=>c.id!==id);
-  saveCart();updateCount();renderCart();renderGrid();renderRecentlyViewed();
+  saveCart();updateCount();renderCart();renderGrid();renderRecentlyViewed();bundleUpdate();
 }
 
 function removeItem(id){
   cart=cart.filter(c=>c.id!==id);
-  saveCart();updateCount();renderCart();renderGrid();renderRecentlyViewed();
+  saveCart();updateCount();renderCart();renderGrid();renderRecentlyViewed();bundleUpdate();
 }
 
-function openCart(){document.getElementById('overlay').classList.add('on');renderCart();}
-function closeCart(){document.getElementById('overlay').classList.remove('on');}
+function openCart(){document.getElementById('overlay').classList.add('on');renderCart();bundleUpdate();}
+function closeCart(){document.getElementById('overlay').classList.remove('on');bundleUpdate();}
 function ovClick(e){if(e.target===document.getElementById('overlay'))closeCart();}
 
 function renderCart(){
@@ -1581,14 +1657,36 @@ function renderCart(){
       <input type="email" id="custEmail" placeholder="Your Email (template will be sent here)" autocomplete="email" oninput="emailLive(this)">
     </div>
     <label class="tcrow"><input type="checkbox" id="tcChk" ${tcAccepted?'checked':''} onchange="onTc(this.checked)"><span>I have read and accept the <a href="terms.html" target="_blank">Terms &amp; Conditions</a>. These files are for my personal use only — I will not resell, re-post, or present them as my own work.</span></label>`;
-  const discRow = save>0
-    ? `<div style="display:flex;justify-content:space-between;align-items:center;background:var(--gold-dim);border:1px solid var(--gb);border-radius:4px;padding:9px 12px;margin-bottom:10px;"><span style="font-size:12px;color:var(--gold);font-weight:600;">🔥 ${q}-Project Bundle</span><span style="font-size:12px;color:var(--gold);font-weight:700;">You save ₹${save}</span></div>`
+  const st = bundleState();
+  const rup = n => '₹' + n.toLocaleString('en-IN');
+
+  /* Bundle badge (only when a tier is actually active) */
+  const bundleBadge = st.hitTier
+    ? `<div style="display:flex;justify-content:space-between;align-items:center;background:var(--gold-dim);border:1px solid var(--gb);border-radius:6px;padding:9px 12px;margin-bottom:11px;"><span style="font-size:12px;color:var(--gold);font-weight:600;">🔥 ${st.hitTier.qty}-Template Bundle active</span><span style="font-size:12px;color:var(--gold);font-weight:700;">${rup(save)} off</span></div>`
     : '';
+
+  /* Inline "almost there" hint inside the cart panel */
+  const nearHint = (st.next && st.needed <= 3 && st.stdQty > 0)
+    ? `<div style="background:rgba(126,224,168,.08);border:1px solid rgba(126,224,168,.3);border-radius:6px;padding:9px 12px;margin-bottom:11px;font-size:12px;color:var(--tx);line-height:1.5;">✨ Add <b style="color:var(--gold);">${st.needed} more</b> → ${st.next.qty} templates for <b style="color:var(--gold);">${rup(st.next.price)}</b>${st.saving>0?` · <b style="color:#7ee0a8;">pay ${rup(st.saving)} less</b>`:` · <b style="color:#7ee0a8;">only ${rup(st.each)} each</b>`}</div>`
+    : '';
+
+  /* Subtotal / Bundle Discount / Final Total */
+  const rows = `
+    <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--mt);margin-bottom:6px;">
+      <span>Subtotal (${q} item${q>1?'s':''})</span><span>${rup(base)}</span>
+    </div>
+    ${save>0?`<div style="display:flex;justify-content:space-between;font-size:13px;color:#7ee0a8;margin-bottom:8px;font-weight:600;">
+      <span>Bundle Discount</span><span>−${rup(save)}</span>
+    </div>`:''}
+    <div style="border-top:1px solid var(--gb);margin-bottom:9px;"></div>`;
+
   f.innerHTML=`<div class="cpf">
-    ${discRow}
-    <div class="cptot"><span>Total</span><span class="am">${save>0?`<span style="text-decoration:line-through;color:var(--mt);font-size:13px;margin-right:8px;font-weight:400;">₹${base}</span>`:''}₹${total}</span></div>
+    ${bundleBadge}
+    ${nearHint}
+    ${rows}
+    <div class="cptot"><span>Final Total</span><span class="am">₹${total.toLocaleString('en-IN')}</span></div>
     <button class="chk" id="chkBtn" ${tcAccepted?'':'disabled'} onclick="checkout()">
-      Pay ₹${total} with Razorpay
+      Pay ₹${total.toLocaleString('en-IN')} with Razorpay
     </button>
   </div>`;
 }
@@ -1726,34 +1824,289 @@ function showPaySuccess(o, paymentId){
   const wa='https://wa.me/918971738710?text='+encodeURIComponent('Hi AfterFX Templates! My Order ID is '+o.oid+'. I paid but want to check / correct my email ('+o.email+') for the download links.');
   const rate='https://wa.me/918971738710?text='+encodeURIComponent('Hi AfterFX Templates! I want to share my feedback / rating for my order '+o.oid+': ');
   const html=`
-  <div id="okOv" style="position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.82);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px;">
-    <div style="max-width:380px;width:100%;background:var(--bg2);border:1px solid var(--gb);border-radius:14px;padding:30px 26px;text-align:center;font-family:'DM Sans',sans-serif;">
-      <div style="font-size:44px;margin-bottom:6px;">✅</div>
-      <h3 style="font-family:'Cinzel',serif;color:var(--gold);font-size:19px;margin:0 0 4px;">Payment Successful!</h3>
-      <p style="color:var(--mt);font-size:12px;margin:0 0 18px;">Order ID: ${o.oid}</p>
-      <p style="color:var(--tx);font-size:13px;line-height:1.6;margin:0 0 6px;">Your download links have been sent to:</p>
-      <p style="color:var(--gold);font-size:15px;font-weight:700;word-break:break-all;margin:0 0 4px;">${o.email}</p>
-      <p style="color:var(--mt);font-size:11.5px;margin:0 0 18px;">(Arrives in ~1 min — check Spam / Promotions too)</p>
-      <div style="background:rgba(201,168,76,.08);border:1px solid var(--gb);border-radius:8px;padding:12px;margin-bottom:18px;">
-        <p style="color:var(--tx);font-size:12px;line-height:1.6;margin:0;">Wrong email or didn't receive it?<br><a href="${wa}" target="_blank" style="color:#25D366;font-weight:700;text-decoration:none;">📱 WhatsApp us: +91 89717 38710</a></p>
+  <div id="okOv" style="position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.82);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px;overflow:hidden;">
+    <canvas id="okCfx" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;"></canvas>
+    <div id="okCard" style="position:relative;z-index:2;max-width:380px;width:100%;background:var(--bg2);border:1px solid var(--gb);border-radius:14px;padding:30px 26px;text-align:center;font-family:'DM Sans',sans-serif;opacity:0;transform:scale(.86) translateY(14px);">
+      <svg viewBox="0 0 80 80" style="width:74px;height:74px;margin:0 auto 8px;display:block;">
+        <circle id="okRing" cx="40" cy="40" r="34" fill="none" stroke="var(--gold)" stroke-width="3" stroke-dasharray="214" stroke-dashoffset="214" transform="rotate(-90 40 40)"></circle>
+        <path id="okTick" d="M25 41 L36 52 L56 30" fill="none" stroke="var(--gold)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="52" stroke-dashoffset="52"></path>
+      </svg>
+      <div class="okstg" style="opacity:0;transform:translateY(8px);">
+        <h3 style="font-family:'Cinzel',serif;color:var(--gold);font-size:19px;margin:0 0 4px;">Payment Successful!</h3>
+        <p style="color:var(--mt);font-size:12px;margin:0 0 18px;">Order ID: ${o.oid}</p>
       </div>
-      <div style="border-top:1px solid var(--gb);margin:2px 0 16px;padding-top:16px;">
-        <p style="color:var(--gold);font-family:'Cinzel',serif;font-size:14px;font-weight:700;margin:0 0 12px;">Loved our work? 💛</p>
-        <a href="https://www.youtube.com/@AfterFXtemplates?sub_confirmation=1" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:#FF0000;color:#fff;text-decoration:none;padding:11px;border-radius:8px;font-weight:700;font-size:13px;margin-bottom:9px;font-family:'DM Sans',sans-serif;">▶ Subscribe on YouTube</a>
-        <a href="${rate}" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(201,168,76,.12);border:1px solid var(--gb);color:var(--gold);text-decoration:none;padding:11px;border-radius:8px;font-weight:700;font-size:13px;margin-bottom:15px;font-family:'DM Sans',sans-serif;">⭐ Rate / Review our work</a>
-        <p style="color:var(--mt);font-size:10.5px;margin:0 0 9px;letter-spacing:1px;">FOLLOW US</p>
-        <div style="display:flex;gap:8px;">
-          <a href="https://whatsapp.com/channel/0029Vb7FskW1iUxQWcL5su0J" target="_blank" style="flex:1;text-align:center;background:var(--bg3);border:1px solid var(--gb);color:var(--tx);text-decoration:none;padding:9px 4px;border-radius:7px;font-size:11px;font-weight:600;font-family:'DM Sans',sans-serif;">WhatsApp</a>
-          <a href="https://www.instagram.com/afterfxtemplaets" target="_blank" style="flex:1;text-align:center;background:var(--bg3);border:1px solid var(--gb);color:var(--tx);text-decoration:none;padding:9px 4px;border-radius:7px;font-size:11px;font-weight:600;font-family:'DM Sans',sans-serif;">Instagram</a>
-          <a href="https://t.me/+egZdhZelWuRmY2U1" target="_blank" style="flex:1;text-align:center;background:var(--bg3);border:1px solid var(--gb);color:var(--tx);text-decoration:none;padding:9px 4px;border-radius:7px;font-size:11px;font-weight:600;font-family:'DM Sans',sans-serif;">Telegram</a>
+      <div class="okstg" style="opacity:0;transform:translateY(8px);">
+        <p style="color:var(--tx);font-size:13px;line-height:1.6;margin:0 0 6px;">Your download links have been sent to:</p>
+        <p style="color:var(--gold);font-size:15px;font-weight:700;word-break:break-all;margin:0 0 4px;">${o.email}</p>
+        <p style="color:var(--mt);font-size:11.5px;margin:0 0 18px;">(Arrives in ~1 min — check Spam / Promotions too)</p>
+      </div>
+      <div class="okstg" style="opacity:0;transform:translateY(8px);">
+        <div style="background:rgba(201,168,76,.08);border:1px solid var(--gb);border-radius:8px;padding:12px;margin-bottom:18px;">
+          <p style="color:var(--tx);font-size:12px;line-height:1.6;margin:0;">Wrong email or didn't receive it?<br><a href="${wa}" target="_blank" style="color:#25D366;font-weight:700;text-decoration:none;">📱 WhatsApp us: +91 89717 38710</a></p>
         </div>
       </div>
-      <button onclick="var x=document.getElementById('okOv');if(x)x.remove();" style="width:100%;background:linear-gradient(135deg,#C9A84C,#a6852f);color:#0a0a12;border:none;padding:13px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;">Done</button>
+      <div class="okstg" style="opacity:0;transform:translateY(8px);">
+        <div style="border-top:1px solid var(--gb);margin:2px 0 16px;padding-top:16px;">
+          <p style="color:var(--gold);font-family:'Cinzel',serif;font-size:14px;font-weight:700;margin:0 0 12px;">Loved our work? 💛</p>
+          <a href="https://www.youtube.com/@AfterFXtemplates?sub_confirmation=1" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:#FF0000;color:#fff;text-decoration:none;padding:11px;border-radius:8px;font-weight:700;font-size:13px;margin-bottom:9px;font-family:'DM Sans',sans-serif;">▶ Subscribe on YouTube</a>
+          <a href="${rate}" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(201,168,76,.12);border:1px solid var(--gb);color:var(--gold);text-decoration:none;padding:11px;border-radius:8px;font-weight:700;font-size:13px;margin-bottom:15px;font-family:'DM Sans',sans-serif;">⭐ Rate / Review our work</a>
+          <p style="color:var(--mt);font-size:10.5px;margin:0 0 9px;letter-spacing:1px;">FOLLOW US</p>
+          <div style="display:flex;gap:8px;">
+            <a href="https://whatsapp.com/channel/0029Vb7FskW1iUxQWcL5su0J" target="_blank" style="flex:1;text-align:center;background:var(--bg3);border:1px solid var(--gb);color:var(--tx);text-decoration:none;padding:9px 4px;border-radius:7px;font-size:11px;font-weight:600;font-family:'DM Sans',sans-serif;">WhatsApp</a>
+            <a href="https://www.instagram.com/afterfxtemplaets" target="_blank" style="flex:1;text-align:center;background:var(--bg3);border:1px solid var(--gb);color:var(--tx);text-decoration:none;padding:9px 4px;border-radius:7px;font-size:11px;font-weight:600;font-family:'DM Sans',sans-serif;">Instagram</a>
+            <a href="https://t.me/+egZdhZelWuRmY2U1" target="_blank" style="flex:1;text-align:center;background:var(--bg3);border:1px solid var(--gb);color:var(--tx);text-decoration:none;padding:9px 4px;border-radius:7px;font-size:11px;font-weight:600;font-family:'DM Sans',sans-serif;">Telegram</a>
+          </div>
+        </div>
+      </div>
+      <div class="okstg" style="opacity:0;transform:translateY(8px);">
+        <button onclick="closePaySuccess()" style="width:100%;background:linear-gradient(135deg,#C9A84C,#a6852f);color:#0a0a12;border:none;padding:13px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;">Done</button>
+      </div>
     </div>
   </div>`;
   const d=document.createElement('div');
   d.innerHTML=html;
   document.body.appendChild(d.firstElementChild);
+  playPaySuccessAnim();
+}
+
+function closePaySuccess(){
+  stopConfetti(document.getElementById('okCfx'));
+  const x=document.getElementById('okOv');
+  if(x) x.remove();
+}
+
+function playPaySuccessAnim(){
+  const card=document.getElementById('okCard');
+  const ring=document.getElementById('okRing');
+  const tick=document.getElementById('okTick');
+  const stgs=document.querySelectorAll('#okCard .okstg');
+  if(!card) return;
+
+  /* reduced-motion respect: show instantly */
+  if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    card.style.opacity='1'; card.style.transform='none';
+    if(ring) ring.style.strokeDashoffset='0';
+    if(tick) tick.style.strokeDashoffset='0';
+    stgs.forEach(s=>{ s.style.opacity='1'; s.style.transform='none'; });
+    return;
+  }
+
+  requestAnimationFrame(()=>{
+    card.style.transition='opacity .4s ease, transform .55s cubic-bezier(.2,1.5,.4,1)';
+    card.style.opacity='1';
+    card.style.transform='scale(1) translateY(0)';
+
+    setTimeout(()=>{ if(ring){ ring.style.transition='stroke-dashoffset .55s ease-out'; ring.style.strokeDashoffset='0'; } },220);
+    setTimeout(()=>{ if(tick){ tick.style.transition='stroke-dashoffset .4s cubic-bezier(.6,0,.3,1)'; tick.style.strokeDashoffset='0'; } },640);
+    setTimeout(fireConfetti,900);
+
+    stgs.forEach((s,i)=>{
+      setTimeout(()=>{
+        s.style.transition='opacity .45s ease, transform .45s ease';
+        s.style.opacity='1'; s.style.transform='translateY(0)';
+      },1000+i*130);
+    });
+  });
+}
+
+/* ===== REUSABLE CONFETTI ENGINE =====
+   Shared by the payment-success modal and the bundle-unlock celebration.
+   Pass any <canvas>; the RAF handle is stored on the element itself so
+   multiple canvases can run (and be stopped) independently.            */
+function afxConfetti(cv, opts){
+  if(!cv) return;
+  opts = opts || {};
+  const ctx = cv.getContext('2d');
+  const W = cv.clientWidth, H = cv.clientHeight;
+  if(!W || !H) return;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  cv.width = W*dpr; cv.height = H*dpr;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+
+  const COL   = opts.colors || ['#C9A84C','#E5CE8A','#F2E6C2','#A6852F','#FFF8E1'];
+  const N     = opts.count  || (W < 520 ? 55 : 90);
+  const originY = (opts.originY !== undefined) ? opts.originY : H/2 - 70;
+  const spread  = Math.min(W*0.6, opts.spread || 260);
+  const decay   = opts.decay || 0.006;
+
+  const parts = [];
+  for(let i=0;i<N;i++){
+    parts.push({
+      x: W/2 + (Math.random()-.5)*spread,
+      y: originY,
+      vx:(Math.random()-.5)*5.2,
+      vy:-Math.random()*7 - 2,
+      w: 5 + Math.random()*6,
+      h: 3 + Math.random()*5,
+      r: Math.random()*6,
+      vr:(Math.random()-.5)*.3,
+      c: COL[(Math.random()*COL.length)|0],
+      life: 1
+    });
+  }
+
+  const loop = () => {
+    ctx.clearRect(0,0,W,H);
+    let alive = 0;
+    for(const p of parts){
+      p.vy += 0.16; p.x += p.vx; p.y += p.vy; p.r += p.vr; p.life -= decay;
+      if(p.life > 0 && p.y < H + 30){
+        alive++;
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, p.life);
+        ctx.translate(p.x, p.y); ctx.rotate(p.r);
+        ctx.fillStyle = p.c;
+        ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+        ctx.restore();
+      }
+    }
+    if(alive > 0){ cv._raf = requestAnimationFrame(loop); }
+    else { ctx.clearRect(0,0,W,H); cv._raf = null; }
+  };
+  stopConfetti(cv);
+  loop();
+}
+function stopConfetti(cv){
+  if(cv && cv._raf){ cancelAnimationFrame(cv._raf); cv._raf = null; }
+}
+/* payment-success modal wrapper */
+function fireConfetti(){ afxConfetti(document.getElementById('okCfx')); }
+
+/* ==========================================================================
+   SMART BUNDLE GENERATOR
+   --------------------------------------------------------------------------
+   Reads the SAME live pricing data the rest of the site uses (PRICING /
+   tierRate / splitCart) — no duplicated numbers. Discounts only apply to
+   standard STD_PRICE templates; premium/custom items are excluded, exactly
+   like cartTotal() already does.
+   ========================================================================== */
+const BUNDLE_TIERS   = PRICING.filter(p => p.qty > 1);   // 5, 10, 20
+const BUNDLE_WINDOW  = 3;      // only nudge when this close (or closer) to the next tier
+const BUNDLE_EMOJI   = {5:'\ud83c\udf89', 10:'\ud83d\udd25', 20:'\u2b50'};
+let bundleDismissed  = sessionStorage.getItem('afx_bundle_dismissed') || '';  // tier the user closed
+let bundleLastTier   = 0;      // highest tier already celebrated this session
+let bcTimer          = null;
+
+/* Single source of truth for every bundle calculation. */
+function bundleState(){
+  const {stdQty, premium} = splitCart();
+  const totalQty = cartQty();                 // ALL items (standard + premium) count toward the tier
+  const nowCost  = cartTotal();               // exactly what the cart charges right now
+
+  const next    = BUNDLE_TIERS.find(t => t.qty > totalQty) || null;                       // next milestone
+  const hitTier = BUNDLE_TIERS.slice().reverse().find(t => t.qty <= totalQty) || null;    // tier already active
+
+  if(!next){
+    return {stdQty, totalQty, premium, nowCost, next:null, hitTier,
+            needed:0, nextCost:nowCost, saving:0, delta:0, each:0, pct:100};
+  }
+
+  const needed = next.qty - totalQty;
+  /* What the cart WOULD cost if they added `needed` more standard templates:
+     the whole cart moves up to the next tier rate, premium items stay full price. */
+  const nextCost = Math.round((stdQty + needed) * tierRate(next.qty)) + premium;
+  const delta    = nextCost - nowCost;        // negative = they end up paying LESS
+
+  return {
+    stdQty, totalQty, premium, nowCost, next, hitTier, needed, nextCost, delta,
+    saving: Math.max(0, -delta),                        // rupees saved vs. paying now
+    each:   delta > 0 ? Math.round(delta / needed) : 0, // effective cost of each extra template
+    pct:    Math.min(100, Math.round((totalQty / next.qty) * 100))
+  };
+}
+
+/* Should the floating card be visible right now? */
+function bundleShouldNudge(st){
+  if(!st.next) return false;                                   // already at max bundle
+  if(st.totalQty < 1) return false;                            // empty cart — don't pester
+  if(st.needed > BUNDLE_WINDOW) return false;                  // too far away — not helpful
+  if(bundleDismissed === String(st.next.qty)) return false;    // user closed this one
+  if(document.getElementById('overlay').classList.contains('on')) return false;   // cart panel open
+  return true;
+}
+
+/* Paint the floating recommendation card. */
+function renderBundleNudge(){
+  const el = document.getElementById('bundleNudge');
+  if(!el) return;
+  const st = bundleState();
+
+  if(!bundleShouldNudge(st)){ el.classList.remove('show'); return; }
+
+  const n      = st.next;
+  const plural = st.needed === 1 ? 'template' : 'templates';
+  /* Show the cart's PROJECTED total at the next tier (premium items stay full price),
+     not the flat tier price — otherwise a mixed cart would be quoted the wrong number. */
+  const price  = '\u20b9' + st.nextCost.toLocaleString('en-IN');
+
+  document.getElementById('bnEmoji').textContent = BUNDLE_EMOJI[n.qty] || '\ud83c\udf89';
+  document.getElementById('bnMsg').innerHTML =
+    `Add <b>${st.needed} more ${plural}</b> and unlock the <b>${n.qty}-template bundle</b> \u2014 cart total <b>${price}</b>.`;
+  document.getElementById('bnCount').innerHTML = `<b>${st.totalQty}</b> / ${n.qty} templates`;
+
+  /* Honest savings line:
+     - delta <= 0 -> they get MORE templates AND pay LESS  ("pay ₹X less")
+     - delta  > 0 -> tiny top-up for the extra templates    ("only ₹X each")  */
+  const saveEl = document.getElementById('bnSave');
+  saveEl.textContent = st.saving > 0
+    ? `+${st.needed} free \u00b7 pay \u20b9${st.saving.toLocaleString('en-IN')} less`
+    : `just \u20b9${st.delta.toLocaleString('en-IN')} more \u00b7 \u20b9${st.each} each`;
+
+  document.getElementById('bnFill').style.width = st.pct + '%';
+  el.classList.add('show');
+}
+
+/* Celebrate the moment a tier is unlocked (2s, then auto-hide). */
+function celebrateBundle(tier){
+  const wrap = document.getElementById('bundleCelebrate');
+  if(!wrap) return;
+  /* Real saving for THIS cart — works for mixed carts too, since premium
+     items simply have no discount to claim. */
+  const save = Math.max(0, cartBase() - cartTotal());
+
+  document.getElementById('bcTitle').textContent = `${tier.qty}-Template Bundle Unlocked!`;
+  document.getElementById('bcSub').innerHTML     = `You saved <b>\u20b9${save.toLocaleString('en-IN')}</b>`;
+
+  wrap.classList.add('on');
+  requestAnimationFrame(() => afxConfetti(document.getElementById('bcCfx'), {count:80, decay:0.009}));
+
+  if(bcTimer) clearTimeout(bcTimer);
+  bcTimer = setTimeout(() => {
+    wrap.classList.remove('on');
+    stopConfetti(document.getElementById('bcCfx'));
+  }, 2000);
+}
+
+/* Called after EVERY cart mutation — the single hook. */
+function bundleUpdate(){
+  const st = bundleState();
+
+  // Unlocked a new (higher) tier? celebrate once.
+  if(st.hitTier && st.hitTier.qty > bundleLastTier){
+    bundleLastTier = st.hitTier.qty;
+    bundleDismissed = '';                                   // fresh start for the next tier
+    sessionStorage.removeItem('afx_bundle_dismissed');
+    celebrateBundle(st.hitTier);
+  }
+  // Dropped back below a tier — allow celebrating it again later.
+  if(!st.hitTier || st.hitTier.qty < bundleLastTier){
+    bundleLastTier = st.hitTier ? st.hitTier.qty : 0;
+  }
+  renderBundleNudge();
+}
+
+function dismissBundleNudge(){
+  const st = bundleState();
+  if(st.next){
+    bundleDismissed = String(st.next.qty);
+    sessionStorage.setItem('afx_bundle_dismissed', bundleDismissed);
+  }
+  document.getElementById('bundleNudge').classList.remove('show');
+}
+
+function bundleNudgeCta(){
+  const t = document.getElementById('templates');
+  if(t) t.scrollIntoView({behavior:'smooth'});
 }
 
 function nrWA(){
@@ -2240,6 +2593,10 @@ renderPricing();updateCount();updateWishCount();
     document.getElementById('tabs').innerHTML='';
     document.getElementById('orienttabs').innerHTML='';
   }
+  /* Seed bundle state from the restored cart — no celebration replay on load */
+  const _bs = bundleState();
+  bundleLastTier = _bs.hitTier ? _bs.hitTier.qty : 0;
+  renderBundleNudge();
 })();
 </script>
 
