@@ -829,6 +829,67 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
   </div>
 </div>
 
+<!-- ===== TEMPLATE DETAIL MODAL (added 2026-07-13) =====
+     Fixes the #1 customer confusion: people saw ₹300 and assumed it bought a
+     finished video. This page separates the two products explicitly. -->
+<style>
+#tplModal{position:fixed;inset:0;background:rgba(4,4,8,.86);z-index:920;display:none;overflow-y:auto;padding:24px 16px;}
+#tplModal.show{display:block;}
+.tm-box{max-width:1080px;margin:0 auto;background:var(--bg2);border:1px solid var(--gb);border-radius:12px;overflow:hidden;animation:tmIn .28s cubic-bezier(.2,.9,.3,1);}
+@keyframes tmIn{from{opacity:0;transform:translateY(18px) scale(.985);}to{opacity:1;transform:none;}}
+.tm-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:16px 20px;border-bottom:1px solid var(--gb);}
+.tm-title{font-family:'Cinzel',serif;font-size:18px;line-height:1.35;color:var(--tx);margin:0;flex:1;}
+.tm-x{background:transparent;border:1px solid var(--gb);color:var(--mt);width:34px;height:34px;border-radius:8px;font-size:17px;cursor:pointer;flex-shrink:0;transition:all .2s;}
+.tm-x:hover{border-color:var(--gold);color:var(--gold);}
+.tm-grid{display:grid;grid-template-columns:1.35fr 1fr;gap:0;}
+.tm-left{background:#000;display:flex;align-items:center;justify-content:center;min-height:300px;}
+.tm-left iframe{width:100%;aspect-ratio:16/9;border:0;display:block;}
+.tm-left.vert iframe{aspect-ratio:9/16;max-height:520px;width:auto;}
+.tm-right{padding:20px;display:flex;flex-direction:column;gap:14px;}
+.tm-warn{display:flex;gap:10px;align-items:flex-start;background:rgba(224,82,96,.09);border:1px solid rgba(224,82,96,.4);border-left:3px solid #e05260;border-radius:0 8px 8px 0;padding:12px 14px;}
+.tm-warn .ic{font-size:16px;line-height:1.3;flex-shrink:0;}
+.tm-warn b{color:#ff8b95;font-size:12.5px;display:block;margin-bottom:3px;letter-spacing:.3px;}
+.tm-warn span{font-size:12px;color:var(--mt);line-height:1.55;}
+.tm-warn.ok{background:rgba(62,207,142,.08);border-color:rgba(62,207,142,.4);border-left-color:#3ecf8e;}
+.tm-warn.ok b{color:#6fe3ad;}
+.tm-steps{display:flex;flex-direction:column;gap:9px;padding:2px 0;}
+.tm-step{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--mt);line-height:1.45;}
+.tm-step i{flex-shrink:0;width:21px;height:21px;border-radius:50%;background:var(--gold);color:#0a0a10;font-style:normal;font-weight:700;font-size:11px;display:flex;align-items:center;justify-content:center;}
+.tm-opt{border:1px solid var(--gb);border-radius:10px;padding:14px;transition:border-color .2s;}
+.tm-opt:hover{border-color:var(--gold-dim);}
+.tm-opt.pick{border-color:var(--gold);}
+.tm-optH{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:5px;}
+.tm-optT{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold);}
+.tm-optP{font-family:'Cinzel',serif;font-size:21px;font-weight:700;color:var(--tx);white-space:nowrap;}
+.tm-optP.q{font-size:13px;font-family:'DM Sans',sans-serif;font-weight:600;color:var(--mt);}
+.tm-optD{font-size:12px;color:var(--mt);line-height:1.55;margin-bottom:11px;}
+.tm-btn{width:100%;padding:11px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;letter-spacing:.4px;}
+.tm-btn.gold{background:var(--gold);color:#0a0a10;border:1px solid var(--gold);}
+.tm-btn.gold:hover{filter:brightness(1.1);}
+.tm-btn.gold.done{background:transparent;color:#3ecf8e;border-color:#3ecf8e;}
+.tm-btn.ghost{background:transparent;color:var(--tx);border:1px solid var(--gb);}
+.tm-btn.ghost:hover{border-color:var(--gold);color:var(--gold);}
+.tm-desc{font-size:12.5px;color:var(--mt);line-height:1.65;padding-top:2px;}
+.tm-attr{border-top:1px solid var(--gb);padding-top:14px;}
+.tm-attr h4{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold);margin:0 0 10px;font-family:'DM Sans',sans-serif;font-weight:700;}
+.tm-attr table{width:100%;border-collapse:collapse;}
+.tm-attr td{padding:6px 0;font-size:12.5px;border-bottom:1px solid rgba(255,255,255,.045);}
+.tm-attr td:first-child{color:var(--mt);}
+.tm-attr td:last-child{text-align:right;color:var(--tx);font-weight:500;}
+.tm-attr tr:last-child td{border-bottom:0;}
+@media(max-width:820px){
+  .tm-grid{grid-template-columns:1fr;}
+  .tm-left{min-height:0;}
+  .tm-left.vert iframe{max-height:400px;}
+  .tm-title{font-size:16px;}
+  #tplModal{padding:0;}
+  .tm-box{border-radius:0;min-height:100vh;}
+}
+</style>
+<div id="tplModal" onclick="tmOverlayClick(event)">
+  <div class="tm-box" id="tmBox"></div>
+</div>
+
 <!-- WISHLIST OVERLAY -->
 <div class="overlay" id="wishlistOverlay" onclick="wishOvClick(event)">
   <div class="cpanel">
@@ -1504,24 +1565,198 @@ function buildCardHTML(v, idPrefix){
         <div class="vtitle">${v.title}</div>
         <div class="vmeta">${co
           ? `<span class="vprice" style="font-size:13px;">Customize Only</span><span style="font-size:10px;color:var(--mt)">Personalized Service</span>`
-          : `<span class="vprice">₹${v.price}</span><span style="font-size:10px;color:var(--mt)">Editable project file</span>`}</div>
+          : `<span class="vprice">₹${v.price}</span><span style="font-size:10px;color:var(--mt)">Project file &middot; you edit it</span>`}</div>
         ${co?'':`<button class="customlink" onclick="customizeWA('${v.title.replace(/'/g,"\\'")}','${v.url}')">🎬 Don't have After Effects? Get a ready-made video →</button>`}
         <div class="vacts">
           ${co
             ? `<button class="badd" onclick="customizeWA('${v.title.replace(/'/g,"\\'")}','${v.url}')">✦ Customize</button>`
             : `<button class="badd ${inc?'done':''}" onclick="addCart('${v.id}','${v.title.replace(/'/g,"\\'")}','${v.thumb}',${v.price},'${v.url}')" id="ab${idPrefix}${v.id}">${inc?'✓ Added':'+ Buy Project File'}</button>`}
-          <button class="bwatch" onclick="openTemplate('${v.id}')">▶ Watch</button>
+          <button class="bwatch" onclick="event.stopPropagation();openDetail('${v.id}')">▶ Details</button>
           <button class="bshare" onclick="shareTemplate('${v.id}','${v.title.replace(/'/g,"\\'")}')" title="Share this template">↗</button>
         </div>
       </div>
     </div>`;
 }
 
+/* ================= TEMPLATE DETAIL MODAL (added 2026-07-13) =================
+   WHY: customers kept reading the ₹300 card price as the price of a finished
+   video. The card is too small to explain the difference without bloating it,
+   so the explanation lives here instead — two clearly separated products,
+   an explicit warning, and the technical attributes.
+   All attribute fields are OPTIONAL on a template. Anything missing falls back
+   to a sensible default (or the row is hidden), so all 193 templates get a
+   good detail page with zero data entry. ========================================= */
+const AE_VERSION_DEFAULT = 'After Effects CC 2020 or above';
+const PLUGINS_DEFAULT    = 'None required';
+
+function tmResolution(v){
+  if(v.resolution) return v.resolution;
+  const o = vOrient(v);
+  if(o === 'v')    return '1080 × 1920 (9:16)';
+  if(o === 'both') return '1920 × 1080 + 1080 × 1920';
+  return '1920 × 1080 (16:9)';
+}
+function tmDescription(v){
+  if(v.desc) return v.desc;
+  const cat = (CATS.find(c => c.id === v.cat) || {}).label || v.cat;
+  const o   = vOrient(v);
+  const fmt = o === 'v' ? 'vertical (WhatsApp / Instagram Story)'
+            : o === 'both' ? 'both horizontal and vertical' : 'horizontal (YouTube / TV)';
+  /* customize-only templates are a SERVICE, not a file — the customer never opens
+     After Effects, so the "you edit it" copy would be plain wrong for them. */
+  if(v.customizeOnly){
+    return `A personalised ${cat.toLowerCase()} video, delivered in ${fmt} format. This one is not sold as a project file — we create it for you. Send your names, date, venue and photos, and we hand back the finished video ready to share.`;
+  }
+  return `A ready-to-edit ${cat.toLowerCase()} invitation project, built in ${fmt} format. Open it in After Effects, replace the names, date, venue and photos with your own, and render your video. Text is fully editable in English and regional languages.`;
+}
+function tmEmbed(v){
+  const yt = String(v.id || '');
+  const clean = /^[A-Za-z0-9_-]{6,}$/.test(yt) ? yt : '';
+  if(!clean){
+    return `<div style="color:#666;font-size:13px;padding:40px;text-align:center;">Preview unavailable — <a href="${v.url}" target="_blank" style="color:var(--gold)">watch on YouTube ↗</a></div>`;
+  }
+  return `<iframe src="https://www.youtube-nocookie.com/embed/${clean}?rel=0&modestbranding=1" title="${(v.title||'').replace(/"/g,'&quot;')}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe>`;
+}
+
+function buildDetailHTML(v){
+  const co    = v.customizeOnly;
+  const inc   = cart.find(c => c.id === v.id);
+  const esc   = s => String(s || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+  const ready = v.readyPrice ? `from ₹${v.readyPrice}` : 'Price on request';
+  const fmt   = vOrient(v) === 'v' ? 'Vertical 9:16' : vOrient(v) === 'both' ? 'Horizontal + Vertical' : 'Horizontal 16:9';
+
+  /* Attributes differ by product. A customize-only template is a SERVICE — the
+     customer never opens After Effects, so software/plugin/editable-text rows
+     would be meaningless (and worrying) to them. */
+  const rows = (co
+    ? [
+        ['Format',          fmt],
+        ['Resolution',      tmResolution(v)],
+        ['Duration',        v.duration || null],
+        ['Delivered as',    'Finished MP4 video'],
+        ['You need',        'Nothing — we make it for you'],
+        ['Languages',       'English + regional (Telugu, Hindi…)'],
+        ['Turnaround',      v.turnaround || null],
+      ]
+    : [
+        ['Format',            fmt],
+        ['Resolution',        tmResolution(v)],
+        ['Duration',          v.duration || null],
+        ['File size',         v.fileSize || null],
+        ['Software required', v.aeVersion || AE_VERSION_DEFAULT],
+        ['Plugins required',  v.plugins   || PLUGINS_DEFAULT],
+        ['Editable text',     'Yes — names, date, venue, photos'],
+      ]
+  ).filter(r => r[1]);
+
+  const projectBlock = co ? '' : `
+    <div class="tm-opt pick">
+      <div class="tm-optH">
+        <span class="tm-optT">📁 Project file</span>
+        <span class="tm-optP">₹${v.price}</span>
+      </div>
+      <div class="tm-optD">You download the After Effects project and edit it yourself. You need After Effects installed — and someone who can use it.</div>
+      <button class="tm-btn gold ${inc ? 'done' : ''}" id="tmBuy"
+        onclick="addCart('${esc(v.id)}','${esc(v.title)}','${esc(v.thumb)}',${v.price},'${esc(v.url)}');tmRefresh('${esc(v.id)}')">
+        ${inc ? '✓ Added to cart' : '+ Buy project file · ₹' + v.price}
+      </button>
+    </div>`;
+
+  /* customize-only: replace the red warning with a green "how it works" panel —
+     nothing is wrong here, this product simply works differently. */
+  const coInfo = !co ? '' : `
+    <div class="tm-warn ok">
+      <span class="ic">✨</span>
+      <div>
+        <b>Personalised service — we make this video for you</b>
+        <span>This one isn't sold as a project file. You don't need After Effects or any software. Send us your details on WhatsApp and we deliver the finished video.</span>
+      </div>
+    </div>
+    <div class="tm-steps">
+      <div class="tm-step"><i>1</i><span>Send names, date, venue &amp; photos on WhatsApp</span></div>
+      <div class="tm-step"><i>2</i><span>We share the price and start work</span></div>
+      <div class="tm-step"><i>3</i><span>You get the finished video, ready to share</span></div>
+    </div>`;
+
+  return `
+    <div class="tm-head">
+      <h3 class="tm-title">${v.title}</h3>
+      <button class="tm-x" onclick="closeDetail()" aria-label="Close">✕</button>
+    </div>
+    <div class="tm-grid">
+      <div class="tm-left ${vOrient(v) === 'v' ? 'vert' : ''}">${tmEmbed(v)}</div>
+      <div class="tm-right">
+        ${co ? coInfo : `
+        <div class="tm-warn">
+          <span class="ic">⚠️</span>
+          <div>
+            <b>This is a PROJECT FILE — not a finished video</b>
+            <span>₹${v.price} gets you the editable After Effects source file. It is meant for graphic designers / video editors who already work in After Effects. If you just want the finished video with your names on it, pick the second option below.</span>
+          </div>
+        </div>`}
+
+        ${projectBlock}
+
+        <div class="tm-opt ${co ? 'pick' : ''}">
+          <div class="tm-optH">
+            <span class="tm-optT">🎬 ${co ? 'Order this video' : 'Ready-made video'}</span>
+            <span class="tm-optP ${v.readyPrice ? '' : 'q'}">${ready}</span>
+          </div>
+          <div class="tm-optD">${co
+            ? 'Tell us the names, date, venue and send your photos. We build the whole video and send it to you — nothing to install, nothing to edit.'
+            : 'We make the video for you. No software, no editing — just send your names, date, venue and photos on WhatsApp, and we deliver the finished video.'}</div>
+          <button class="tm-btn ${co ? 'gold' : 'ghost'}" onclick="customizeWA('${esc(v.title)}','${esc(v.url)}')">
+            💬 Get a quote on WhatsApp
+          </button>
+        </div>
+
+        <div class="tm-desc">${tmDescription(v)}</div>
+
+        <div class="tm-attr">
+          <h4>Attributes</h4>
+          <table>
+            ${rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}
+          </table>
+        </div>
+      </div>
+    </div>`;
+}
+
+let tmOpenId = null;
+function openDetail(id){
+  const v = videos.find(x => String(x.id) === String(id));
+  if(!v) return;
+  trackRecentView(id);
+  tmOpenId = String(id);
+  document.getElementById('tmBox').innerHTML = buildDetailHTML(v);
+  const m = document.getElementById('tplModal');
+  m.classList.add('show');
+  m.scrollTop = 0;
+  document.body.style.overflow = 'hidden';
+  if(history.replaceState) history.replaceState({}, '', '?t=' + encodeURIComponent(id));
+}
+function closeDetail(){
+  const m = document.getElementById('tplModal');
+  m.classList.remove('show');
+  document.getElementById('tmBox').innerHTML = '';   /* kills the iframe → stops audio */
+  document.body.style.overflow = '';
+  tmOpenId = null;
+  if(history.replaceState) history.replaceState({}, '', location.pathname);
+}
+function tmOverlayClick(e){ if(e.target.id === 'tplModal') closeDetail(); }
+function tmRefresh(id){
+  /* re-render just the buy button after adding to cart */
+  const v = videos.find(x => String(x.id) === String(id));
+  const b = document.getElementById('tmBuy');
+  if(v && b){ b.classList.add('done'); b.textContent = '✓ Added to cart'; }
+}
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape' && tmOpenId) closeDetail();
+});
+
 /* ===== Recently Viewed tracking ===== */
 function openTemplate(id){
-  const v=videos.find(x=>String(x.id)===String(id));
-  trackRecentView(id);
-  if(v) window.open(v.url,'_blank');
+  openDetail(id);
 }
 function trackRecentView(id){
   id=String(id);
@@ -2376,6 +2611,7 @@ function applyDeepLink(){
   if(!t)return;
   enterFocus(t.id);
   setTimeout(()=>{const el=document.getElementById('templates');if(el)el.scrollIntoView({behavior:'smooth'});},300);
+  setTimeout(()=>openDetail(t.id),450);   /* shared links land straight on the detail page */
 }
 
 /* ===== AFTERFX AI ASSISTANT (new) — offline, pure JS, no backend, no API ===== */

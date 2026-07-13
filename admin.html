@@ -299,6 +299,46 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
         </label>
         <div class="hint">If ON: customers see a "Customize / Enquire" button instead of Add to Cart, and no price.</div>
       </div>
+
+      <!-- ===== DETAIL PAGE FIELDS (added 2026-07-13) — ALL OPTIONAL =====
+           These fill the template detail page customers see when they click a card.
+           Leave any of them blank and a sensible default is used, or the row is
+           simply hidden. You never have to fill these in. -->
+      <div style="border-top:1px solid var(--gb);margin:22px 0 16px;padding-top:16px;">
+        <div style="font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:4px;">Detail page (all optional)</div>
+        <div class="hint" style="margin-bottom:14px;">Leave blank → smart default is used, or the row is hidden. Nothing here is required.</div>
+      </div>
+
+      <div class="field">
+        <label>Ready-made video price</label>
+        <input type="text" id="fReadyPrice" placeholder="e.g. 1499  or  1499–2999  (blank = 'Price on request')">
+        <div class="hint">Shown as "from ₹…" next to the Get-a-Quote button. Blank → "Price on request".</div>
+      </div>
+
+      <div class="field">
+        <label>Duration</label>
+        <input type="text" id="fDuration" placeholder="e.g. 0:32  (blank = row hidden)">
+      </div>
+
+      <div class="field">
+        <label>File size</label>
+        <input type="text" id="fFileSize" placeholder="e.g. 180 MB  (blank = row hidden)">
+      </div>
+
+      <div class="field">
+        <label>After Effects version</label>
+        <input type="text" id="fAeVersion" placeholder="blank = After Effects CC 2020 or above">
+      </div>
+
+      <div class="field">
+        <label>Plugins required</label>
+        <input type="text" id="fPlugins" placeholder="blank = None required">
+      </div>
+
+      <div class="field">
+        <label>Short description</label>
+        <textarea id="fDesc" rows="3" placeholder="Blank = auto-written from the title, category and orientation." style="width:100%;font-family:'DM Sans',sans-serif;background:var(--bg);border:1px solid var(--gb);color:var(--tx);padding:10px;border-radius:6px;resize:vertical;"></textarea>
+      </div>
     </div>
     <div class="modal-foot">
       <button class="btn-cancel" onclick="closeModal()">Cancel</button>
@@ -467,6 +507,8 @@ async function fetchVideos(){
           defaultOrient:t.orient||'h',
           defaultPrice:(t.price!=null?t.price:300),
           addedAt:t.addedAt,
+          readyPrice:t.readyPrice, duration:t.duration, fileSize:t.fileSize,
+          aeVersion:t.aeVersion, plugins:t.plugins, desc:t.desc,
           isExtra:false
         }));
       }
@@ -682,7 +724,13 @@ function getMergedList(){
       addedAt:v.addedAt,
       customizeOnly:co.includes(v.id),
       isCustomized:!!custom[v.id],
-      isExtra:false
+      isExtra:false,
+      readyPrice:c.readyPrice||v.readyPrice,
+      duration:c.duration||v.duration,
+      fileSize:c.fileSize||v.fileSize,
+      aeVersion:c.aeVersion||v.aeVersion,
+      plugins:c.plugins||v.plugins,
+      desc:c.desc||v.desc
     };
   });
   const baseIds=new Set(allVideos.map(v=>v.id));
@@ -738,6 +786,7 @@ function exportForWebsite(){
       if(t.orient && t.orient!=='h') o.orient=t.orient;
       if(t.customizeOnly) o.customizeOnly=true;
       if(t.addedAt) o.addedAt=t.addedAt;
+      ['readyPrice','duration','fileSize','aeVersion','plugins','desc'].forEach(k=>{ if(t[k]) o[k]=t[k]; });
       return o;
     });
   const data={version:2,exportedAt:new Date().toISOString(),categories:getAllCats(),templates:list};
@@ -834,6 +883,7 @@ function openEditModal(id,isExtra){
   setThumbTab('upload');
   updatePreviewImg(t.thumb);
   document.getElementById('fCustOnly').checked=getCustOnly().includes(id);
+  fillDetailFields(t);
   document.getElementById('editModal').classList.add('on');
 }
 
@@ -855,7 +905,28 @@ function openAddModal(){
   setThumbTab('upload');
   updatePreviewImg('');
   document.getElementById('fCustOnly').checked=false;
+  fillDetailFields({});
   document.getElementById('editModal').classList.add('on');
+}
+
+/* ---- DETAIL PAGE FIELDS (2026-07-13) — all optional, all free text ---- */
+const DETAIL_KEYS={readyPrice:'fReadyPrice',duration:'fDuration',fileSize:'fFileSize',
+                   aeVersion:'fAeVersion',plugins:'fPlugins',desc:'fDesc'};
+function fillDetailFields(t){
+  t=t||{};
+  for(const k in DETAIL_KEYS){
+    const el=document.getElementById(DETAIL_KEYS[k]);
+    if(el) el.value = t[k] || '';
+  }
+}
+function readDetailFields(){
+  const out={};
+  for(const k in DETAIL_KEYS){
+    const el=document.getElementById(DETAIL_KEYS[k]);
+    const v=(el&&el.value||'').trim();
+    if(v) out[k]=v;          // blank stays blank -> storefront uses its default
+  }
+  return out;
 }
 
 function closeModal(){
@@ -1018,6 +1089,9 @@ function saveTemplate(){
       const idx=extras.findIndex(e=>e.id===editingId);
       if(idx>=0){
         extras[idx]={...extras[idx],title,cat,orient,price,url:ytUrl||extras[idx].url,thumb:thumb||extras[idx].thumb};
+        // detail fields: rewrite cleanly so clearing a box actually clears it
+        for(const k in DETAIL_KEYS) delete extras[idx][k];
+        Object.assign(extras[idx], readDetailFields());
       }
     }else{
       // Use the YouTube video ID as the template ID (clean + matches the master sheet).
@@ -1028,7 +1102,7 @@ function saveTemplate(){
       const dup=extras.some(e=>e.id===newId)||(allVideos&&allVideos.some(v=>v.id===newId));
       if(dup){showToast('This video is already in your templates (ID '+newId+')','err');return;}
       savedId=newId;
-      extras.unshift({id:newId,title,cat,orient,price,url:ytUrl||'#',thumb:thumb||'https://via.placeholder.com/480x270/14141F/C9A84C?text='+encodeURIComponent(title),addedAt:new Date().toISOString().slice(0,10)});
+      extras.unshift({id:newId,title,cat,orient,price,url:ytUrl||'#',thumb:thumb||'https://via.placeholder.com/480x270/14141F/C9A84C?text='+encodeURIComponent(title),addedAt:new Date().toISOString().slice(0,10),...readDetailFields()});
     }
     setExtras(extras);
   }else{
@@ -1044,6 +1118,7 @@ function saveTemplate(){
     }else if(thumb&&thumb!==orig.defaultThumb){
       data.thumb=thumb;
     }
+    Object.assign(data, readDetailFields());   // optional detail-page fields
     if(Object.keys(data).length){custom[editingId]=data;}
     else{delete custom[editingId];}
     setCustom(custom);
