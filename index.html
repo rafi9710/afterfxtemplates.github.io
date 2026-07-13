@@ -1609,11 +1609,32 @@ function tmDescription(v){
   }
   return `A ready-to-edit ${cat.toLowerCase()} invitation project, built in ${fmt} format. Open it in After Effects, replace the names, date, venue and photos with your own, and render your video. Text is fully editable in English and regional languages.`;
 }
+/* BUG FIX (2026-07-13): the embed used to assume `v.id` IS the YouTube video id.
+   That holds for most templates, but 6 legacy ones carry a `custom_<timestamp>`
+   id — so the player was asked to load a video called "custom_1782284949050"
+   and threw "An error occurred. Please try again later."
+   The real id always lives in `v.url`, in one of four shapes:
+     youtube.com/watch?v=ID · youtu.be/ID · youtube.com/shorts/ID · youtube.com/embed/ID
+   So: read the url first, fall back to the id only if it looks like a real one. */
+function ytIdOf(v){
+  const u = String((v && v.url) || '');
+  const m = u.match(/(?:youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+  if(m) return m[1];
+  const id = String((v && v.id) || '');
+  if(/^[A-Za-z0-9_-]{11}$/.test(id)) return id;   /* real YouTube ids are exactly 11 chars */
+  return '';
+}
 function tmEmbed(v){
-  const yt = String(v.id || '');
-  const clean = /^[A-Za-z0-9_-]{6,}$/.test(yt) ? yt : '';
+  const clean = ytIdOf(v);
   if(!clean){
-    return `<div style="color:#666;font-size:13px;padding:40px;text-align:center;">Preview unavailable — <a href="${v.url}" target="_blank" style="color:var(--gold)">watch on YouTube ↗</a></div>`;
+    /* no usable video id — show the thumbnail with a link out rather than a broken player */
+    return `<div style="width:100%;position:relative;">
+      <img src="${v.thumb}" alt="${(v.title||'').replace(/"/g,'&quot;')}" style="width:100%;display:block;opacity:.5;">
+      <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:20px;">
+        <div style="color:#bbb;font-size:13px;">Preview not available here</div>
+        <a href="${v.url}" target="_blank" rel="noopener" style="color:var(--gold);font-size:13px;font-weight:600;border:1px solid var(--gold);padding:8px 16px;border-radius:8px;text-decoration:none;">▶ Watch on YouTube ↗</a>
+      </div>
+    </div>`;
   }
   return `<iframe src="https://www.youtube-nocookie.com/embed/${clean}?rel=0&modestbranding=1" title="${(v.title||'').replace(/"/g,'&quot;')}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe>`;
 }
