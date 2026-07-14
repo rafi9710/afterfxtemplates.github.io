@@ -777,14 +777,24 @@ function getMergedList(){
   const cleanExtras=extras.filter(e=>!baseIds.has(e.id));
   const combined=[...cleanExtras.map(e=>({...e,orient:e.orient||'h',customizeOnly:co.includes(e.id),isExtra:true,isCustomized:false})),...merged];
 
-  // apply saved display order (seed from current order on first run; new items fall to the end)
+  /* Apply the saved display order.
+     FIX (2026-07-14): anything NOT yet in the saved order is a brand-new
+     template — it used to be pushed to the END, so it landed on page 5-6 of
+     the storefront and nobody ever saw it. New templates now go to the TOP
+     (newest addedAt first), which is what both the admin list and the live
+     grid need. Manual Top/Up/Down ordering still wins for everything else. */
   let order=getOrder();
   if(!order.length){ order=combined.map(t=>t.id); setOrder(order); }
   const byId={}; combined.forEach(t=>byId[t.id]=t);
+
   const ordered=[];
   order.forEach(id=>{ if(byId[id]){ ordered.push(byId[id]); delete byId[id]; } });
-  Object.keys(byId).forEach(id=>ordered.push(byId[id])); // any new/unordered items go last
-  return ordered;
+
+  // leftovers = never-ordered = new. Newest first, then put them on top.
+  const fresh = Object.keys(byId).map(id=>byId[id]);
+  fresh.sort((a,b)=>(Date.parse(b.addedAt||0)||0)-(Date.parse(a.addedAt||0)||0));
+
+  return [...fresh, ...ordered];
 }
 
 /* REORDER — move a template to top or bottom of display order */
