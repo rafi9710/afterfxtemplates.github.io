@@ -543,9 +543,28 @@ async function fetchVideos(){
    silently stopped saving. Thumbnails are now compressed on upload, and
    every write goes through afxSet() which never throws.
    ======================================================================== */
-const THUMB_MAX_W  = 640;    // px — plenty for a 16:9 card
-const THUMB_QUALITY = 0.78;  // JPEG quality
-const THUMB_WARN_KB = 150;   // warn above this
+/* BUG FIX (2026-07-14): the old compressor capped WIDTH only.
+   A vertical 9:16 thumbnail (e.g. 279x495) already has a small width, so the
+   `if (w > maxW)` check never fired — it was never resized and never really
+   re-encoded, so it stayed fat and "Fix Storage" appeared to do nothing.
+   We now cap the LONGEST side (works for 16:9 AND 9:16) and step the JPEG
+   quality down until the thumbnail actually lands under a byte target. */
+const THUMB_MAX_SIDE  = 480;   // px on the longest side — cards are ~300px wide
+const THUMB_TARGET_KB = 45;    // squeeze until the data-URL is under this
+const THUMB_MIN_Q     = 0.45;  // never go uglier than this
+const THUMB_MAX_Q     = 0.80;  // start here
+const THUMB_WARN_KB   = 60;    // a single thumbnail bigger than this is "fat"
+const THUMB_MAX_W     = THUMB_MAX_SIDE;   // kept for backwards compatibility
+const THUMB_QUALITY   = THUMB_MAX_Q;      // kept for backwards compatibility
+
+/* Size of a data-URL as it will land in templates.json */
+function thumbKB(s){ return ((s || '').length) / 1024; }
+
+/* Version stamp — lets us confirm at a glance which build the browser loaded.
+   Type  AFX_ADMIN_BUILD  in the console: if it's undefined, you're on a cached
+   old file and need a hard refresh (Ctrl+Shift+R). */
+const AFX_ADMIN_BUILD = '2026-07-14 · thumb-compressor-v2';
+console.log('%c[AfterFX Admin] build ' + AFX_ADMIN_BUILD, 'color:#C9A84C;font-weight:700');
 
 function afxSet(key, value){
   const str = (typeof value === 'string') ? value : JSON.stringify(value);
@@ -577,10 +596,12 @@ function afxSet(key, value){
   }
 }
 
-/* Shrink a data-URL (or any image URL) down to a small JPEG data-URL. */
-function afxCompressImage(src, maxW, quality){
-  maxW = maxW || THUMB_MAX_W;
-  quality = quality || THUMB_QUALITY;
+/* Shrink a data-URL (or any image URL) down to a small JPEG data-URL.
+   Caps the LONGEST side (so vertical 9:16 thumbs shrink too) and then steps
+   the JPEG quality down until the result fits under `targetKB`. */
+function afxCompressImage(src, maxSide, targetKB){
+  maxSide = maxSide || THUMB_MAX_SIDE;
+  targetKB = targetKB || THUMB_TARGET_KB;
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.crossOrigin = 'anonymous';
@@ -588,14 +609,32 @@ function afxCompressImage(src, maxW, quality){
       try{
         let w = img.naturalWidth || img.width, h = img.naturalHeight || img.height;
         if(!w || !h) return reject(new Error('bad image'));
-        if(w > maxW){ h = Math.round(h * maxW / w); w = maxW; }
+
+        /* Scale by the LONGEST side — this is the line the old code got wrong. */
+        const longest = Math.max(w, h);
+        if(longest > maxSide){
+          const k = maxSide / longest;
+          w = Math.max(1, Math.round(w * k));
+          h = Math.max(1, Math.round(h * k));
+        }
+
         const c = document.createElement('canvas');
         c.width = w; c.height = h;
         const ctx = c.getContext('2d');
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
         ctx.fillStyle = '#0a0a10';           // flatten transparency (no PNG bloat)
         ctx.fillRect(0, 0, w, h);
         ctx.drawImage(img, 0, 0, w, h);
-        resolve(c.toDataURL('image/jpeg', quality));
+
+        /* Step the quality down until we're under target (or hit the floor). */
+        let q   = THUMB_MAX_Q;
+        let out = c.toDataURL('image/jpeg', q);
+        while(thumbKB(out) > targetKB && q > THUMB_MIN_Q){
+          q = Math.max(THUMB_MIN_Q, q - 0.07);
+          out = c.toDataURL('image/jpeg', q);
+        }
+        resolve(out);
       }catch(e){ reject(e); }
     };
     img.onerror = () => reject(new Error('load failed'));
@@ -956,20 +995,12 @@ function onFileSelect(e){
   showToast('Compressing image…');
   const r=new FileReader();
   r.onload=ev=>{
-    afxCompressImage(ev.target.result, THUMB_MAX_W, THUMB_QUALITY)
-      .then(small=>{
-        const kb = Math.round(small.length*2/1024);
-        if(kb > 400){
-          // still fat (huge source) — squeeze harder
-          return afxCompressImage(small, 480, 0.68);
-        }
-        return small;
-      })
+    afxCompressImage(ev.target.result, THUMB_MAX_SIDE, THUMB_TARGET_KB)
       .then(small=>{
         currentThumb = small;
         updatePreviewImg(currentThumb);
-        const kb  = Math.round(small.length*2/1024);
-        const raw = Math.round(ev.target.result.length*2/1024);
+        const kb  = Math.round(thumbKB(small));
+        const raw = Math.round(thumbKB(ev.target.result));
         console.log(`[thumb] ${raw} KB -> ${kb} KB`);
         showToast(`✓ Thumbnail ready (${raw} KB → ${kb} KB)`);
         renderStats();renderStorageBar();
@@ -983,17 +1014,31 @@ function onFileSelect(e){
 }
 
 /* ── STORAGE HEALTH: meter + one-click repair ───────────────────────── */
+/* BUG FIX (2026-07-14): `fat` used to count oversized localStorage KEYS, not
+   thumbnails — so a single fat key ("afx_extras", which holds ALL thumbs) was
+   reported as "1 oversized thumbnail". Now we count the actual thumbnails. */
+function afxFatThumbs(){
+  const list=[];
+  const push=(obj,label)=>{
+    if(obj && typeof obj.thumb==='string' && obj.thumb.startsWith('data:')){
+      const kb=thumbKB(obj.thumb);
+      if(kb > THUMB_WARN_KB) list.push({label, kb});
+    }
+  };
+  try{ (getExtras()||[]).forEach(t=>push(t, t.title||t.id)); }catch(e){}
+  try{ const c=getCustom()||{}; Object.keys(c).forEach(id=>push(c[id], (c[id]&&c[id].title)||id)); }catch(e){}
+  return list;
+}
+
 function afxScanStorage(){
-  const rows=[]; let total=0, fat=0;
+  const rows=[]; let total=0;
   for(let i=0;i<localStorage.length;i++){
     const k=localStorage.key(i), v=localStorage.getItem(k)||'';
     const b=afxBytes(v); total+=b;
-    const hasB64=v.includes('data:image');
-    if(hasB64 && b>THUMB_WARN_KB*1024) fat++;
-    rows.push({key:k, kb:b/1024, base64:hasB64});
+    rows.push({key:k, kb:b/1024, base64:v.includes('data:image')});
   }
   rows.sort((a,b)=>b.kb-a.kb);
-  return {rows, totalMB: total/1048576, fat};
+  return {rows, totalMB: total/1048576, fat: afxFatThumbs().length};
 }
 
 function renderStorageBar(){
@@ -1016,32 +1061,51 @@ function renderStorageBar(){
   `;
 }
 
-/* Compress every oversized base64 thumbnail already saved in this browser. */
+/* Re-compress EVERY base64 thumbnail already saved in this browser.
+   BUG FIX (2026-07-14): this used to skip anything under 150KB and then
+   re-compress with the broken width-only cap — so on an already-640px-wide
+   (or any vertical) thumbnail it changed nothing and the button looked dead.
+   Now: any thumb over the target gets rebuilt with the longest-side cap. */
 async function afxRepairStorage(){
-  showToast('Repairing storage…');
-  const extras=getExtras();
-  const custom=getCustom();
-  let fixed=0, before=afxScanStorage().totalMB;
+  showToast('Repairing thumbnails…');
+  const extras = getExtras();
+  const custom = getCustom();
+  let fixed = 0, kbBefore = 0, kbAfter = 0;
+  const before = afxScanStorage().totalMB;
 
-  for(const t of extras){
-    if(typeof t.thumb==='string' && t.thumb.startsWith('data:') && afxBytes(t.thumb)>THUMB_WARN_KB*1024){
-      try{ t.thumb=await afxCompressImage(t.thumb); fixed++; }
-      catch(e){ if(t.id && !/^custom_/.test(t.id)) t.thumb='https://i.ytimg.com/vi/'+t.id+'/mqdefault.jpg'; }
+  const squeeze = async (obj, fallbackId) => {
+    if(!obj || typeof obj.thumb !== 'string' || !obj.thumb.startsWith('data:')) return;
+    const was = thumbKB(obj.thumb);
+    if(was <= THUMB_TARGET_KB) return;          // already small enough
+    try{
+      const out = await afxCompressImage(obj.thumb, THUMB_MAX_SIDE, THUMB_TARGET_KB);
+      if(thumbKB(out) < was){                    // only keep it if it actually helped
+        kbBefore += was; kbAfter += thumbKB(out);
+        obj.thumb = out; fixed++;
+      }
+    }catch(e){
+      // Couldn't decode it — fall back to the free YouTube thumbnail if we can.
+      if(fallbackId && !/^custom_/.test(fallbackId)){
+        obj.thumb = 'https://i.ytimg.com/vi/' + fallbackId + '/mqdefault.jpg';
+        kbBefore += was; fixed++;
+      }
     }
-  }
-  for(const id of Object.keys(custom)){
-    const c=custom[id];
-    if(c && typeof c.thumb==='string' && c.thumb.startsWith('data:') && afxBytes(c.thumb)>THUMB_WARN_KB*1024){
-      try{ c.thumb=await afxCompressImage(c.thumb); fixed++; }
-      catch(e){ delete c.thumb; }
-    }
-  }
+  };
+
+  for(const t of extras)                  await squeeze(t, t.id);
+  for(const id of Object.keys(custom))    await squeeze(custom[id], id);
+
   setExtras(extras);
   setCustom(custom);
-  const after=afxScanStorage().totalMB;
-  renderStats();renderStorageBar(); renderList(); renderStorageBar();
-  showToast(`✓ Fixed ${fixed} thumbnail${fixed===1?'':'s'} · ${before.toFixed(2)} MB → ${after.toFixed(2)} MB`);
-  if(fixed) showToast('Now click "⬇ Export for Website" and re-upload templates.json','err');
+  const after = afxScanStorage().totalMB;
+  renderStats(); renderList(); renderStorageBar();
+
+  if(!fixed){
+    showToast('✓ All thumbnails are already optimized.');
+    return;
+  }
+  showToast(`✓ ${fixed} thumbnail${fixed===1?'':'s'} squeezed · ${kbBefore.toFixed(0)} KB → ${kbAfter.toFixed(0)} KB · storage ${before.toFixed(2)} → ${after.toFixed(2)} MB`);
+  showToast('Now click "⬇ Export for Website" and re-upload templates.json','err');
 }
 
 function updatePreview(url){
