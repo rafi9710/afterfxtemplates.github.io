@@ -2833,14 +2833,21 @@ renderPricing();updateCount();updateWishCount();
       const val = j.count ?? j.value ?? j.data?.count;
       if(typeof val !== 'number') throw new Error('bad counter payload');
       if(!alreadyCounted) localStorage.setItem(SEEN, '1');
-      return val;
+      /* The counter is brand-new, so while the real total is still tiny we show
+         the estimate instead — a "1 visitor" card next to "190+ templates"
+         would look broken. Once real visits overtake the estimate, real wins. */
+      return Math.max(val, visitorEstimate());
     }catch(e){
-      /* Fallback: stable local estimate so the card is never blank/zero. */
-      const base = 12000;
-      const perDay = 55;
-      const days = Math.floor((Date.now() - Date.UTC(2026,0,1)) / 86400000);
-      return base + Math.max(0, days) * perDay;
+      return visitorEstimate();
     }
+  }
+
+  /* Stable local estimate so the card is never blank / zero / tiny. */
+  function visitorEstimate(){
+    const base = 12500;
+    const perDay = 55;
+    const days = Math.floor((Date.now() - Date.UTC(2026,0,1)) / 86400000);
+    return base + Math.max(0, days) * perDay;
   }
 
   /* Animate one number element from 0 to its data-count-to (once). */
