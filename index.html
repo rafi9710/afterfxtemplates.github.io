@@ -2825,20 +2825,23 @@ renderPricing();updateCount();updateWishCount();
   }
 
   /* Count a unique visit at most once per browser; return the global total. */
+
+
+  /* Stable local estimate so the card is never blank / zero / tiny. */
   async function getVisitorCount(){
     const alreadyCounted = localStorage.getItem(SEEN);
-    const url = 'https://api.counterapi.dev/v1/' + NS + '/' + KEY + (alreadyCounted ? '' : '/up');
+    /* CounterAPI v2 sends CORS headers (the old v1 path was CORS-blocked on this
+       domain). Hit /up only once per browser, then just read on later visits. */
+    const base = 'https://api.counterapi.dev/v2/' + NS + '/' + KEY;
+    const url  = alreadyCounted ? base : base + '/up';
     try{
-      const r = await fetch(url, {cache:'no-store'});
+      const r = await fetch(url, {cache:'no-store', headers:{'Accept':'application/json'}});
       if(!r.ok) throw new Error('counter ' + r.status);
       const j = await r.json();
-      const val = j.count ?? j.value ?? j.data?.count;
+      const val = j?.data?.up_count ?? j?.data?.count ?? j?.count ?? j?.value;
       if(typeof val !== 'number') throw new Error('bad counter payload');
       if(!alreadyCounted) localStorage.setItem(SEEN, '1');
-      /* The counter is brand-new, so while the real total is still tiny we show
-         the estimate instead — a "1 visitor" card next to "190+ templates"
-         would look broken. Once real visits overtake the estimate, real wins. */
-      return Math.max(val, visitorEstimate());
+      return Math.max(val, visitorEstimate());   // never show a tiny fresh count
     }catch(e){
       return visitorEstimate();
     }
@@ -2881,34 +2884,65 @@ renderPricing();updateCount();updateWishCount();
     requestAnimationFrame(step);
   }
 
-  let started = false;
-  function runOnce(){
-    if(started) return; started = true;
-    document.querySelectorAll('#liveStats .stat-num[data-count-to]').forEach(countUp);
+  let revealed = false;
+  function reveal(){
+    revealed = true;
+    // animate only the cards that already have a target; late ones self-animate
+    document.querySelectorAll('#liveStats .stat-num[data-count-to]').forEach(el => {
+      if(Number(el.dataset.countTo) > 0) countUp(el);
+    });
   }
 
   window.initLiveStats = async function(){
     const sec = document.getElementById('liveStats');
     if(!sec) return;
+    console.log('[LiveStats] catalog size:', Array.isArray(window.videos) ? window.videos.length : 'not ready');
 
-
-
-    // 2) Visitors — real global count, formatted compact (12.5K style).
-    const vEl = document.getElementById('statVisitors');
-    if(vEl){
-      const v = await getVisitorCount();
-      vEl.dataset.countTo = v;
-      vEl.dataset.compact = '1';
+    // 1) Templates — from the live catalog. Poll briefly in case it loads late.
+    const tEl = document.getElementById('statTemplates');
+    if(tEl){
+      const applyTemplates = () => {
+        const n = Array.isArray(window.videos) ? window.videos.length : 0;
+        if(n > 0){
+          tEl.dataset.countTo = (n >= 20 ? Math.floor(n/10)*10 : n);   // 193 -> 190+
+          tEl.dataset.suffix  = '+';
+          if(revealed) countUp(tEl);        // section already on screen? fill it now
+          return true;
+        }
+        return false;
+      };
+      if(!applyTemplates()){
+        let tries = 0;
+        const iv = setInterval(() => {
+          if(applyTemplates() || ++tries > 25){
+            clearInterval(iv);
+            if(!Number(tEl.dataset.countTo)){       // never resolved -> safe floor
+              tEl.dataset.countTo = 100; tEl.dataset.suffix = '+';
+              if(revealed) countUp(tEl);
+            }
+          }
+        }, 200);
+      }
     }
 
-    // 3) Fire the count-up when the section scrolls into view (once).
+    // 2) Visitors — global count, compact format (12.5K style).
+    const vEl = document.getElementById('statVisitors');
+    if(vEl){
+      vEl.dataset.compact = '1';
+      getVisitorCount().then(v => {
+        vEl.dataset.countTo = v;
+        if(revealed) countUp(vEl);
+      });
+    }
+
+    // 3) Animate each card once, when the section scrolls into view.
     if('IntersectionObserver' in window){
       const io = new IntersectionObserver((entries, obs) => {
-        entries.forEach(en => { if(en.isIntersecting){ runOnce(); obs.disconnect(); } });
-      }, {threshold:0.35});
+        entries.forEach(en => { if(en.isIntersecting){ reveal(); obs.disconnect(); } });
+      }, {threshold:0.3});
       io.observe(sec);
     }else{
-      runOnce();
+      reveal();
     }
   };
 })();
