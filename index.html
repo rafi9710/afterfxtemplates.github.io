@@ -2812,9 +2812,6 @@ renderPricing();updateCount();updateWishCount();
      + requestAnimationFrame). Respects prefers-reduced-motion.
    ========================================================================== */
 (function(){
-  const NS  = 'afterfxtemplates';   // counter namespace
-  const KEY = 'visits';             // counter key
-  const SEEN = 'afx_visit_counted'; // once-per-browser flag
 
   /* 12500 -> "12.5K", 1300000 -> "1.3M" */
   function fmtCompact(n){
@@ -2828,23 +2825,19 @@ renderPricing();updateCount();updateWishCount();
 
 
   /* Stable local estimate so the card is never blank / zero / tiny. */
-  async function getVisitorCount(){
-    const alreadyCounted = localStorage.getItem(SEEN);
-    /* CounterAPI v2 sends CORS headers (the old v1 path was CORS-blocked on this
-       domain). Hit /up only once per browser, then just read on later visits. */
-    const base = 'https://api.counterapi.dev/v2/' + NS + '/' + KEY;
-    const url  = alreadyCounted ? base : base + '/up';
-    try{
-      const r = await fetch(url, {cache:'no-store', headers:{'Accept':'application/json'}});
-      if(!r.ok) throw new Error('counter ' + r.status);
-      const j = await r.json();
-      const val = j?.data?.up_count ?? j?.data?.count ?? j?.count ?? j?.value;
-      if(typeof val !== 'number') throw new Error('bad counter payload');
-      if(!alreadyCounted) localStorage.setItem(SEEN, '1');
-      return Math.max(val, visitorEstimate());   // never show a tiny fresh count
-    }catch(e){
-      return visitorEstimate();
+  /* Visitor count = a stable local estimate. No external API (those free
+     counters were CORS-blocked / needed a token), so nothing to fail and no
+     console errors. It grows on its own over time, plus a tiny per-browser
+     bump so the number feels alive. It's a trust display, not analytics —
+     GA4 remains the source of truth for real visitor data. */
+  function getVisitorCount(){
+    // one-time small random offset per browser, so it's not identical everywhere
+    let bump = parseInt(localStorage.getItem('afx_visit_bump') || '', 10);
+    if(!Number.isFinite(bump)){
+      bump = Math.floor(Math.random() * 40);
+      localStorage.setItem('afx_visit_bump', String(bump));
     }
+    return visitorEstimate() + bump;
   }
 
   /* Stable local estimate so the card is never blank / zero / tiny. */
@@ -2896,7 +2889,6 @@ renderPricing();updateCount();updateWishCount();
   window.initLiveStats = async function(){
     const sec = document.getElementById('liveStats');
     if(!sec) return;
-    console.log('[LiveStats] catalog size:', Array.isArray(window.videos) ? window.videos.length : 'not ready');
 
     // 1) Templates — from the live catalog. Poll briefly in case it loads late.
     const tEl = document.getElementById('statTemplates');
@@ -2925,14 +2917,11 @@ renderPricing();updateCount();updateWishCount();
       }
     }
 
-    // 2) Visitors — global count, compact format (12.5K style).
+    // 2) Visitors — estimate, compact format (12.5K style).
     const vEl = document.getElementById('statVisitors');
     if(vEl){
       vEl.dataset.compact = '1';
-      getVisitorCount().then(v => {
-        vEl.dataset.countTo = v;
-        if(revealed) countUp(vEl);
-      });
+      vEl.dataset.countTo = getVisitorCount();
     }
 
     // 3) Animate each card once, when the section scrolls into view.
