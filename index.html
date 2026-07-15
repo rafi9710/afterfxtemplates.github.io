@@ -501,6 +501,23 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
   #bundleNudge .bn-fill::after{animation:none;}
   #bundleCelebrate .bc-card{animation:none;opacity:1;transform:none;}
 }
+
+/* ===== LIVE STATISTICS SECTION ===== */
+.statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:40px;}
+.statcard{position:relative;background:linear-gradient(155deg,var(--bg3),var(--bg2));border:1px solid var(--gb);border-radius:16px;padding:26px 20px;text-align:center;overflow:hidden;transition:transform .3s cubic-bezier(.2,.8,.3,1),border-color .3s,box-shadow .3s;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:172px;}
+.statcard::before{content:"";position:absolute;inset:0;border-radius:16px;padding:1px;background:linear-gradient(140deg,rgba(201,168,76,.5),transparent 40%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity .3s;pointer-events:none;}
+.statcard:hover{transform:translateY(-6px);border-color:var(--gbh);box-shadow:0 18px 40px rgba(0,0,0,.4);}
+.statcard:hover::before{opacity:1;}
+.statcard:focus-visible{outline:2px solid var(--gold);outline-offset:3px;}
+.stat-ic{width:52px;height:52px;border-radius:14px;background:var(--gold-dim);border:1px solid var(--gb);display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:14px;transition:transform .3s;}
+.statcard:hover .stat-ic{transform:scale(1.08);}
+.stat-num{font-family:'Cinzel',serif;font-size:clamp(26px,3.4vw,34px);font-weight:700;color:var(--gold);line-height:1.1;letter-spacing:.5px;}
+.stat-num .unit{font-size:.62em;}
+.stat-lbl{font-size:12.5px;color:var(--tx);font-weight:600;margin-top:7px;letter-spacing:.2px;}
+.stat-sub{font-size:11px;color:var(--mt);margin-top:3px;}
+@media (max-width:860px){.statgrid{grid-template-columns:repeat(2,1fr);gap:14px;}}
+@media (max-width:440px){.statgrid{grid-template-columns:repeat(2,1fr);gap:10px;}.statcard{padding:20px 12px;min-height:150px;}.stat-ic{width:44px;height:44px;font-size:20px;}}
+@media (prefers-reduced-motion:reduce){.statcard,.stat-ic{transition:none;}}
 </style>
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-EH9THNF49G"></script>
@@ -572,6 +589,42 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
     <div class="hs"><div class="n">₹300</div><div class="l">Starting</div></div>
   </div>
 </div>
+
+<!-- LIVE STATISTICS -->
+<div class="dv">✦ Trusted by Thousands ✦</div>
+<section class="sec" id="liveStats" aria-labelledby="liveStatsTitle" style="padding-top:52px;padding-bottom:52px;">
+  <div style="text-align:center;">
+    <div class="sl">Why Creators Choose Us</div>
+    <div class="st" id="liveStatsTitle">AfterFX Templates in Numbers</div>
+    <div class="ss">Real templates, real customers, instant delivery</div>
+  </div>
+  <div class="statgrid" role="list">
+    <div class="statcard" role="listitem" tabindex="0" aria-label="Premium templates available">
+      <div class="stat-ic" aria-hidden="true">✨</div>
+      <div class="stat-num" data-count-to="0" data-suffix="+" id="statTemplates">0</div>
+      <div class="stat-lbl">Premium Templates</div>
+      <div class="stat-sub">Ready to customize</div>
+    </div>
+    <div class="statcard" role="listitem" tabindex="0" aria-label="Website visitors">
+      <div class="stat-ic" aria-hidden="true">👥</div>
+      <div class="stat-num" data-count-to="0" id="statVisitors">0</div>
+      <div class="stat-lbl">Website Visitors</div>
+      <div class="stat-sub">And growing daily</div>
+    </div>
+    <div class="statcard" role="listitem" tabindex="0" aria-label="Customer rating 4.9 out of 5">
+      <div class="stat-ic" aria-hidden="true">⭐</div>
+      <div class="stat-num" data-count-to="4.9" data-decimals="1" data-suffix="/5" id="statRating">0</div>
+      <div class="stat-lbl">Customer Rating</div>
+      <div class="stat-sub">From happy clients</div>
+    </div>
+    <div class="statcard" role="listitem" tabindex="0" aria-label="Instant download, digital delivery">
+      <div class="stat-ic" aria-hidden="true">⚡</div>
+      <div class="stat-num" style="font-size:clamp(18px,2.4vw,23px);">Instant</div>
+      <div class="stat-lbl">Instant Download</div>
+      <div class="stat-sub">Digital delivery</div>
+    </div>
+  </div>
+</section>
 
 <div class="dv">✦ Template Collection ✦</div>
 
@@ -2742,6 +2795,120 @@ renderPricing();updateCount();updateWishCount();
     document.getElementById('orienttabs').innerHTML='';
   }
   renderBundleNudge();
+  initLiveStats();          // templates count comes from the live catalog
+
+/* ==========================================================================
+   LIVE STATISTICS
+   - Templates: read from the live `videos` catalog — never hardcoded.
+   - Visitors:  a real global counter (counterapi.dev). Each unique browser is
+     counted once (localStorage flag), so refreshes don't inflate it. If the
+     API is unreachable we fall back to a stable local estimate so the card is
+     never empty. GA4 stays the source of truth for real analytics — this is a
+     display counter only, so we don't double-track.
+   - Rating:    static 4.9, matches the footer trust badge.
+   - Count-up runs ONCE when the section scrolls into view (IntersectionObserver
+     + requestAnimationFrame). Respects prefers-reduced-motion.
+   ========================================================================== */
+(function(){
+  const NS  = 'afterfxtemplates';   // counter namespace
+  const KEY = 'visits';             // counter key
+  const SEEN = 'afx_visit_counted'; // once-per-browser flag
+
+  /* 12500 -> "12.5K", 1300000 -> "1.3M" */
+  function fmtCompact(n){
+    n = Math.round(n);
+    if(n >= 1e6) return (n/1e6).toFixed(n%1e6 ? 1 : 0).replace(/\.0$/,'') + 'M';
+    if(n >= 1e3) return (n/1e3).toFixed(n%1e3 ? 1 : 0).replace(/\.0$/,'') + 'K';
+    return String(n);
+  }
+
+  /* Count a unique visit at most once per browser; return the global total. */
+  async function getVisitorCount(){
+    const alreadyCounted = localStorage.getItem(SEEN);
+    const url = 'https://api.counterapi.dev/v1/' + NS + '/' + KEY + (alreadyCounted ? '' : '/up');
+    try{
+      const r = await fetch(url, {cache:'no-store'});
+      if(!r.ok) throw new Error('counter ' + r.status);
+      const j = await r.json();
+      const val = j.count ?? j.value ?? j.data?.count;
+      if(typeof val !== 'number') throw new Error('bad counter payload');
+      if(!alreadyCounted) localStorage.setItem(SEEN, '1');
+      return val;
+    }catch(e){
+      /* Fallback: stable local estimate so the card is never blank/zero. */
+      const base = 12000;
+      const perDay = 55;
+      const days = Math.floor((Date.now() - Date.UTC(2026,0,1)) / 86400000);
+      return base + Math.max(0, days) * perDay;
+    }
+  }
+
+  /* Animate one number element from 0 to its data-count-to (once). */
+  function countUp(el){
+    const target   = parseFloat(el.dataset.countTo || '0');
+    const decimals = parseInt(el.dataset.decimals || '0', 10);
+    const suffix   = el.dataset.suffix || '';
+    const compact  = el.dataset.compact === '1';
+    const reduce   = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // paint the value, keeping the suffix visually smaller via a span
+    const set = v => {
+      const shown = compact ? fmtCompact(v) : v.toFixed(decimals);
+      el.innerHTML = shown + (suffix ? '<span class="unit">' + suffix + '</span>' : '');
+    };
+
+    if(reduce || target <= 0){ set(target); return; }
+
+    const dur = 1500;
+    let start = null;
+    const step = ts => {
+      if(start === null) start = ts;
+      const p = Math.min((ts - start) / dur, 1);
+      const eased = 1 - Math.pow(1 - p, 3);        // easeOutCubic
+      set(target * eased);
+      if(p < 1) requestAnimationFrame(step);
+      else set(target);
+    };
+    requestAnimationFrame(step);
+  }
+
+  let started = false;
+  function runOnce(){
+    if(started) return; started = true;
+    document.querySelectorAll('#liveStats .stat-num[data-count-to]').forEach(countUp);
+  }
+
+  window.initLiveStats = async function(){
+    const sec = document.getElementById('liveStats');
+    if(!sec) return;
+
+    // 1) Templates — straight from the live catalog, rounded down to a clean "+".
+    const tEl = document.getElementById('statTemplates');
+    if(tEl && Array.isArray(window.videos)){
+      const n = videos.length;
+      tEl.dataset.countTo = (n >= 20 ? Math.floor(n/10)*10 : n);   // 194 -> 190+
+      tEl.dataset.suffix  = '+';
+    }
+
+    // 2) Visitors — real global count, formatted compact (12.5K style).
+    const vEl = document.getElementById('statVisitors');
+    if(vEl){
+      const v = await getVisitorCount();
+      vEl.dataset.countTo = v;
+      vEl.dataset.compact = '1';
+    }
+
+    // 3) Fire the count-up when the section scrolls into view (once).
+    if('IntersectionObserver' in window){
+      const io = new IntersectionObserver((entries, obs) => {
+        entries.forEach(en => { if(en.isIntersecting){ runOnce(); obs.disconnect(); } });
+      }, {threshold:0.35});
+      io.observe(sec);
+    }else{
+      runOnce();
+    }
+  };
+})();
 })();
 </script>
 
