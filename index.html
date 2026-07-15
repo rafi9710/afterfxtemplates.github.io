@@ -2788,6 +2788,7 @@ renderPricing();updateCount();updateWishCount();
 
 (async()=>{
   videos=await fetchVideos();
+  window.videos = videos;   // expose the live catalog to the Live Stats module
   if(videos.length){readFilterParams();renderSortMenu();renderOrientTabs();renderTabs();renderGrid();applyDeepLink();renderRecentlyViewed();}
   else{
     document.getElementById('vgrid').innerHTML=`<div style="color:var(--mt);text-align:center;padding:48px;grid-column:1/-1;font-size:14px;"><div style="font-size:34px;margin-bottom:12px">📦</div><div style="margin-bottom:14px">Templates coming soon!</div><a href="https://youtube.com/@afterfxtemplates" target="_blank" class="bg" style="display:inline-flex">▶ Watch on YouTube</a></div>`;
@@ -2890,13 +2891,7 @@ renderPricing();updateCount();updateWishCount();
     const sec = document.getElementById('liveStats');
     if(!sec) return;
 
-    // 1) Templates — straight from the live catalog, rounded down to a clean "+".
-    const tEl = document.getElementById('statTemplates');
-    if(tEl && Array.isArray(window.videos)){
-      const n = videos.length;
-      tEl.dataset.countTo = (n >= 20 ? Math.floor(n/10)*10 : n);   // 194 -> 190+
-      tEl.dataset.suffix  = '+';
-    }
+
 
     // 2) Visitors — real global count, formatted compact (12.5K style).
     const vEl = document.getElementById('statVisitors');
