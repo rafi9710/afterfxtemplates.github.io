@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "exportedAt": "2026-07-18T03:37:54.798Z",
+  "exportedAt": "2026-07-18T04:05:43.169Z",
   "categories": [
     {
       "id": "wedding",
@@ -71,6 +71,7 @@
       "price": 300,
       "url": "https://www.youtube.com/shorts/IQKcuQRfK8Y",
       "orient": "v",
+      "customizeOnly": true,
       "addedAt": "2026-07-14"
     },
     {
