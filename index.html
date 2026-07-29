@@ -2148,7 +2148,7 @@ function fireConfetti(){ afxConfetti(document.getElementById('okCfx')); }
    ========================================================================== */
 const BUNDLE_TIERS   = PRICING.filter(p => p.qty > 1);   // 5, 10, 20
 const BUNDLE_WINDOW  = 3;      // only nudge when this close (or closer) to the next tier
-const BUNDLE_EMOJI   = {5:'Ì†ºÌæâ', 10:'Ì†ΩÌ¥•', 20:'‚≠ê'};
+const BUNDLE_EMOJI   = {5:'üéâ', 10:'üî•', 20:'‚≠ê'};
 let bundleDismissed  = sessionStorage.getItem('afx_bundle_dismissed') || '';  // tier the user closed
 let bundleLastTier   = 0;      // highest tier already celebrated this session
 let bcTimer          = null;
@@ -2208,7 +2208,7 @@ function renderBundleNudge(){
      not the flat tier price ‚Äî otherwise a mixed cart would be quoted the wrong number. */
   const price  = '‚Çπ' + st.nextCost.toLocaleString('en-IN');
 
-  document.getElementById('bnEmoji').textContent = BUNDLE_EMOJI[n.qty] || 'Ì†ºÌæâ';
+  document.getElementById('bnEmoji').textContent = BUNDLE_EMOJI[n.qty] || 'üéâ';
   document.getElementById('bnMsg').innerHTML =
     `Add <b>${st.needed} more ${plural}</b> and unlock the <b>${n.qty}-template bundle</b> ‚Äî cart total <b>${price}</b>.`;
   document.getElementById('bnCount').innerHTML = `<b>${st.totalQty}</b> / ${n.qty} templates`;
