@@ -563,7 +563,7 @@ function thumbKB(s){ return ((s || '').length) / 1024; }
 /* Version stamp — lets us confirm at a glance which build the browser loaded.
    Type  AFX_ADMIN_BUILD  in the console: if it's undefined, you're on a cached
    old file and need a hard refresh (Ctrl+Shift+R). */
-const AFX_ADMIN_BUILD = '2026-07-14 · thumb-compressor-v2';
+const AFX_ADMIN_BUILD = '2026-07-29 · price-override-fix';
 console.log('%c[AfterFX Admin] build ' + AFX_ADMIN_BUILD, 'color:#C9A84C;font-weight:700');
 
 function afxSet(key, value){
@@ -1186,7 +1186,15 @@ function saveTemplate(){
     if(title!==orig.title) data.title=title;
     if(cat!==orig.defaultCat) data.cat=cat;
     if(orient!==(orig.defaultOrient||'h')) data.orient=orient;
-    if(price!==300) data.price=price;
+    /* BUG FIX (2026-07-29): this used to read `if(price!==300)`, i.e. it assumed
+       every template's base price is 300 and therefore treated 300 as "nothing
+       to save". For a premium template already published at 499, typing 300 in
+       the modal saved NO override at all, so getMergedList() fell back to
+       defaultPrice (499) and the card never changed. Compare against the
+       template's OWN base price instead — then 300 is a real edit and is stored,
+       while re-entering the base price correctly clears the override. */
+    const basePrice = (orig.defaultPrice!=null ? orig.defaultPrice : 300);
+    if(price!==basePrice) data.price=price;
     if(currentThumbTab==='default'){
       // Reset thumb
     }else if(thumb&&thumb!==orig.defaultThumb){
