@@ -1619,6 +1619,34 @@ function cartTotal(){
   return Math.round(stdQty*tierRate(cartQty()))+premium;
 }
 
+/* ===== STALE-CART PRICE GUARD (added 2026-07-30) =====
+   addCart() stores a PRICE SNAPSHOT taken at the moment the item was added.
+   If a template's price changes later, an old cart keeps charging the OLD price
+   forever — this is what made order AFX-782823 bill 1499 instead of 1200.
+   Once the live catalog has loaded, re-sync every cart line to the current price
+   and drop anything that no longer exists or is customize-only. */
+function afxRepriceCart(){
+  if(!Array.isArray(videos) || !videos.length || !cart.length) return;
+  var changed=false, dropped=0, repriced=0;
+  cart = cart.filter(function(c){
+    var v = videos.find(function(x){ return String(x.id)===String(c.id); });
+    if(!v || v.customizeOnly){ dropped++; return false; }
+    var live = (v.price!=null ? Number(v.price) : STD_PRICE);
+    if(isFinite(live) && live>0 && c.price!==live){
+      console.warn('[cart] price re-synced:', c.title, '\u20b9'+c.price, '\u2192 \u20b9'+live);
+      c.price=live; changed=true; repriced++;
+    }
+    if(v.title && c.title!==v.title){ c.title=v.title; changed=true; }
+    if(v.thumb && c.thumb!==v.thumb){ c.thumb=v.thumb; changed=true; }
+    return true;
+  });
+  if(changed || dropped){
+    saveCart(); updateCount();
+    if(dropped) showToast(dropped+' cart item(s) removed \u2014 no longer available');
+    else if(repriced) showToast('Cart updated to current prices');
+  }
+}
+
 function customizeWA(title,url){
   const msg=`Hi AfterFX Templates! I would like to customize this template:\n\n${title}\n${url}\n\nPlease guide me with the details and pricing. Thank you!`;
   window.open(`https://wa.me/918971738710?text=${encodeURIComponent(msg)}`,'_blank');
@@ -1920,11 +1948,22 @@ async function checkout(){
         amount: Math.round(total*100),
         currency:'INR',
         receipt: oid,
+        items: cart.map(function(c){ return {id:c.id, qty:c.qty}; }),  // server re-prices from THIS
         notes:{ order_id:oid, customer_email:email, customer_name:name, template_ids:ids, templates:readable.slice(0,240), qty:String(q), total:String(total) }
       })
     });
     const data=await resp.json();
     if(!resp.ok || !data.order_id){ throw new Error(data.error||'Order failed'); }
+
+    /* The backend re-prices the cart from the live catalog and is the authority.
+       If it disagrees with our number, use ITS number for the receipt + delivery
+       payload too, so the invoice can never say a different figure to what was
+       actually charged. */
+    const srvTotal = Math.round(Number(data.amount||0)/100);
+    const payTotal = (srvTotal>0 ? srvTotal : total);
+    if(srvTotal>0 && srvTotal!==total){
+      console.warn('[checkout] server re-priced this cart: \u20b9'+total+' \u2192 \u20b9'+payTotal);
+    }
 
     // 2) Razorpay modal (key backend se aayi)
     const options={
@@ -1937,7 +1976,7 @@ async function checkout(){
       image:"https://afterfxtemplates.com/logo.png",
       prefill:{ name:name, email:email },
       theme:{ color:"#C9A84C" },
-      handler: function(r){ verifyPayment(r, {oid,name,email,ids,readable,q,total}); }
+      handler: function(r){ verifyPayment(r, {oid,name,email,ids,readable,q,total:payTotal}); }
     };
     const rzp=new Razorpay(options);
     rzp.on('payment.failed', function(resp){
@@ -2835,6 +2874,7 @@ renderPricing();updateCount();updateWishCount();
 (async()=>{
   videos=await fetchVideos();
   window.videos = videos;   // expose the live catalog to the Live Stats module
+  afxRepriceCart();         // kill stale prices in a cart saved before a price change
   if(videos.length){readFilterParams();renderSortMenu();renderOrientTabs();renderTabs();renderGrid();applyDeepLink();renderRecentlyViewed();}
   else{
     document.getElementById('vgrid').innerHTML=`<div style="color:var(--mt);text-align:center;padding:48px;grid-column:1/-1;font-size:14px;"><div style="font-size:34px;margin-bottom:12px">📦</div><div style="margin-bottom:14px">Templates coming soon!</div><a href="https://youtube.com/@afterfxtemplates" target="_blank" class="bg" style="display:inline-flex">▶ Watch on YouTube</a></div>`;
