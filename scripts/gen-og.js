@@ -1,65 +1,250 @@
-// Generates one real HTML page per template at /t/<id>/index.html
-// Each page carries its OWN og:image (that template's thumbnail) so WhatsApp/
-// Telegram/Facebook show the right thumbnail in the link preview.
-// Real visitors get redirected to the storefront focus mode (/?t=<id>).
+// Generates the site's static pages from templates.json:
+//   /t/<id>/index.html   one real page per template  (share preview + SEO)
+//   /c/<cat>/index.html  one page per category
+//   /sitemap.xml         every URL on the site
+//
+// Run:  node scripts/gen-og.js      (from the repo root)
 
 const fs = require('fs');
 const path = require('path');
 
-const BASE = 'https://afterfxtemplates.com'; // <-- your live domain
-const OUT  = 't';                            // output folder: /t/<id>/
+const BASE = 'https://afterfxtemplates.com';
+const WA   = '918971738710';
+const TODAY = new Date().toISOString().slice(0, 10);
 
 const raw = JSON.parse(fs.readFileSync('templates.json', 'utf8'));
-const templates = raw.templates || raw;
+const templates = (raw.templates || raw).filter(t => t && t.id);
+const labels = Object.fromEntries((raw.categories || []).map(c => [c.id, c.label]));
 
-const esc = s => String(s || '')
+const esc = s => String(s == null ? '' : s)
   .replace(/&/g, '&amp;').replace(/</g, '&lt;')
   .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
+// --- THE FIX -------------------------------------------------------------
+// thumb is usually a base64 data: URI. A data: URI can never be an og:image,
+// and prefixing it with BASE produced the broken
+// "https://afterfxtemplates.com/data:image/jpeg;base64,..." URLs.
+// Social crawlers need a real, fetchable https URL -> use the YouTube thumb.
 function imageFor(t) {
-  if (t.thumb && /^https?:\/\//.test(t.thumb)) return t.thumb;          // full URL already
-  if (t.thumb) return `${BASE}/${t.thumb.replace(/^\//, '')}`;          // relative path on site
-  return `https://i.ytimg.com/vi/${t.id}/hqdefault.jpg`;                // fallback: YouTube thumb
+  const thumb = String(t.thumb || '');
+  if (/^https?:\/\//.test(thumb)) return thumb;                 // already a real URL
+  if (thumb && !/^data:/i.test(thumb)) {                        // a path on the site
+    return `${BASE}/${thumb.replace(/^\//, '')}`;
+  }
+  return `https://i.ytimg.com/vi/${t.id}/hqdefault.jpg`;        // base64 or missing
 }
+// -------------------------------------------------------------------------
 
-let count = 0;
-for (const t of templates) {
-  if (!t.id) continue;
-  const title = esc(t.title || 'After Effects Template');
-  const img   = esc(imageFor(t));
-  const url   = `${BASE}/${OUT}/${t.id}/`;
-  const price = t.price ? ` \u20B9${t.price}` : '';
-  const desc  = esc(`${t.title || 'Template'} \u2014 Editable After Effects project file${price} \u00B7 AfterFX Templates`);
-  const focus = `${BASE}/?t=${t.id}`;
+const ORIENT = { v: 'Vertical (9:16)', h: 'Horizontal (16:9)', both: 'Horizontal &amp; Vertical' };
+const orientOf = t => ORIENT[t.orient] || 'Horizontal &amp; Vertical';
+const priceOf  = t => t.price || 300;
+const waLink   = txt => `https://wa.me/${WA}?text=${encodeURIComponent(txt)}`;
 
-  const html = `<!doctype html>
+const INTRO = {
+  wedding: 'Cinematic After Effects wedding invitation video templates for South Indian weddings. Telugu and English text support, horizontal and vertical output from the same project file.',
+  muslimwedding: 'Nikah and Walima invitation video templates with Islamic geometric patterns and calligraphy-friendly layouts. Urdu, Telugu and English text support.',
+  christian: 'Church wedding invitation video templates with cross motifs and clean typographic layouts, built for Indian Christian weddings.',
+  engagement: 'Engagement and ring ceremony (nischitartham) invitation video templates — shorter and softer than the wedding sets, made to go out weeks before the main function.',
+  cradle: 'Barasala, namakaranam and cradle ceremony invitation video templates. Soft palettes and cradle motifs with room for the baby name, ceremony date and family names.',
+  babyshower: 'Seemantham, valakappu and baby shower invitation video templates with warm floral South Indian motifs.',
+  halfsaree: 'Half saree ceremony (langa voni, ritu kala samskara) invitation video templates with silk textures and temple jewellery detail.',
+  birthday: 'Birthday invitation video templates from first birthdays through milestone celebrations, with space for name, age, date and venue.',
+  housewarming: 'Gruhapravesam and house warming invitation video templates with kalasham, mango leaf toran and rangoli motifs.',
+  namereveal: 'Cinematic baby name reveal videos built around Indian mythological themes, where the name meaning drives the story.',
+  saree: 'Saree ceremony invitation video templates with traditional South Indian textile and jewellery detail.',
+  others: 'Invitation video templates for anniversaries, family functions and one-off celebrations.',
+};
+
+const STYLE = `
+*{box-sizing:border-box}
+body{margin:0;background:#080810;color:#f2ede2;font-family:"DM Sans",system-ui,sans-serif;line-height:1.65}
+a{color:#e6c76a;text-decoration:none}a:hover{text-decoration:underline}
+.wrap{max-width:1020px;margin:0 auto;padding:0 20px}
+header{border-bottom:1px solid #241f33;padding:16px 0}
+header .wrap{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+.brand{font-size:1.1rem;color:#f2ede2}.brand b{color:#C9A84C}
+nav a{margin-left:16px;font-size:.9rem;color:#9b93ad}
+.crumb{font-size:.82rem;color:#9b93ad;margin:26px 0 8px}.crumb a{color:#9b93ad}
+h1{font-weight:500;font-size:clamp(1.6rem,4vw,2.4rem);line-height:1.22;margin:.2em 0 .4em}
+h2{font-weight:500;font-size:1.3rem;color:#e6c76a;margin:2em 0 .5em}
+p{max-width:70ch}.lede{font-size:1.05rem;color:#ddd6ea}
+ul.meta{display:flex;gap:9px;flex-wrap:wrap;list-style:none;padding:0;margin:18px 0 24px}
+ul.meta li{border:1px solid #241f33;border-radius:999px;padding:5px 13px;font-size:.82rem;color:#9b93ad}
+ul.meta li b{color:#C9A84C}
+.player{position:relative;padding-top:56.25%;border:1px solid #241f33;border-radius:10px;overflow:hidden;background:#000}
+.player iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.cta{display:flex;gap:11px;flex-wrap:wrap;margin:24px 0}
+.btn{padding:12px 22px;border-radius:8px;font-weight:600;font-size:.94rem;border:1px solid #C9A84C;color:#C9A84C;display:inline-block}
+.btn.solid{background:#C9A84C;color:#16120a}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px;list-style:none;padding:0;margin:20px 0}
+.card{border:1px solid #241f33;border-radius:10px;overflow:hidden;background:#0f0d18}
+.card:hover{border-color:#C9A84C}
+.card img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#000}
+.card .t{padding:10px 12px 13px;font-size:.88rem;color:#f2ede2}
+.card .t span{display:block;margin-top:4px;font-size:.77rem;color:#9b93ad}
+.cats{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0;margin:14px 0}
+.cats a{border:1px solid #241f33;border-radius:999px;padding:6px 14px;font-size:.85rem;color:#9b93ad;display:inline-block}
+footer{border-top:1px solid #241f33;margin-top:56px;padding:26px 0 44px;font-size:.85rem;color:#9b93ad}
+footer a{color:#9b93ad}
+`;
+
+function shell({ title, desc, canonical, image, body, jsonld = '' }) {
+  return `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${title} \u00B7 AfterFX Templates</title>
-<link rel="canonical" href="${url}">
+<title>${title}</title>
+<meta name="description" content="${desc}">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="${canonical}">
 <meta property="og:type" content="product">
 <meta property="og:site_name" content="AfterFX Templates">
 <meta property="og:title" content="${title}">
 <meta property="og:description" content="${desc}">
-<meta property="og:image" content="${img}">
-<meta property="og:url" content="${url}">
+<meta property="og:image" content="${image}">
+<meta property="og:url" content="${canonical}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${title}">
 <meta name="twitter:description" content="${desc}">
-<meta name="twitter:image" content="${img}">
-<script>location.replace(${JSON.stringify(focus)});</script>
+<meta name="twitter:image" content="${image}">
+<link rel="icon" href="${BASE}/favicon.ico">
+<style>${STYLE}</style>
+${jsonld}
 </head>
-<body style="background:#080810;color:#C9A84C;font-family:DM Sans,sans-serif;text-align:center;padding:48px 20px">
-<p>Opening template\u2026</p>
-<p><a style="color:#C9A84C" href="${focus}">Tap here if it doesn't open \u2192</a></p>
+<body>
+<header><div class="wrap">
+<a class="brand" href="${BASE}/">AfterFX <b>Templates</b></a>
+<nav><a href="${BASE}/">All templates</a><a href="${BASE}/wedding-cards.html">Cards</a><a href="${BASE}/fonts.html">Fonts</a><a href="${BASE}/about.html">About</a></nav>
+</div></header>
+<main class="wrap">
+${body}
+</main>
+<footer><div class="wrap">
+AfterFX Templates — Mohammad Rafi, VFX &amp; Motion Graphics Artist, Bengaluru.<br>
+<a href="${BASE}/">Templates</a> · <a href="${BASE}/about.html">About</a> ·
+<a href="${BASE}/terms.html">Terms</a> · <a href="${BASE}/privacy.html">Privacy</a> ·
+<a href="https://wa.me/${WA}">WhatsApp</a>
+</div></footer>
 </body>
 </html>`;
-
-  const dir = path.join(OUT, t.id);
-  fs.mkdirSync(dir, { recursive: true });
-  fs.writeFileSync(path.join(dir, 'index.html'), html);
-  count++;
 }
-console.log(`Generated ${count} template share pages in /${OUT}`);
+
+const card = (t, label) =>
+  `<li class="card"><a href="${BASE}/t/${t.id}/">` +
+  `<img src="https://i.ytimg.com/vi/${t.id}/hqdefault.jpg" loading="lazy" alt="${esc(t.title)} invitation video template">` +
+  `<div class="t">${esc(t.title)}<span>${esc(label)} · ₹${priceOf(t)}</span></div></a></li>`;
+
+// ---------- group ----------
+const byCat = {};
+for (const t of templates) (byCat[t.cat || 'others'] ||= []).push(t);
+const cats = Object.keys(byCat).sort((a, b) => byCat[b].length - byCat[a].length);
+const labelOf = c => labels[c] || c.charAt(0).toUpperCase() + c.slice(1);
+
+// ---------- template pages ----------
+let nT = 0;
+for (const c of cats) {
+  const label = labelOf(c);
+  for (const t of byCat[c]) {
+    const title = esc(t.title || 'After Effects Template');
+    const price = priceOf(t);
+    const img = esc(imageFor(t));
+    const url = `${BASE}/t/${t.id}/`;
+    const own = String(t.desc || '').trim();
+    const lede = own || `${t.title} — an editable After Effects invitation video template for ${label.toLowerCase()} celebrations. Telugu and English text support, ${orientOf(t).toLowerCase()} output, with every font, audio file, PNG asset and PSD included.`;
+    const metaDesc = esc(lede.length > 155 ? lede.slice(0, 150).replace(/\s\S*$/, '') + '…' : lede);
+
+    const jsonld = `<script type="application/ld+json">${JSON.stringify({
+      '@context': 'https://schema.org', '@type': 'Product',
+      name: t.title, description: lede,
+      image: `https://i.ytimg.com/vi/${t.id}/hqdefault.jpg`,
+      brand: { '@type': 'Brand', name: 'AfterFX Templates' },
+      category: label, url,
+      offers: { '@type': 'Offer', price: String(price), priceCurrency: 'INR', availability: 'https://schema.org/InStock', url },
+    })}</script>`;
+
+    const rel = byCat[c].filter(x => x.id !== t.id).slice(0, 8);
+    const relHtml = rel.length
+      ? `<h2>More ${esc(label.toLowerCase())} templates</h2><ul class="grid">${rel.map(x => card(x, label)).join('')}</ul>` +
+        `<p><a href="${BASE}/c/${c}/">View all ${byCat[c].length} ${esc(label.toLowerCase())} templates →</a></p>`
+      : '';
+
+    const body = `
+<p class="crumb"><a href="${BASE}/">Templates</a> › <a href="${BASE}/c/${c}/">${esc(label)}</a> › ${title}</p>
+<h1>${title}</h1>
+<p class="lede">${esc(lede)}</p>
+<ul class="meta"><li>Category <b>${esc(label)}</b></li><li>Format <b>${orientOf(t)}</b></li><li>Price <b>₹${price}</b></li><li>Languages <b>Telugu + English</b></li></ul>
+<div class="player"><iframe src="https://www.youtube.com/embed/${t.id}" title="${title} preview" loading="lazy" allowfullscreen allow="encrypted-media; picture-in-picture"></iframe></div>
+<div class="cta">
+  <a class="btn solid" href="${BASE}/?t=${t.id}">Buy the project file — ₹${price}</a>
+  <a class="btn" href="${esc(waLink(`Hi AfterFX Templates! I want a ready-made personalised video of: ${t.title} (${url})`))}">Get a ready-made video</a>
+</div>
+<h2>What you get</h2>
+<p>The After Effects project file, the fonts used in the design, PNG footages, audio and music files, Telugu and English PSD files, and all remaining design assets. Nothing is held back.</p>
+<h2>About ${esc(label.toLowerCase())} templates</h2>
+<p>${esc(INTRO[c] || INTRO.others)}</p>
+${relHtml}`;
+
+    const dir = path.join('t', t.id);
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(path.join(dir, 'index.html'),
+      shell({ title: `${title} — After Effects Invitation Video Template | ₹${price}`, desc: metaDesc, canonical: url, image: img, body, jsonld }));
+    nT++;
+  }
+}
+
+// ---------- category pages ----------
+let nC = 0;
+for (const c of cats) {
+  const label = labelOf(c), items = byCat[c];
+  const url = `${BASE}/c/${c}/`;
+  const intro = INTRO[c] || INTRO.others;
+  const others = cats.filter(x => x !== c).map(x => `<li><a href="${BASE}/c/${x}/">${esc(labelOf(x))}</a></li>`).join('');
+  const body = `
+<p class="crumb"><a href="${BASE}/">Templates</a> › ${esc(label)}</p>
+<h1>${esc(label)} Invitation Video Templates</h1>
+<p class="lede">${esc(intro)}</p>
+<ul class="meta"><li>Templates <b>${items.length}</b></li><li>From <b>₹300</b></li><li>Languages <b>Telugu + English</b></li><li>Delivery <b>Instant to your email</b></li></ul>
+<div class="cta">
+  <a class="btn solid" href="${BASE}/">Browse all templates</a>
+  <a class="btn" href="${esc(waLink(`Hi AfterFX Templates! I am looking for a ${label} invitation video.`))}">Ask on WhatsApp</a>
+</div>
+<h2>All ${esc(label.toLowerCase())} templates</h2>
+<ul class="grid">${items.map(t => card(t, label)).join('')}</ul>
+<h2>How these templates work</h2>
+<p>Each template is an editable After Effects project file. Replace the names, dates and venue, then render horizontal for the function screen and vertical for WhatsApp. Fonts, PNG footage, audio and layered PSD files are all included in the download.</p>
+<p>If you do not use After Effects, we can personalise the template for you and deliver a finished video — message us on WhatsApp with the template you like.</p>
+<h2>Other categories</h2>
+<ul class="cats">${others}</ul>`;
+
+  fs.mkdirSync(path.join('c', c), { recursive: true });
+  fs.writeFileSync(path.join('c', c, 'index.html'),
+    shell({
+      title: `${label} Invitation Video Templates — ${items.length} Designs from ₹300 | AfterFX Templates`,
+      desc: esc(intro.slice(0, 150).replace(/\s\S*$/, '') + '…'),
+      canonical: url,
+      image: `https://i.ytimg.com/vi/${items[0].id}/hqdefault.jpg`,
+      body,
+    }));
+  nC++;
+}
+
+// ---------- sitemap ----------
+const STATIC = [['/', '1.0', 'weekly'], ['/wedding-cards.html', '0.8', 'monthly'],
+  ['/fonts.html', '0.7', 'monthly'], ['/about.html', '0.5', 'yearly'],
+  ['/terms.html', '0.3', 'yearly'], ['/privacy.html', '0.3', 'yearly']];
+
+const entry = (loc, mod, freq, pri) =>
+  `  <url>\n    <loc>${loc}</loc>\n    <lastmod>${mod}</lastmod>\n    <changefreq>${freq}</changefreq>\n    <priority>${pri}</priority>\n  </url>\n`;
+
+let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
+for (const [p, pri, freq] of STATIC) xml += entry(BASE + p, TODAY, freq, pri);
+for (const c of cats) xml += entry(`${BASE}/c/${c}/`, TODAY, 'weekly', '0.9');
+for (const t of templates) {
+  const mod = /^\d{4}-\d{2}-\d{2}$/.test(String(t.addedAt || '').slice(0, 10)) ? String(t.addedAt).slice(0, 10) : TODAY;
+  xml += entry(`${BASE}/t/${t.id}/`, mod, 'monthly', '0.7');
+}
+xml += '</urlset>\n';
+fs.writeFileSync('sitemap.xml', xml);
+
+console.log(`Generated ${nT} template pages, ${nC} category pages, sitemap with ${STATIC.length + nC + templates.length} URLs`);
