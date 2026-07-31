@@ -25,14 +25,39 @@ const esc = s => String(s == null ? '' : s)
 // and prefixing it with BASE produced the broken
 // "https://afterfxtemplates.com/data:image/jpeg;base64,..." URLs.
 // Social crawlers need a real, fetchable https URL -> use the YouTube thumb.
-function imageFor(t) {
-  const thumb = String(t.thumb || '');
-  if (/^https?:\/\//.test(thumb)) return thumb;                 // already a real URL
-  if (thumb && !/^data:/i.test(thumb)) {                        // a path on the site
-    return `${BASE}/${thumb.replace(/^\//, '')}`;
-  }
-  return `https://i.ytimg.com/vi/${t.id}/hqdefault.jpg`;        // base64 or missing
+// A few templates were added manually in admin, so their id looks like
+// "custom_1782192554698" instead of a YouTube video id. Asking YouTube for
+// i.ytimg.com/vi/custom_.../hqdefault.jpg returns the grey placeholder.
+// Those rows DO carry the real link in `url`, so parse the video id out of it.
+const YT_ID = /^[A-Za-z0-9_-]{11}$/;
+
+function ytIdOf(t) {
+  if (YT_ID.test(String(t.id || ''))) return t.id;
+  const m = String(t.url || '').match(
+    /(?:v=|youtu\.be\/|\/shorts\/|\/embed\/|\/live\/)([A-Za-z0-9_-]{11})/);
+  return m ? m[1] : null;
 }
+
+const ytThumb = id => `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+
+// og:image must be an absolute, fetchable https URL - never a data: URI.
+function imageFor(t) {
+  const yt = ytIdOf(t);
+  if (yt) return ytThumb(yt);
+  const thumb = String(t.thumb || '');
+  if (/^https?:\/\//.test(thumb)) return thumb;
+  if (thumb && !/^data:/i.test(thumb)) return `${BASE}/${thumb.replace(/^\//, '')}`;
+  return `${BASE}/logo.png`;
+}
+
+// An in-page <img> CAN use a data: URI, so cards still show the admin
+// thumbnail even when there is no video behind the template.
+function cardImageFor(t) {
+  const yt = ytIdOf(t);
+  if (yt) return ytThumb(yt);
+  return String(t.thumb || '') || `${BASE}/logo.png`;
+}
+
 // -------------------------------------------------------------------------
 
 const ORIENT = { v: 'Vertical (9:16)', h: 'Horizontal (16:9)', both: 'Horizontal &amp; Vertical' };
@@ -132,7 +157,7 @@ AfterFX Templates — Mohammad Rafi, VFX &amp; Motion Graphics Artist, Bengaluru
 
 const card = (t, label) =>
   `<li class="card"><a href="${BASE}/t/${t.id}/">` +
-  `<img src="https://i.ytimg.com/vi/${t.id}/hqdefault.jpg" loading="lazy" alt="${esc(t.title)} invitation video template">` +
+  `<img src="${esc(cardImageFor(t))}" loading="lazy" alt="${esc(t.title)} invitation video template">` +
   `<div class="t">${esc(t.title)}<span>${esc(label)} · ₹${priceOf(t)}</span></div></a></li>`;
 
 // ---------- group ----------
@@ -157,11 +182,16 @@ for (const c of cats) {
     const jsonld = `<script type="application/ld+json">${JSON.stringify({
       '@context': 'https://schema.org', '@type': 'Product',
       name: t.title, description: lede,
-      image: `https://i.ytimg.com/vi/${t.id}/hqdefault.jpg`,
+      image: imageFor(t),
       brand: { '@type': 'Brand', name: 'AfterFX Templates' },
       category: label, url,
       offers: { '@type': 'Offer', price: String(price), priceCurrency: 'INR', availability: 'https://schema.org/InStock', url },
     })}</script>`;
+
+    const yt = ytIdOf(t);
+    const playerHtml = yt
+      ? `<div class="player"><iframe src="https://www.youtube.com/embed/${yt}" title="${title} preview" loading="lazy" allowfullscreen allow="encrypted-media; picture-in-picture"></iframe></div>`
+      : `<img src="${esc(cardImageFor(t))}" alt="${title}" style="width:100%;border:1px solid #241f33;border-radius:10px;display:block">`;
 
     const rel = byCat[c].filter(x => x.id !== t.id).slice(0, 8);
     const relHtml = rel.length
@@ -174,7 +204,7 @@ for (const c of cats) {
 <h1>${title}</h1>
 <p class="lede">${esc(lede)}</p>
 <ul class="meta"><li>Category <b>${esc(label)}</b></li><li>Format <b>${orientOf(t)}</b></li><li>Price <b>₹${price}</b></li><li>Languages <b>Telugu + English</b></li></ul>
-<div class="player"><iframe src="https://www.youtube.com/embed/${t.id}" title="${title} preview" loading="lazy" allowfullscreen allow="encrypted-media; picture-in-picture"></iframe></div>
+${playerHtml}
 <div class="cta">
   <a class="btn solid" href="${BASE}/?t=${t.id}">Buy the project file — ₹${price}</a>
   <a class="btn" href="${esc(waLink(`Hi AfterFX Templates! I want a ready-made personalised video of: ${t.title} (${url})`))}">Get a ready-made video</a>
@@ -223,7 +253,7 @@ for (const c of cats) {
       title: `${label} Invitation Video Templates — ${items.length} Designs from ₹300 | AfterFX Templates`,
       desc: esc(intro.slice(0, 150).replace(/\s\S*$/, '') + '…'),
       canonical: url,
-      image: `https://i.ytimg.com/vi/${items[0].id}/hqdefault.jpg`,
+      image: imageFor(items[0]),
       body,
     }));
   nC++;
