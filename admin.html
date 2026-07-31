@@ -185,6 +185,27 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
     <div class="stats" id="stats"></div>
     <div id="storageBar" style="margin:14px 0 4px;padding:12px 14px;background:var(--bg2);border:1px solid var(--gb);border-radius:10px;"></div>
 
+    <!-- ===== AI DESCRIPTION GENERATOR (2026-07-31) ===== -->
+    <div id="genBox" style="margin:14px 0 4px;padding:14px 16px;background:#0d0d16;border:1px solid var(--gold);border-radius:10px;">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <div style="font-size:14px;color:var(--gold);font-weight:800;white-space:nowrap;">&#10024; AI Descriptions</div>
+        <div class="hint" style="flex:1;min-width:220px;margin:0;font-size:12px;">Writes a unique description for every template that has none. Thin, repeated text is what stops Google indexing the /t/ pages &mdash; this fixes it.</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:11px;">
+        <button type="button" id="genAllBtn" onclick="afxGenAll()" style="padding:9px 18px;background:var(--gold);color:#080810;border:0;border-radius:7px;font-weight:800;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;">&#10024; Generate All Missing</button>
+        <button type="button" id="genPauseBtn" onclick="afxGenTogglePause()" style="display:none;padding:9px 16px;background:transparent;border:1px solid var(--gold);color:var(--gold);border-radius:7px;font-weight:700;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;">&#9208; Pause</button>
+        <button type="button" id="genStopBtn" onclick="afxGenStopNow()" style="display:none;padding:9px 16px;background:transparent;border:1px solid #e05555;color:#e05555;border-radius:7px;font-weight:700;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;">&#9632; Stop</button>
+        <span style="font-size:12px;color:#8a8aa0;">Gap <input type="number" id="genGap" value="6" min="2" max="60" style="width:54px;padding:5px 6px;background:#080810;border:1px solid #2a2a3a;border-radius:5px;color:#fff;font-size:12px;"> sec</span>
+      </div>
+      <div id="genPanel" style="display:none;margin-top:13px;">
+        <div style="height:9px;background:#080810;border-radius:5px;overflow:hidden;border:1px solid var(--gb);">
+          <div id="genBar" style="height:100%;width:0%;background:var(--gold);transition:width .3s;"></div>
+        </div>
+        <div id="genText" style="margin-top:8px;font-size:12px;color:var(--gold);font-weight:600;line-height:1.6;"></div>
+        <div id="genFail" style="margin-top:6px;font-size:12px;color:#e05555;line-height:1.6;"></div>
+      </div>
+    </div>
+
     <!-- TABS -->
     <div class="tabbar">
       <button class="tabb on" data-tab="all" onclick="setTab('all')">All Templates</button>
@@ -336,8 +357,13 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
       </div>
 
       <div class="field">
-        <label>Short description</label>
-        <textarea id="fDesc" rows="3" placeholder="Blank = auto-written from the title, category and orientation." style="width:100%;font-family:'DM Sans',sans-serif;background:var(--bg);border:1px solid var(--gb);color:var(--tx);padding:10px;border-radius:6px;resize:vertical;"></textarea>
+        <label style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <span>Short description</span>
+          <button type="button" id="genOneBtn" onclick="afxGenForModal()" style="padding:5px 12px;background:var(--gold);color:#080810;border:0;border-radius:6px;font-weight:800;cursor:pointer;font-size:11px;font-family:'DM Sans',sans-serif;">&#10024; Generate with AI</button>
+          <span id="genOneStatus" style="font-size:11px;color:var(--gold);font-weight:600;"></span>
+        </label>
+        <textarea id="fDesc" rows="5" placeholder="Blank = auto-written from the title, category and orientation." style="width:100%;font-family:'DM Sans',sans-serif;background:var(--bg);border:1px solid var(--gb);color:var(--tx);padding:10px;border-radius:6px;resize:vertical;"></textarea>
+        <div class="hint">AI writes 90-130 words from the Title, Category and Orientation above. Read it, edit anything you want, then Save.</div>
       </div>
     </div>
     <div class="modal-foot">
@@ -563,7 +589,7 @@ function thumbKB(s){ return ((s || '').length) / 1024; }
 /* Version stamp — lets us confirm at a glance which build the browser loaded.
    Type  AFX_ADMIN_BUILD  in the console: if it's undefined, you're on a cached
    old file and need a hard refresh (Ctrl+Shift+R). */
-const AFX_ADMIN_BUILD = '2026-07-29 · price-override-fix';
+const AFX_ADMIN_BUILD = '2026-07-31 · ai-desc-generator';
 console.log('%c[AfterFX Admin] build ' + AFX_ADMIN_BUILD, 'color:#C9A84C;font-weight:700');
 
 function afxSet(key, value){
@@ -1273,6 +1299,223 @@ function showToast(msg,type){
   t.classList.add('on');
   setTimeout(()=>t.classList.remove('on'),2500);
 }
+
+
+/* ============================================================================
+   AI DESCRIPTION GENERATOR  (added 2026-07-31)
+   ----------------------------------------------------------------------------
+   Talks to  afterfx-api.vercel.app/api/gen-desc  (Vercel serverless + Gemini).
+   The API key lives ONLY in Vercel's env vars, never in this file.
+
+   WHY THIS EXISTS: a blank `desc` makes the /t/<id>/ page fall back to
+   auto-generated near-duplicate text. Google will not index 199 pages that all
+   say the same thing. Unique copy per template is the fix.
+
+   TWO WAYS IN:
+     - "Generate with AI" inside the Edit modal  -> fills the box, you Save
+     - "Generate All Missing"                    -> batch, auto-saves each one
+   ========================================================================== */
+const AFX_GEN_API   = 'https://afterfx-api.vercel.app/api/gen-desc';
+const AFX_GEN_TOKEN = 'afx-desc-9k2m7x';   // must match GEN_DESC_TOKEN on Vercel
+
+let afxGenBusy = false, afxGenStopFlag = false, afxGenPaused = false;
+
+function afxGenSleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+/* one call to the API -------------------------------------------------- */
+async function afxGenOne(t){
+  let res;
+  try{
+    res = await fetch(AFX_GEN_API,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','X-Afx-Token':AFX_GEN_TOKEN},
+      body:JSON.stringify({
+        title         : t.title,
+        cat           : t.cat,
+        orient        : t.orient,
+        customizeOnly : !!t.customizeOnly
+      })
+    });
+  }catch(e){
+    throw new Error('no internet / API unreachable');
+  }
+  let data = {};
+  try{ data = await res.json(); }catch(e){}
+  if(res.status === 401) throw new Error('401 bad token');
+  if(!res.ok || !data.desc) throw new Error(data.error || ('HTTP '+res.status));
+  return String(data.desc).trim();
+}
+
+/* write a desc straight into storage, no modal involved ----------------- */
+function afxGenSaveDesc(id, isExtra, desc){
+  if(isExtra){
+    const extras = getExtras();
+    const i = extras.findIndex(e=>e.id===id);
+    if(i < 0) return false;
+    extras[i].desc = desc;
+    setExtras(extras);
+  }else{
+    const custom = getCustom();
+    custom[id] = Object.assign({}, custom[id]||{}, {desc:desc});
+    setCustom(custom);
+  }
+  return true;
+}
+
+/* ---- single template, from inside the Edit modal ---------------------- */
+async function afxGenForModal(){
+  const btn = document.getElementById('genOneBtn');
+  const st  = document.getElementById('genOneStatus');
+  const title = (document.getElementById('fTitle').value||'').trim();
+  if(!title){ showToast('Add a title first','err'); return; }
+
+  const t = {
+    title         : title,
+    cat           : document.getElementById('fCat').value,
+    orient        : document.getElementById('fOrient').value,
+    customizeOnly : document.getElementById('fCustOnly').checked
+  };
+
+  const label = btn.innerHTML;
+  btn.disabled = true; btn.innerHTML = '&#9203; Writing&hellip;'; st.textContent = '';
+  try{
+    const desc = await afxGenOne(t);
+    document.getElementById('fDesc').value = desc;
+    st.textContent = '\u2713 ' + desc.split(/\s+/).filter(Boolean).length + ' words \u2014 review it, then Save';
+  }catch(e){
+    st.textContent = '';
+    showToast('AI failed: ' + e.message, 'err');
+  }
+  btn.disabled = false; btn.innerHTML = label;
+}
+
+/* ---- batch ----------------------------------------------------------- */
+function afxGenMissing(){
+  return getMergedList().filter(t => !(t.desc && String(t.desc).trim()));
+}
+
+function afxGenRefreshCount(){
+  const b = document.getElementById('genAllBtn');
+  if(!b || afxGenBusy) return;
+  const n = afxGenMissing().length;
+  b.innerHTML = n ? ('&#10024; Generate All Missing (' + n + ')')
+                  : '&#10024; All descriptions filled &#10003;';
+  b.disabled = (n === 0);
+  b.style.opacity = n ? '1' : '.55';
+  b.style.cursor  = n ? 'pointer' : 'default';
+}
+
+function afxGenProgress(i, total, title, failCount){
+  const pct = Math.round(i / total * 100);
+  document.getElementById('genBar').style.width = pct + '%';
+  document.getElementById('genText').innerHTML =
+    i + ' / ' + total + '  \u00b7  ' + pct + '%' +
+    (afxGenPaused ? '  \u00b7  <span style="color:#8a8aa0">PAUSED</span>' : '') +
+    '<br><span style="color:#8a8aa0;font-weight:400;">now: ' +
+    String(title).replace(/</g,'&lt;').slice(0,70) + '</span>' +
+    (failCount ? '<br><span style="color:#e05555;">' + failCount + ' failed so far</span>' : '');
+}
+
+function afxGenTogglePause(){
+  afxGenPaused = !afxGenPaused;
+  const b = document.getElementById('genPauseBtn');
+  b.innerHTML = afxGenPaused ? '&#9654; Resume' : '&#9208; Pause';
+}
+
+function afxGenStopNow(){
+  afxGenStopFlag = true;
+  afxGenPaused = false;
+  showToast('Stopping after the current one\u2026');
+}
+
+async function afxGenAll(){
+  if(afxGenBusy) return;
+  const list = afxGenMissing();
+  if(!list.length){ showToast('Nothing missing \u2014 all templates have a description'); return; }
+
+  const gapEl = document.getElementById('genGap');
+  const gap   = Math.max(2, Math.min(60, parseInt(gapEl && gapEl.value) || 6)) * 1000;
+
+  afxGenBusy = true; afxGenStopFlag = false; afxGenPaused = false;
+  document.getElementById('genPanel').style.display = 'block';
+  document.getElementById('genAllBtn').disabled = true;
+  document.getElementById('genAllBtn').style.opacity = '.55';
+  document.getElementById('genPauseBtn').style.display = '';
+  document.getElementById('genStopBtn').style.display  = '';
+  document.getElementById('genFail').innerHTML = '';
+  document.getElementById('genPauseBtn').innerHTML = '&#9208; Pause';
+
+  const failed = [];
+  let ok = 0;
+
+  for(let i = 0; i < list.length; i++){
+    if(afxGenStopFlag) break;
+    while(afxGenPaused && !afxGenStopFlag){
+      afxGenProgress(i, list.length, list[i].title, failed.length);
+      await afxGenSleep(400);
+    }
+    if(afxGenStopFlag) break;
+
+    const t = list[i];
+    afxGenProgress(i + 1, list.length, t.title, failed.length);
+
+    try{
+      const desc = await afxGenOne(t);
+      afxGenSaveDesc(t.id, t.isExtra, desc);   // saved immediately, one at a time
+      ok++;
+    }catch(e){
+      const msg = String(e.message || e);
+      failed.push(t.title + ' \u2014 ' + msg);
+
+      if(/401|bad token/i.test(msg)){
+        document.getElementById('genFail').innerHTML =
+          'Stopped: the API rejected the token. Check that GEN_DESC_TOKEN on Vercel matches AFX_GEN_TOKEN in this file, then Redeploy.';
+        break;
+      }
+      if(/quota|exhaust|429|rate/i.test(msg)){
+        // free tier per-minute limit: breathe, then carry on
+        document.getElementById('genFail').innerHTML =
+          'Rate limit hit \u2014 waiting 30s, then continuing\u2026';
+        await afxGenSleep(30000);
+        document.getElementById('genFail').innerHTML = '';
+      }
+    }
+
+    if(i < list.length - 1 && !afxGenStopFlag) await afxGenSleep(gap);
+  }
+
+  afxGenBusy = false;
+  document.getElementById('genPauseBtn').style.display = 'none';
+  document.getElementById('genStopBtn').style.display  = 'none';
+  document.getElementById('genAllBtn').disabled = false;
+  document.getElementById('genAllBtn').style.opacity = '1';
+
+  renderStats(); renderStorageBar(); renderList();
+
+  document.getElementById('genText').innerHTML =
+    '\u2713 Done \u2014 ' + ok + ' written' + (failed.length ? ', ' + failed.length + ' failed' : '') +
+    '<br><span style="color:#8a8aa0;font-weight:400;">Now hit \u201c\u2b07 Export for Website\u201d and upload templates.json to GitHub.</span>';
+
+  if(failed.length){
+    document.getElementById('genFail').innerHTML =
+      '<b>Failed (just run Generate All again \u2014 it only retries these):</b><br>' +
+      failed.slice(0,15).map(f=>'\u00b7 ' + f.replace(/</g,'&lt;')).join('<br>') +
+      (failed.length > 15 ? '<br>\u2026and ' + (failed.length-15) + ' more' : '');
+  }
+  showToast(ok ? ('\u2713 ' + ok + ' descriptions written') : 'Nothing was written', ok ? '' : 'err');
+}
+
+/* keep the button count fresh whenever the list re-renders */
+const _afxPrevRenderList = renderList;
+renderList = function(){
+  _afxPrevRenderList.apply(this, arguments);
+  try{ afxGenRefreshCount(); }catch(e){}
+};
+
+/* warn before closing the tab mid-batch */
+window.addEventListener('beforeunload', function(e){
+  if(afxGenBusy){ e.preventDefault(); e.returnValue = ''; return ''; }
+});
 
 /* DRAG DROP */
 const ua=document.getElementById('uploadArea');
