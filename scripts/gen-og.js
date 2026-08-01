@@ -98,8 +98,6 @@ function faqFor(t, label) {
   if (service) {
     q.push(['Do I need After Effects to use this?',
       'No. This one is a done-for-you video. You send us the names, date and venue on WhatsApp and we personalise the video and send you the finished file, ready to share.']);
-    q.push(['How do I order this video?',
-      'Pay on the site, then message us on WhatsApp with your details. We personalise the video and send the final file back to you.']);
   } else {
     q.push(['Do I need After Effects to use this template?',
       'Yes. This is an editable Adobe After Effects project file, so you need After Effects CC 2020 or above to open it and render your video. If you do not use After Effects, message us on WhatsApp and we can personalise it for you instead.']);
@@ -116,8 +114,11 @@ function faqFor(t, label) {
     q.push(['Can the video be in Telugu?',
       'Yes. Tell us the names and wording you want in Telugu or English and we set the text for you — you do not have to type or install anything.']);
 
-    q.push(['How much does it cost and how do I get it?',
-      `This video is Rs ${price}. Pay online, then send us your details on WhatsApp and we send the finished video back to you.`]);
+    q.push(['How much does it cost?',
+      'Every one of these is made from scratch for your family, so the price depends on the length, the theme and how much custom work it needs. Message us on WhatsApp with what you have in mind and we will quote you.']);
+
+    q.push(['How do I order?',
+      'Send us a message on WhatsApp with the names, date and venue and the style you like. We confirm the price, make the video and send you the finished file.']);
 
     q.push(['Can I share the video wherever I want?',
       'Yes. Once you have your video you can share it with family and friends on WhatsApp, Instagram or anywhere else. It may not be resold or redistributed.']);
@@ -233,7 +234,7 @@ AfterFX Templates — Mohammad Rafi, VFX &amp; Motion Graphics Artist, Bengaluru
 const card = (t, label) =>
   `<li class="card"><a href="${BASE}/t/${t.id}/">` +
   `<img src="${esc(cardImageFor(t))}" loading="lazy" alt="${esc(t.title)} invitation video template">` +
-  `<div class="t">${esc(t.title)}<span>${esc(label)} · ₹${priceOf(t)}</span></div></a></li>`;
+  `<div class="t">${esc(t.title)}<span>${esc(label)} · ${isService(t) ? 'Made to order' : '₹' + priceOf(t)}</span></div></a></li>`;
 
 // ---------- group ----------
 const byCat = {};
@@ -257,7 +258,19 @@ for (const c of cats) {
     const service = isService(t);
     const faq = faqFor(t, label);
 
-    const jsonld = `<script type="application/ld+json">${JSON.stringify({
+    // A made-to-order video has no fixed price, so publishing price: 300 in the
+    // Offer would put a wrong number straight into Google's rich result. Emit a
+    // Service with a quote-based offer instead of a priced Product.
+    const jsonld = `<script type="application/ld+json">${JSON.stringify(service ? {
+      '@context': 'https://schema.org', '@type': 'Service',
+      name: t.title, description: lede,
+      image: imageFor(t),
+      serviceType: `${label} video creation`,
+      areaServed: 'IN', url,
+      provider: { '@type': 'Organization', name: 'AfterFX Templates', url: BASE },
+      offers: { '@type': 'Offer', priceCurrency: 'INR', availability: 'https://schema.org/InStock', url,
+        priceSpecification: { '@type': 'PriceSpecification', priceCurrency: 'INR', valueAddedTaxIncluded: true } },
+    } : {
       '@context': 'https://schema.org', '@type': 'Product',
       name: t.title, description: lede,
       image: imageFor(t),
@@ -304,15 +317,16 @@ for (const c of cats) {
 <p class="crumb"><a href="${BASE}/">Templates</a> › <a href="${BASE}/c/${c}/">${esc(label)}</a> › ${title}</p>
 <h1>${title}</h1>
 <p class="lede">${esc(lede)}</p>
-<ul class="meta"><li>Category <b>${esc(label)}</b></li><li>Format <b>${orientOf(t)}</b></li><li>Price <b>₹${price}</b></li><li>Languages <b>Telugu + English</b></li></ul>
+<ul class="meta"><li>Category <b>${esc(label)}</b></li><li>Format <b>${orientOf(t)}</b></li>${service ? `<li>Made to order <b>Price on request</b></li>` : `<li>Price <b>₹${price}</b></li>`}<li>Languages <b>Telugu + English</b></li></ul>
 ${playerHtml}
-<div class="cta">
-  <a class="btn solid" href="${BASE}/?t=${t.id}">${service ? `Order this video — ₹${price}` : `Buy the project file — ₹${price}`}</a>
-  <a class="btn" href="${esc(waLink(`Hi AfterFX Templates! I want a ready-made personalised video of: ${t.title} (${url})`))}">${service ? 'Ask on WhatsApp' : 'Get a ready-made video'}</a>
+<div class="cta">${service
+  ? `<a class="btn solid" href="${esc(waLink(`Hi AfterFX Templates! I want this video made for me: ${t.title} (${url})`))}">Enquire on WhatsApp</a>`
+  : `<a class="btn solid" href="${BASE}/?t=${t.id}">Buy the project file — ₹${price}</a>
+  <a class="btn" href="${esc(waLink(`Hi AfterFX Templates! I want a ready-made personalised video of: ${t.title} (${url})`))}">Get a ready-made video</a>`}
 </div>
 <h2>What you get</h2>
 <p>${service
-  ? 'A finished, personalised video — not a project file. You do not need After Effects. Send us the names, date and venue on WhatsApp after ordering and we deliver the ready-to-share video to you.'
+  ? 'A finished, personalised video — not a project file. You do not need After Effects. Message us on WhatsApp with the names, date and venue, we confirm the price, and we deliver the ready-to-share video to you.'
   : 'The After Effects project file, the fonts used in the design, PNG footages, audio and music files, Telugu and English PSD files, and all remaining design assets. Nothing is held back.'}</p>
 <h2>About ${esc(label.toLowerCase())} templates</h2>
 <p>${esc(INTRO[c] || INTRO.others)}</p>
@@ -323,7 +337,11 @@ ${alsoHtml}`;
     const dir = path.join('t', t.id);
     fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(path.join(dir, 'index.html'),
-      shell({ title: `${title} — After Effects Invitation Video Template | ₹${price}`, desc: metaDesc, canonical: url, image: img, body, jsonld }));
+      shell({
+        title: service
+          ? `${title} — Custom ${esc(label)} Video Made For You | AfterFX Templates`
+          : `${title} — After Effects Invitation Video Template | ₹${price}`,
+        desc: metaDesc, canonical: url, image: img, body, jsonld }));
     nT++;
   }
 }
@@ -334,28 +352,42 @@ for (const c of cats) {
   const label = labelOf(c), items = byCat[c];
   const url = `${BASE}/c/${c}/`;
   const intro = INTRO[c] || INTRO.others;
+  // A category where EVERY item is made to order (name reveal) must not claim
+  // "from Rs 300" or "instant to your email" — there is no fixed price and
+  // nothing is auto-delivered.
+  const allService = items.every(isService);
   const others = cats.filter(x => x !== c).map(x => `<li><a href="${BASE}/c/${x}/">${esc(labelOf(x))}</a></li>`).join('');
   const body = `
 <p class="crumb"><a href="${BASE}/">Templates</a> › ${esc(label)}</p>
-<h1>${esc(label)} Invitation Video Templates</h1>
+<h1>${esc(label)} ${allService ? 'Videos' : 'Invitation Video Templates'}</h1>
 <p class="lede">${esc(intro)}</p>
-<ul class="meta"><li>Templates <b>${items.length}</b></li><li>From <b>₹300</b></li><li>Languages <b>Telugu + English</b></li><li>Delivery <b>Instant to your email</b></li></ul>
-<div class="cta">
-  <a class="btn solid" href="${BASE}/">Browse all templates</a>
-  <a class="btn" href="${esc(waLink(`Hi AfterFX Templates! I am looking for a ${label} invitation video.`))}">Ask on WhatsApp</a>
+<ul class="meta"><li>${allService ? 'Videos' : 'Templates'} <b>${items.length}</b></li>${allService
+  ? `<li>Made to order <b>Price on request</b></li>`
+  : `<li>From <b>₹300</b></li>`}<li>Languages <b>Telugu + English</b></li>${allService
+  ? `<li>Made by <b>our team, for you</b></li>`
+  : `<li>Delivery <b>Instant to your email</b></li>`}</ul>
+<div class="cta">${allService
+  ? `<a class="btn solid" href="${esc(waLink(`Hi AfterFX Templates! I want a custom ${label} video made.`))}">Enquire on WhatsApp</a>
+  <a class="btn" href="${BASE}/">Browse all templates</a>`
+  : `<a class="btn solid" href="${BASE}/">Browse all templates</a>
+  <a class="btn" href="${esc(waLink(`Hi AfterFX Templates! I am looking for a ${label} invitation video.`))}">Ask on WhatsApp</a>`}
 </div>
-<h2>All ${esc(label.toLowerCase())} templates</h2>
+<h2>All ${esc(label.toLowerCase())} ${allService ? 'videos' : 'templates'}</h2>
 <ul class="grid">${items.map(t => card(t, label)).join('')}</ul>
-<h2>How these templates work</h2>
+${allService ? `<h2>How these videos work</h2>
+<p>These are made for you, not sold as project files. Pick the style you like, message us on WhatsApp with the name, date and other details, and we confirm a price for your video.</p>
+<p>You do not need After Effects or any editing skill. We build the video and send you the finished file, ready to share on WhatsApp, Instagram or a big screen at the function.</p>` : `<h2>How these templates work</h2>
 <p>Each template is an editable After Effects project file. Replace the names, dates and venue, then render horizontal for the function screen and vertical for WhatsApp. Fonts, PNG footage, audio and layered PSD files are all included in the download.</p>
-<p>If you do not use After Effects, we can personalise the template for you and deliver a finished video — message us on WhatsApp with the template you like.</p>
+<p>If you do not use After Effects, we can personalise the template for you and deliver a finished video — message us on WhatsApp with the template you like.</p>`}
 <h2>Other categories</h2>
 <ul class="cats">${others}</ul>`;
 
   fs.mkdirSync(path.join('c', c), { recursive: true });
   fs.writeFileSync(path.join('c', c, 'index.html'),
     shell({
-      title: `${label} Invitation Video Templates — ${items.length} Designs from ₹300 | AfterFX Templates`,
+      title: allService
+        ? `${label} Videos — ${items.length} Custom Designs Made For You | AfterFX Templates`
+        : `${label} Invitation Video Templates — ${items.length} Designs from ₹300 | AfterFX Templates`,
       desc: esc(intro.slice(0, 150).replace(/\s\S*$/, '') + '…'),
       canonical: url,
       image: imageFor(items[0]),
