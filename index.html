@@ -271,6 +271,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:60px;display:flex;ali
 .bwatch{background:transparent;border:1px solid var(--gb);color:var(--mt);padding:8px 12px;border-radius:3px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap;}
 .bshare{background:transparent;border:1px solid var(--gb);color:var(--gold);padding:8px 11px;border-radius:3px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;line-height:1;}
 .bshare:hover{border-color:var(--gold);background:var(--gold-dim);}
+/* WhatsApp share — his market shares invitations on WhatsApp, so this gets
+   its own button rather than hiding behind the generic ↗ share. */
+.bwa{background:transparent;border:1px solid #25543a;color:#25D366;padding:8px 11px;border-radius:3px;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;line-height:1;}
+.bwa:hover{border-color:#25D366;background:rgba(37,211,102,.10);}
+.bwa svg{display:block;width:15px;height:15px;fill:currentColor;}
 .bwatch:hover{border-color:var(--gold);color:var(--gold);}
 
 /* SKELETON */
@@ -1482,7 +1487,8 @@ function buildCardHTML(v, idPrefix){
             ? `<button class="badd" onclick="customizeWA('${v.title.replace(/'/g,"\\'")}','${v.url}')">✦ Customize</button>`
             : `<button class="badd ${inc?'done':''}" onclick="addCart('${v.id}','${v.title.replace(/'/g,"\\'")}','${v.thumb}',${v.price},'${v.url}')" id="ab${idPrefix}${v.id}">${inc?'✓ Added':'+ Buy Project File'}</button>`}
           <button class="bwatch" onclick="openTpl('${v.id}')">▶ Details</button>
-          <button class="bshare" onclick="shareTemplate('${v.id}','${v.title.replace(/'/g,"\\'")}')" title="Share this template">↗</button>
+          <button class="bwa" onclick="shareWA('${v.id}','${v.title.replace(/'/g,"\\'")}')" title="Send on WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.47 14.38c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.64.08-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.65-2.05-.17-.3-.02-.46.13-.6.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.6-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.88 1.22 3.08.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.09 1.75-.72 2-1.41.25-.69.25-1.28.17-1.41-.07-.13-.27-.2-.57-.35z"/><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm0 18.13h-.01c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.22 8.22 0 0 1-1.26-4.36c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.83 2.42a8.19 8.19 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24z"/></svg></button>
+          <button class="bshare" onclick="shareTemplate('${v.id}','${v.title.replace(/'/g,"\\'")}')" title="Copy link / share">↗</button>
         </div>
       </div>
     </div>`;
@@ -2443,6 +2449,29 @@ window.addEventListener('scroll',function(){
   const f=document.getElementById('scrollfab');
   if(f) f.textContent = window.scrollY>300 ? '↑' : '↓';
 });
+
+/* ---------------------------------------------------------------------------
+   shareWA — one tap to send a template to a WhatsApp chat.
+   His customers pick invitations inside family WhatsApp groups, so this is the
+   share that actually gets used. It sends the /t/<id>/ page (which now renders
+   a real preview card with thumbnail, title and description) rather than the
+   YouTube link, so every share points back at the site.
+   On phones wa.me opens the app directly; on desktop it opens WhatsApp Web.
+--------------------------------------------------------------------------- */
+function shareWA(id,title){
+  const v=videos.find(x=>String(x.id)===String(id));
+  const url='https://afterfxtemplates.com/t/'+encodeURIComponent(id)+'/';
+  const co=v&&v.customizeOnly;
+  const price=(v&&v.price!=null)?v.price:STD_PRICE;
+  /* A made-to-order video has no fixed price, so never put a number in the
+     message for those — same rule as the card, the modal and the /t/ page. */
+  const line=co
+    ? 'Custom-made video — price on request'
+    : '₹'+price+' — After Effects project file';
+  const msg=(title||'')+'\n'+line+'\n\n'+url+'\n\nFound this on AfterFX Templates';
+  bumpViews(id);
+  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+}
 
 function shareTemplate(id,title){
   const url='https://afterfxtemplates.com/t/'+encodeURIComponent(id)+'/';
