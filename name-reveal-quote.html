@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Name Reveal Video — Get Your Estimate | AfterFX Templates</title>
+<meta name="description" content="Answer 4 quick questions and see what your baby name reveal video will involve — scenes, format, delivery time and an honest price range.">
+<link rel="canonical" href="https://afterfxtemplates.com/name-reveal-quote.html">
+<meta property="og:title" content="Name Reveal Video — Get Your Estimate">
+<meta property="og:description" content="4 questions. See the scenes, the delivery time and the price range before you message.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://afterfxtemplates.com/name-reveal-quote.html">
+<link rel="icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#C9A84C;
+  --gold-soft:rgba(201,168,76,.14);
+  --gold-line:rgba(201,168,76,.28);
+  --bg:#080810;
+  --bg2:#0e0e1a;
+  --bg3:#14142400;
+  --txt:#efeade;
+  --mut:#9a9384;
+  --ok:#57c98a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--txt);
+  font-family:'DM Sans',system-ui,sans-serif;
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;
+  padding:28px 18px 60px;
+  background-image:radial-gradient(900px 500px at 50% -10%,rgba(201,168,76,.10),transparent 70%);
+}
+a{color:inherit}
+.wrap{width:100%;max-width:660px}
+
+/* ---------- header ---------- */
+.brand{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:26px}
+.brand img{height:34px;width:auto;border-radius:6px}
+.brand span{font-family:'Cinzel',serif;font-size:15px;letter-spacing:2.4px;color:var(--gold);text-transform:uppercase}
+
+.head{text-align:center;margin-bottom:26px}
+.head h1{font-family:'Cinzel',serif;font-size:clamp(24px,5.2vw,34px);font-weight:600;line-height:1.25;letter-spacing:.5px}
+.head h1 em{font-style:normal;color:var(--gold)}
+.head p{color:var(--mut);font-size:14.5px;margin-top:10px;line-height:1.6}
+
+/* ---------- progress ---------- */
+.prog{display:flex;gap:6px;margin:0 0 22px}
+.prog i{flex:1;height:3px;border-radius:3px;background:rgba(255,255,255,.09);transition:background .35s}
+.prog i.on{background:var(--gold)}
+
+/* ---------- card ---------- */
+.card{
+  background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015));
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:18px;
+  padding:26px 22px;
+  backdrop-filter:blur(6px);
+}
+.step{display:none}
+.step.on{display:block;animation:fade .38s ease both}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.qno{font-size:11.5px;letter-spacing:2.2px;color:var(--gold);text-transform:uppercase;margin-bottom:9px}
+.q{font-family:'Cinzel',serif;font-size:21px;font-weight:600;line-height:1.35;margin-bottom:6px}
+.qsub{color:var(--mut);font-size:13.5px;line-height:1.55;margin-bottom:20px}
+
+.opts{display:grid;gap:11px}
+.opt{
+  text-align:left;width:100%;cursor:pointer;
+  background:rgba(255,255,255,.025);
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:13px;padding:15px 16px;color:var(--txt);
+  font-family:inherit;font-size:15px;
+  transition:border-color .2s,background .2s,transform .15s;
+}
+.opt:hover{border-color:var(--gold-line);background:rgba(201,168,76,.06)}
+.opt:active{transform:scale(.99)}
+.opt:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.opt.sel{border-color:var(--gold);background:var(--gold-soft)}
+.opt b{display:block;font-weight:700;font-size:15.5px;margin-bottom:3px}
+.opt small{display:block;color:var(--mut);font-size:12.8px;line-height:1.5}
+
+label.fl{display:block;font-size:12.5px;letter-spacing:1.4px;text-transform:uppercase;color:var(--mut);margin:20px 0 7px}
+input[type=text],textarea{
+  width:100%;background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.12);border-radius:11px;
+  padding:13px 14px;color:var(--txt);font-family:inherit;font-size:15px;
+}
+textarea{min-height:84px;resize:vertical;line-height:1.55}
+input:focus,textarea:focus{outline:none;border-color:var(--gold)}
+::placeholder{color:#6d6858}
+
+.row{display:flex;gap:10px;margin-top:22px;align-items:center}
+.btn{
+  flex:1;cursor:pointer;border:none;border-radius:12px;
+  padding:15px 18px;font-family:'Cinzel',serif;font-size:14.5px;letter-spacing:1.2px;
+  background:var(--gold);color:#12100a;font-weight:600;
+  transition:filter .2s,transform .15s;
+}
+.btn:hover{filter:brightness(1.09)}
+.btn:active{transform:scale(.99)}
+.btn:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.btn.ghost{flex:0 0 auto;background:transparent;color:var(--mut);border:1px solid rgba(255,255,255,.14);font-family:'DM Sans',sans-serif;letter-spacing:0}
+.btn.ghost:hover{color:var(--txt);border-color:var(--gold-line);filter:none}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* ---------- worksheet result ---------- */
+.rhead{text-align:center;margin-bottom:22px}
+.rhead .qno{margin-bottom:8px}
+.rhead h2{font-family:'Cinzel',serif;font-size:22px;font-weight:600}
+.rhead p{color:var(--mut);font-size:13.5px;margin-top:8px;line-height:1.6}
+
+.sheet{border-top:1px solid rgba(255,255,255,.08)}
+.sr{
+  display:flex;justify-content:space-between;gap:16px;align-items:baseline;
+  padding:14px 2px;border-bottom:1px solid rgba(255,255,255,.08);
+  opacity:0;transform:translateY(8px);
+}
+.sr.in{animation:rowin .45s ease forwards}
+@keyframes rowin{to{opacity:1;transform:none}}
+.sr .k{font-size:12.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--mut);flex:0 0 auto}
+.sr .v{font-size:15.5px;text-align:right;font-weight:500}
+.sr.big .v{font-family:'Cinzel',serif;font-size:19px;color:var(--gold);font-weight:600}
+
+.price{
+  margin-top:20px;padding:22px 18px;text-align:center;
+  border:1px solid var(--gold-line);border-radius:15px;background:var(--gold-soft);
+  opacity:0;transform:translateY(8px);
+}
+.price.in{animation:rowin .5s ease forwards}
+.price .lbl{font-size:11.5px;letter-spacing:2.2px;text-transform:uppercase;color:var(--mut)}
+.price .amt{font-family:'Cinzel',serif;font-size:clamp(28px,7vw,38px);color:var(--gold);font-weight:700;margin:9px 0 6px;letter-spacing:.5px}
+.price .note{font-size:12.8px;color:var(--mut);line-height:1.6}
+.rush{display:inline-block;margin-top:10px;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#e8c96a;border:1px solid rgba(232,201,106,.35);border-radius:99px;padding:5px 12px}
+
+.tip{
+  margin-top:18px;padding:14px 16px;border-radius:12px;
+  background:rgba(87,201,138,.07);border:1px solid rgba(87,201,138,.22);
+  font-size:13.4px;line-height:1.6;color:#cfe9d9;
+}
+.tip b{color:var(--ok)}
+
+.wa{
+  display:flex;align-items:center;justify-content:center;gap:9px;
+  margin-top:18px;width:100%;text-decoration:none;
+  background:#25D366;color:#07210f;font-weight:700;font-size:15.5px;
+  padding:16px;border-radius:13px;transition:filter .2s,transform .15s;
+}
+.wa:hover{filter:brightness(1.06)}
+.wa:active{transform:scale(.99)}
+.wa svg{width:20px;height:20px;fill:currentColor}
+
+.again{display:block;width:100%;text-align:center;margin-top:14px;background:none;border:none;color:var(--mut);font-family:inherit;font-size:13.5px;cursor:pointer;text-decoration:underline;padding:8px}
+.again:hover{color:var(--txt)}
+
+.foot{text-align:center;color:var(--mut);font-size:12.5px;margin-top:26px;line-height:1.7}
+.foot a{color:var(--gold);text-decoration:none}
+.foot a:hover{text-decoration:underline}
+
+@media (max-width:480px){
+  .card{padding:22px 17px;border-radius:15px}
+  .sr{flex-direction:column;gap:4px}
+  .sr .v{text-align:left}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  .sr,.price{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="brand">
+    <img src="logo.png" alt="" onerror="this.style.display='none'">
+    <span>AfterFX Templates</span>
+  </div>
+
+  <div class="head">
+    <h1>Let's plan your <em>name reveal video</em></h1>
+    <p>Four quick questions. You'll see exactly what goes into your video — scenes, format, delivery — and an honest price range at the end.</p>
+  </div>
+
+  <div class="prog" id="prog">
+    <i class="on"></i><i></i><i></i><i></i>
+  </div>
+
+  <div class="card">
+
+    <!-- Q1 -->
+    <section class="step on" id="s1">
+      <div class="qno">Question 1 of 4</div>
+      <div class="q">What look do you have in mind?</div>
+      <div class="qsub">This is the biggest thing that shapes the work — and the cost.</div>
+      <div class="opts">
+        <button class="opt" data-k="look" data-v="simple">
+          <b>Elegant &amp; simple</b>
+          <small>Soft florals, light rays, gentle text animation. Clean and sweet, no deity or mythology scenes.</small>
+        </button>
+        <button class="opt" data-k="look" data-v="myth">
+          <b>Cinematic &amp; mythological</b>
+          <small>Temples, deities, divine light, epic music — every scene created from scratch. Like our Murugan and Krishna films.</small>
+        </button>
+      </div>
+    </section>
+
+    <!-- Q2 -->
+    <section class="step" id="s2">
+      <div class="qno">Question 2 of 4</div>
+      <div class="q">How long should the video be?</div>
+      <div class="qsub">Longer means more scenes to create, not just a longer edit.</div>
+      <div class="opts">
+        <button class="opt" data-k="len" data-v="short"><b>15–20 seconds</b><small>Straight to the name. Perfect for a WhatsApp status.</small></button>
+        <button class="opt" data-k="len" data-v="mid"><b>30–40 seconds</b><small>A small story, then the reveal. Most people pick this.</small></button>
+        <button class="opt" data-k="len" data-v="long"><b>1 minute or more</b><small>A proper short film with a build-up and a finale.</small></button>
+      </div>
+      <div class="row"><button class="btn ghost" data-back>← Back</button></div>
+    </section>
+
+    <!-- Q3 -->
+    <section class="step" id="s3">
+      <div class="qno">Question 3 of 4</div>
+      <div class="q">Where will you share it?</div>
+      <div class="qsub">Pick one — the whole video is designed and framed for that shape.</div>
+      <div class="opts">
+        <button class="opt" data-k="fmt" data-v="v"><b>Vertical &nbsp;9:16</b><small>WhatsApp status, Instagram reel, phone screen.</small></button>
+        <button class="opt" data-k="fmt" data-v="h"><b>Horizontal &nbsp;16:9</b><small>YouTube, TV or a projector at the function.</small></button>
+      </div>
+      <div class="row"><button class="btn ghost" data-back>← Back</button></div>
+    </section>
+
+    <!-- Q4 -->
+    <section class="step" id="s4">
+      <div class="qno">Question 4 of 4</div>
+      <div class="q">When do you need it?</div>
+      <div class="qsub">Every scene is created and animated one by one, so time matters.</div>
+      <div class="opts">
+        <button class="opt" data-k="time" data-v="rush"><b>Within 3 days</b><small>Possible, with a rush charge for the reshuffled schedule.</small></button>
+        <button class="opt" data-k="time" data-v="week"><b>About a week</b><small>Comfortable pace with room for your changes.</small></button>
+        <button class="opt" data-k="time" data-v="easy"><b>No hurry</b><small>The function is still some time away.</small></button>
+      </div>
+
+      <label class="fl" for="babyName">Baby's name <span style="text-transform:none;letter-spacing:0">(optional)</span></label>
+      <input type="text" id="babyName" placeholder="e.g. Harshav" autocomplete="off">
+
+      <label class="fl" for="notes">Anything you have in mind? <span style="text-transform:none;letter-spacing:0">(optional)</span></label>
+      <textarea id="notes" placeholder="A reference video link, a deity you'd like, colours, a song — anything helps."></textarea>
+
+      <div class="row">
+        <button class="btn ghost" data-back>← Back</button>
+        <button class="btn" id="go" disabled>See my estimate</button>
+      </div>
+    </section>
+
+    <!-- Result -->
+    <section class="step" id="s5">
+      <div class="rhead">
+        <div class="qno">Your video plan</div>
+        <h2 id="rTitle">Here's what we'd make</h2>
+        <p>This is the work involved. The exact price is confirmed once we see your reference or idea.</p>
+      </div>
+
+      <div class="sheet" id="sheet"></div>
+
+      <div class="price" id="priceBox">
+        <div class="lbl">Estimated range</div>
+        <div class="amt" id="amt">—</div>
+        <div class="note">Final price depends on your reference and the number of changes. Confirmed before any payment.</div>
+        <div class="rush" id="rushTag" style="display:none">Rush delivery included</div>
+      </div>
+
+      <div class="tip">
+        <b>Want it for less?</b> If one of our existing videos can be adapted for your baby's name instead of building every scene fresh, it usually costs quite a bit less. Just ask.
+      </div>
+
+      <a class="wa" id="waBtn" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm5.8 14.13c-.24.68-1.42 1.31-1.95 1.36-.5.05-.98.23-3.3-.69-2.77-1.1-4.53-3.93-4.67-4.11-.13-.18-1.11-1.48-1.11-2.82s.7-2 .95-2.28c.25-.27.54-.34.72-.34.18 0 .36 0 .52.01.17.01.39-.06.61.47.23.55.78 1.9.85 2.04.07.14.11.3.02.48-.09.18-.14.29-.27.45-.14.16-.29.36-.41.48-.14.14-.28.29-.12.57.16.27.72 1.19 1.55 1.93 1.07.95 1.97 1.25 2.25 1.39.27.14.43.11.59-.07.16-.18.68-.79.86-1.07.18-.27.36-.23.61-.14.25.09 1.6.75 1.87.89.27.14.46.2.52.32.07.11.07.64-.17 1.32z"/></svg>
+        <span>Send this to us on WhatsApp</span>
+      </a>
+      <button class="again" id="again">Start over</button>
+    </section>
+
+  </div>
+
+  <div class="foot">
+    Custom name reveal films by <a href="https://afterfxtemplates.com">AfterFX Templates</a><br>
+    Or browse ready-made templates from ₹300 on the <a href="https://afterfxtemplates.com">main site</a>.
+  </div>
+</div>
+
+<script>
+/* =======================================================================
+   PRICING — edit only this block. Everything else reads from it.
+   ======================================================================= */
+const WA_NUMBER = '918971738710';
+
+const PRICE = {
+  simple: {
+    short: {min:2500,  max:3000,  scenes:'4–5'},
+    mid:   {min:3000,  max:4000,  scenes:'6–8'},
+    long:  {min:4000,  max:5500,  scenes:'10–12'}
+  },
+  myth: {
+    short: {min:4500,  max:6000,  scenes:'8–10'},
+    mid:   {min:6000,  max:8000,  scenes:'14–18'},
+    long:  {min:8000,  max:11000, scenes:'22–30'}
+  },
+  RUSH_MULTIPLIER: 1.2
+};
+
+const LABEL = {
+  look:{simple:'Elegant & simple', myth:'Cinematic & mythological'},
+  len: {short:'15–20 seconds', mid:'30–40 seconds', long:'1 minute or more'},
+  fmt: {v:'Vertical 9:16', h:'Horizontal 16:9'},
+  time:{rush:'Within 3 days', week:'About a week', easy:'No hurry'}
+};
+const DELIVERY = {rush:'2–3 days', week:'5–7 days', easy:'10–14 days'};
+
+/* ======================================================================= */
+const state = {look:null, len:null, fmt:null, time:null};
+let step = 1;
+
+const $  = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+
+function show(n){
+  step = n;
+  $$('.step').forEach(el => el.classList.remove('on'));
+  $('#s'+n).classList.add('on');
+  $$('#prog i').forEach((b,i) => b.classList.toggle('on', i < Math.min(n,4)));
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+$$('.opt').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const k = btn.dataset.k, v = btn.dataset.v;
+    state[k] = v;
+    $$('.opt[data-k="'+k+'"]').forEach(o => o.classList.remove('sel'));
+    btn.classList.add('sel');
+
+    if(k === 'time'){ $('#go').disabled = false; return; }
+    setTimeout(() => show(step + 1), 190);
+  });
+});
+
+$$('[data-back]').forEach(b => b.addEventListener('click', () => show(step - 1)));
+
+function fmtRupee(n){
+  n = Math.round(n/100)*100;
+  return '₹' + n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+function calc(){
+  const base = PRICE[state.look][state.len];
+  const rush = state.time === 'rush';
+  const m = rush ? PRICE.RUSH_MULTIPLIER : 1;
+  return {
+    min: Math.round(base.min * m / 100) * 100,
+    max: Math.round(base.max * m / 100) * 100,
+    scenes: base.scenes,
+    rush
+  };
+}
+
+function addRow(k, v, big, delay){
+  const d = document.createElement('div');
+  d.className = 'sr' + (big ? ' big' : '');
+  d.innerHTML = '<span class="k">' + k + '</span><span class="v">' + v + '</span>';
+  $('#sheet').appendChild(d);
+  setTimeout(() => d.classList.add('in'), delay);
+}
+
+function render(){
+  const r = calc();
+  const name = $('#babyName').value.trim();
+  $('#rTitle').textContent = name ? 'Here\u2019s what we\u2019d make for ' + name : 'Here\u2019s what we\u2019d make';
+  $('#sheet').innerHTML = '';
+
+  addRow('Style',    LABEL.look[state.look], false, 60);
+  addRow('Length',   LABEL.len[state.len],   false, 260);
+  addRow('Format',   LABEL.fmt[state.fmt],   false, 460);
+  addRow('Scenes to create', r.scenes + ' custom scenes', true, 660);
+  addRow('Delivery', DELIVERY[state.time],   false, 900);
+
+  $('#amt').textContent = fmtRupee(r.min) + ' – ' + fmtRupee(r.max);
+  $('#rushTag').style.display = r.rush ? 'inline-block' : 'none';
+  const pb = $('#priceBox');
+  pb.classList.remove('in');
+  setTimeout(() => pb.classList.add('in'), 1150);
+
+  const notes = $('#notes').value.trim();
+  const msg =
+    'Hi! I\'d like a name reveal video.\n\n' +
+    'Style: ' + LABEL.look[state.look] + '\n' +
+    'Length: ' + LABEL.len[state.len] + '\n' +
+    'Format: ' + LABEL.fmt[state.fmt] + '\n' +
+    'Scenes: ' + r.scenes + '\n' +
+    'Needed: ' + LABEL.time[state.time] + '\n' +
+    'Estimate shown: ' + fmtRupee(r.min) + ' – ' + fmtRupee(r.max) + '\n' +
+    (name  ? 'Baby\'s name: ' + name + '\n' : '') +
+    (notes ? '\nWhat I have in mind:\n' + notes + '\n' : '') +
+    '\nPlease confirm the exact price.';
+
+  $('#waBtn').href = 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(msg);
+  show(5);
+}
+
+$('#go').addEventListener('click', render);
+
+$('#again').addEventListener('click', () => {
+  state.look = state.len = state.fmt = state.time = null;
+  $$('.opt').forEach(o => o.classList.remove('sel'));
+  $('#babyName').value = '';
+  $('#notes').value = '';
+  $('#go').disabled = true;
+  $('#sheet').innerHTML = '';
+  $('#priceBox').classList.remove('in');
+  show(1);
+});
+</script>
+</body>
+</html>
