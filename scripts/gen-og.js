@@ -60,6 +60,12 @@ function cardImageFor(t) {
 
 // -------------------------------------------------------------------------
 
+// Some rows are a DONE-FOR-YOU SERVICE, not a project file: the buyer gets a
+// finished personalised video and never opens After Effects. Saying "buy the
+// project file / here are the fonts and PSDs" on those pages is simply untrue
+// and is exactly the kind of mismatch that turns into a refund request.
+const isService = t => !!t.customizeOnly;
+
 const ORIENT = { v: 'Vertical (9:16)', h: 'Horizontal (16:9)', both: 'Horizontal &amp; Vertical' };
 const orientOf = t => ORIENT[t.orient] || 'Horizontal &amp; Vertical';
 const priceOf  = t => t.price || 300;
@@ -79,6 +85,54 @@ const INTRO = {
   saree: 'Saree ceremony invitation video templates with traditional South Indian textile and jewellery detail.',
   others: 'Invitation video templates for anniversaries, family functions and one-off celebrations.',
 };
+
+// ---------- FAQ ----------
+// Real buyer questions. Google can show these directly under the result, which
+// makes the listing taller and answers the "do I need After Effects?" doubt
+// before the click. Answers must match what the page actually sells.
+function faqFor(t, label) {
+  const service = isService(t);
+  const price = priceOf(t);
+  const q = [];
+
+  if (service) {
+    q.push(['Do I need After Effects to use this?',
+      'No. This one is a done-for-you video. You send us the names, date and venue on WhatsApp and we personalise the video and send you the finished file, ready to share.']);
+    q.push(['How do I order this video?',
+      'Pay on the site, then message us on WhatsApp with your details. We personalise the video and send the final file back to you.']);
+  } else {
+    q.push(['Do I need After Effects to use this template?',
+      'Yes. This is an editable Adobe After Effects project file, so you need After Effects CC 2020 or above to open it and render your video. If you do not use After Effects, message us on WhatsApp and we can personalise it for you instead.']);
+    q.push(['What is included in the download?',
+      'The After Effects project file, the fonts used in the design, PNG footage, audio and music files, Telugu and English PSD files, and the remaining design assets.']);
+    q.push(['Can I change the names, date and venue?',
+      'Yes. Every text layer is editable. Open the project, type in your own names, wedding or ceremony date and venue, then render the video.']);
+  }
+
+  q.push(['Does it support Telugu text?',
+    'Yes. The templates are built for Telugu and English text, and the fonts used are included in the download.']);
+
+  q.push(['How much does it cost and how do I get it?',
+    `This template is Rs ${price}. Pay online and the download link is emailed to you automatically — usually within a minute.`]);
+
+  q.push(['Can I use it for more than one function?',
+    'Yes. Once you have the file you can reuse it for your own family functions. It may not be resold or redistributed.']);
+
+  return q;
+}
+
+const faqJsonLd = q => `<script type="application/ld+json">${JSON.stringify({
+  '@context': 'https://schema.org', '@type': 'FAQPage',
+  mainEntity: q.map(([name, text]) => ({
+    '@type': 'Question', name,
+    acceptedAnswer: { '@type': 'Answer', text },
+  })),
+})}</script>`;
+
+const faqHtml = q =>
+  `<h2>Common questions</h2><div class="faq">` +
+  q.map(([name, text]) => `<details><summary>${esc(name)}</summary><p>${esc(text)}</p></details>`).join('') +
+  `</div>`;
 
 const STYLE = `
 *{box-sizing:border-box}
@@ -109,6 +163,13 @@ ul.meta li b{color:#C9A84C}
 .card .t span{display:block;margin-top:4px;font-size:.77rem;color:#9b93ad}
 .cats{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0;margin:14px 0}
 .cats a{border:1px solid #241f33;border-radius:999px;padding:6px 14px;font-size:.85rem;color:#9b93ad;display:inline-block}
+.faq{max-width:70ch;margin:14px 0 0}
+.faq details{border-bottom:1px solid #241f33;padding:2px 0}
+.faq summary{cursor:pointer;padding:13px 0;font-size:.96rem;color:#f2ede2;list-style:none}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";float:right;color:#C9A84C;font-size:1.15rem;line-height:1}
+.faq details[open] summary::after{content:"−"}
+.faq details p{margin:0 0 15px;color:#bdb5cc;font-size:.93rem}
 footer{border-top:1px solid #241f33;margin-top:56px;padding:26px 0 44px;font-size:.85rem;color:#9b93ad}
 footer a{color:#9b93ad}
 `;
@@ -179,6 +240,9 @@ for (const c of cats) {
     const lede = own || `${t.title} — an editable After Effects invitation video template for ${label.toLowerCase()} celebrations. Telugu and English text support, ${orientOf(t).toLowerCase()} output, with every font, audio file, PNG asset and PSD included.`;
     const metaDesc = esc(lede.length > 155 ? lede.slice(0, 150).replace(/\s\S*$/, '') + '…' : lede);
 
+    const service = isService(t);
+    const faq = faqFor(t, label);
+
     const jsonld = `<script type="application/ld+json">${JSON.stringify({
       '@context': 'https://schema.org', '@type': 'Product',
       name: t.title, description: lede,
@@ -186,18 +250,41 @@ for (const c of cats) {
       brand: { '@type': 'Brand', name: 'AfterFX Templates' },
       category: label, url,
       offers: { '@type': 'Offer', price: String(price), priceCurrency: 'INR', availability: 'https://schema.org/InStock', url },
-    })}</script>`;
+    })}</script>` + faqJsonLd(faq);
 
     const yt = ytIdOf(t);
     const playerHtml = yt
       ? `<div class="player"><iframe src="https://www.youtube.com/embed/${yt}" title="${title} preview" loading="lazy" allowfullscreen allow="encrypted-media; picture-in-picture"></iframe></div>`
       : `<img src="${esc(cardImageFor(t))}" alt="${title}" style="width:100%;border:1px solid #241f33;border-radius:10px;display:block">`;
 
-    const rel = byCat[c].filter(x => x.id !== t.id).slice(0, 8);
-    const relHtml = rel.length
-      ? `<h2>More ${esc(label.toLowerCase())} templates</h2><ul class="grid">${rel.map(x => card(x, label)).join('')}</ul>` +
+    // Same-category first. Christian Wedding has 4 templates and Others has 1,
+    // so those pages were dead ends with 3 links or none — top them up from the
+    // rest of the catalogue so every page gives the reader (and the crawler)
+    // somewhere to go.
+    const sameCat = byCat[c].filter(x => x.id !== t.id).slice(0, 8);
+    const relHtml = sameCat.length
+      ? `<h2>More ${esc(label.toLowerCase())} templates</h2><ul class="grid">${sameCat.map(x => card(x, label)).join('')}</ul>` +
         `<p><a href="${BASE}/c/${c}/">View all ${byCat[c].length} ${esc(label.toLowerCase())} templates →</a></p>`
       : '';
+
+    let alsoHtml = '';
+    if (sameCat.length < 4) {
+      const seen = new Set([t.id, ...sameCat.map(x => x.id)]);
+      const fill = [];
+      for (const oc of cats) {                      // widest categories first
+        if (oc === c) continue;
+        for (const x of byCat[oc]) {
+          if (seen.has(x.id)) continue;
+          fill.push([x, labelOf(oc)]);
+          seen.add(x.id);
+          break;                                     // one per category, mixed
+        }
+        if (fill.length >= 8) break;
+      }
+      if (fill.length) {
+        alsoHtml = `<h2>Also popular</h2><ul class="grid">${fill.map(([x, l]) => card(x, l)).join('')}</ul>`;
+      }
+    }
 
     const body = `
 <p class="crumb"><a href="${BASE}/">Templates</a> › <a href="${BASE}/c/${c}/">${esc(label)}</a> › ${title}</p>
@@ -206,14 +293,18 @@ for (const c of cats) {
 <ul class="meta"><li>Category <b>${esc(label)}</b></li><li>Format <b>${orientOf(t)}</b></li><li>Price <b>₹${price}</b></li><li>Languages <b>Telugu + English</b></li></ul>
 ${playerHtml}
 <div class="cta">
-  <a class="btn solid" href="${BASE}/?t=${t.id}">Buy the project file — ₹${price}</a>
-  <a class="btn" href="${esc(waLink(`Hi AfterFX Templates! I want a ready-made personalised video of: ${t.title} (${url})`))}">Get a ready-made video</a>
+  <a class="btn solid" href="${BASE}/?t=${t.id}">${service ? `Order this video — ₹${price}` : `Buy the project file — ₹${price}`}</a>
+  <a class="btn" href="${esc(waLink(`Hi AfterFX Templates! I want a ready-made personalised video of: ${t.title} (${url})`))}">${service ? 'Ask on WhatsApp' : 'Get a ready-made video'}</a>
 </div>
 <h2>What you get</h2>
-<p>The After Effects project file, the fonts used in the design, PNG footages, audio and music files, Telugu and English PSD files, and all remaining design assets. Nothing is held back.</p>
+<p>${service
+  ? 'A finished, personalised video — not a project file. You do not need After Effects. Send us the names, date and venue on WhatsApp after ordering and we deliver the ready-to-share video to you.'
+  : 'The After Effects project file, the fonts used in the design, PNG footages, audio and music files, Telugu and English PSD files, and all remaining design assets. Nothing is held back.'}</p>
 <h2>About ${esc(label.toLowerCase())} templates</h2>
 <p>${esc(INTRO[c] || INTRO.others)}</p>
-${relHtml}`;
+${faqHtml(faq)}
+${relHtml}
+${alsoHtml}`;
 
     const dir = path.join('t', t.id);
     fs.mkdirSync(dir, { recursive: true });
