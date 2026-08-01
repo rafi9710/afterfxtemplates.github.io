@@ -1688,13 +1688,21 @@ function renderWishlist(){
   el.innerHTML=wishlist.map(id=>{
     const v=videos.find(x=>String(x.id)===String(id));
     if(!v)return'';
+    /* customizeOnly items are a made-to-order service: there is no fixed price
+       and nothing to put in the cart, so show "Price on request" and send the
+       customer to WhatsApp instead of straight to checkout. The card and the
+       detail modal already did this — the wishlist was the one place left
+       still showing a rupee figure and a Buy button for them. */
+    const co=v.customizeOnly;
     return`<div style="display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--gb);">
       <img src="${v.thumb}" alt="${v.title}" style="width:64px;height:48px;object-fit:cover;border-radius:4px;flex:none;">
       <div style="flex:1;min-width:0;">
         <div style="font-size:12.5px;color:var(--tx);font-weight:600;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${v.title}</div>
-        <div style="font-size:11px;color:var(--gold);margin-top:3px;">₹${v.price}</div>
+        <div style="font-size:11px;color:var(--gold);margin-top:3px;">${co?'Price on request':'₹'+v.price}</div>
       </div>
-      <button class="badd" style="flex:none;width:auto;padding:8px 12px;" onclick="quickBuy('${v.id}','${v.title.replace(/'/g,"\\'")}','${v.thumb}',${v.price},'${v.url}');closeWishlist();">Buy</button>
+      ${co
+        ? `<button class="badd" style="flex:none;width:auto;padding:8px 12px;" onclick="customizeWA('${v.title.replace(/'/g,"\\'")}','${v.url}');closeWishlist();">✦ Enquire</button>`
+        : `<button class="badd" style="flex:none;width:auto;padding:8px 12px;" onclick="quickBuy('${v.id}','${v.title.replace(/'/g,"\\'")}','${v.thumb}',${v.price},'${v.url}');closeWishlist();">Buy</button>`}
       <button class="bshare" style="flex:none;" onclick="removeWish('${v.id}')" title="Remove">✕</button>
     </div>`;
   }).join('');
@@ -1712,6 +1720,14 @@ function selectCard(el){
 }
 function addCart(id,title,thumb,price,url){
   if(cart.find(c=>c.id===id))return;
+  /* Last line of defence: a customizeOnly template is a made-to-order service
+     with no fixed price, so it must never reach the cart or Razorpay. The card,
+     the detail modal and the wishlist all send these to WhatsApp already —
+     afxRepriceCart() also strips them on load — but an old deep link or a
+     stale button could still call addCart directly. */
+  var _v = (typeof videos!=='undefined' && Array.isArray(videos))
+    ? videos.find(function(x){ return String(x.id)===String(id); }) : null;
+  if(_v && _v.customizeOnly){ customizeWA(_v.title||title, _v.url||url); return; }
   if(cartQty()>=MAX_CART){bigOrderNotice();return;}
   cart.push({id,title,thumb,price,url,qty:1});
   saveCart();updateCount();
