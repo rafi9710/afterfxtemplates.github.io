@@ -109,14 +109,28 @@ function faqFor(t, label) {
       'Yes. Every text layer is editable. Open the project, type in your own names, wedding or ceremony date and venue, then render the video.']);
   }
 
-  q.push(['Does it support Telugu text?',
-    'Yes. The templates are built for Telugu and English text, and the fonts used are included in the download.']);
+  // The remaining three used to be shared, but every one of them talked about
+  // a download, a file and fonts — all meaningless on a service page, where the
+  // customer never receives anything except the finished video.
+  if (service) {
+    q.push(['Can the video be in Telugu?',
+      'Yes. Tell us the names and wording you want in Telugu or English and we set the text for you — you do not have to type or install anything.']);
 
-  q.push(['How much does it cost and how do I get it?',
-    `This template is Rs ${price}. Pay online and the download link is emailed to you automatically — usually within a minute.`]);
+    q.push(['How much does it cost and how do I get it?',
+      `This video is Rs ${price}. Pay online, then send us your details on WhatsApp and we send the finished video back to you.`]);
 
-  q.push(['Can I use it for more than one function?',
-    'Yes. Once you have the file you can reuse it for your own family functions. It may not be resold or redistributed.']);
+    q.push(['Can I share the video wherever I want?',
+      'Yes. Once you have your video you can share it with family and friends on WhatsApp, Instagram or anywhere else. It may not be resold or redistributed.']);
+  } else {
+    q.push(['Does it support Telugu text?',
+      'Yes. The templates are built for Telugu and English text, and the fonts used are included in the download.']);
+
+    q.push(['How much does it cost and how do I get it?',
+      `This template is Rs ${price}. Pay online and the download link is emailed to you automatically — usually within a minute.`]);
+
+    q.push(['Can I use it for more than one function?',
+      'Yes. Once you have the file you can reuse it for your own family functions. It may not be resold or redistributed.']);
+  }
 
   return q;
 }
