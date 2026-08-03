@@ -573,6 +573,38 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
   .tm-left{border-radius:16px 16px 0 0;}
   .tm-right{padding:20px 18px;}
 }
+/* ── OCCASION BROWSER (visual category grid) ───────────────────── */
+.occgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+.occgrid .occ:first-child{grid-column:span 2;grid-row:span 2;}
+.occ{position:relative;display:block;overflow:hidden;border-radius:10px;border:1px solid var(--gb);background:var(--bg2);min-height:158px;text-decoration:none;color:inherit;isolation:isolate;transition:border-color .35s ease,transform .35s ease,box-shadow .35s ease;}
+.occ:focus-visible{outline:2px solid var(--gold);outline-offset:3px;}
+.occ .occ-ph{position:absolute;inset:0;background-size:cover;background-position:center;transform:scale(1.04);transition:transform .7s cubic-bezier(.2,.7,.3,1);filter:saturate(.72) brightness(.62);}
+:root[data-theme="light"] .occ .occ-ph{filter:saturate(.82) brightness(.72);}
+.occ .occ-veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,8,16,.16) 0%,rgba(8,8,16,.60) 46%,rgba(8,8,16,.93) 100%);}
+:root[data-theme="light"] .occ .occ-veil{background:linear-gradient(180deg,rgba(30,22,8,.20) 0%,rgba(30,22,8,.55) 46%,rgba(30,22,8,.88) 100%);}
+.occ .occ-foil{position:absolute;top:-60%;left:-70%;width:46%;height:230%;background:linear-gradient(100deg,transparent,rgba(201,168,76,.42),transparent);transform:rotate(14deg);opacity:0;pointer-events:none;}
+.occ:hover .occ-foil{animation:occSweep .85s cubic-bezier(.3,.1,.2,1) forwards;}
+@keyframes occSweep{0%{left:-70%;opacity:0}18%{opacity:1}100%{left:130%;opacity:0}}
+.occ .occ-in{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;justify-content:flex-end;padding:18px 18px 16px;}
+.occ .occ-t{font-family:'Cinzel',serif;font-weight:600;color:#fff;font-size:17px;margin:0 0 7px;line-height:1.24;letter-spacing:.3px;text-shadow:0 2px 12px rgba(0,0,0,.55);}
+.occgrid .occ:first-child .occ-t{font-size:27px;}
+.occ .occ-n{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:500;color:rgba(255,255,255,.82);letter-spacing:.4px;}
+.occ .occ-n i{width:4px;height:4px;border-radius:50%;background:var(--gold);font-style:normal;flex:none;}
+.occ .occ-rule{height:1.5px;background:var(--gold);width:0;margin-top:12px;transition:width .45s cubic-bezier(.2,.7,.3,1);}
+.occ:hover{border-color:var(--gold);transform:translateY(-3px);box-shadow:0 14px 34px rgba(0,0,0,.42);}
+.occ:hover .occ-ph{transform:scale(1.13);}
+.occ:hover .occ-rule{width:44px;}
+@media(max-width:860px){
+  .occgrid{grid-template-columns:repeat(2,1fr);gap:12px;}
+  .occgrid .occ:first-child{grid-column:span 2;grid-row:auto;min-height:196px;}
+  .occ{min-height:136px;}
+  .occgrid .occ:first-child .occ-t{font-size:22px;}
+  .occ .occ-t{font-size:15px;}
+}
+@media(prefers-reduced-motion:reduce){
+  .occ,.occ .occ-ph,.occ .occ-rule{transition:none;}
+  .occ:hover .occ-foil{animation:none;}
+}
 </style>
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-EH9THNF49G"></script>
@@ -636,6 +668,16 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
 </div>
 
 <div class="dv">✦ Template Collection ✦</div>
+
+<!-- OCCASION BROWSER -->
+<section class="sec" id="occasions" style="padding-bottom:34px;">
+  <div style="margin-bottom:32px">
+    <div class="sl">Browse by Occasion</div>
+    <div class="st">Every Celebration, Ready to Send</div>
+    <div class="ss">Pick the occasion — each collection opens with every template we have for it.</div>
+  </div>
+  <div class="occgrid" id="occgrid"></div>
+</section>
 
 <!-- TEMPLATES -->
 <section class="sec" id="templates">
@@ -1240,6 +1282,70 @@ function applyCustomizations(vids, ov){
   });
   return [...extras,...result];
 }
+
+// ── OCCASION BROWSER ────────────────────────────────────────────────
+// Real <a href="/c/<id>/"> links so Google sees internal links to the
+// category pages; the click is intercepted so customers stay on the page
+// and just filter the grid. Modifier/middle clicks open the /c/ page.
+function occYtId(t){
+  const id=String(t.id||'');
+  if(/^[A-Za-z0-9_-]{11}$/.test(id)) return id;
+  const u=String(t.url||''); let m;
+  if((m=u.match(/[?&]v=([A-Za-z0-9_-]{11})/))) return m[1];
+  if((m=u.match(/youtu\.be\/([A-Za-z0-9_-]{11})/))) return m[1];
+  if((m=u.match(/\/(?:shorts|embed|live)\/([A-Za-z0-9_-]{11})/))) return m[1];
+  return '';
+}
+function occCover(t){
+  const id=occYtId(t);
+  if(id) return 'https://i.ytimg.com/vi/'+id+'/hqdefault.jpg';
+  if(t.thumb && String(t.thumb).indexOf('http')===0) return t.thumb;
+  return '';
+}
+function occPick(cat){
+  setFilter(cat);
+  const el=document.getElementById('templates');
+  if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function occGo(e,cat){
+  if(e.metaKey||e.ctrlKey||e.shiftKey||e.altKey||e.button===1) return true; // let the /c/ page open
+  e.preventDefault();
+  occPick(cat);
+  return false;
+}
+function renderOccasions(){
+  const box=document.getElementById('occgrid');
+  if(!box || typeof videos==='undefined' || !Array.isArray(videos) || !videos.length) return false;
+  const bucket={};
+  videos.forEach(function(v){
+    const c=v.cat||'others';
+    if(!bucket[c]) bucket[c]={n:0,cover:''};
+    bucket[c].n++;
+    if(!bucket[c].cover){ const th=occCover(v); if(th) bucket[c].cover=th; }
+  });
+  const list=Object.keys(bucket).map(function(id){
+    const meta=CATS.find(function(c){return c.id===id;});
+    return {id:id,label:(meta&&meta.label)||id,n:bucket[id].n,cover:bucket[id].cover};
+  }).filter(function(c){ return c.n>0 && c.id!=='all'; })
+    .sort(function(a,b){ return b.n-a.n; });
+  if(!list.length) return false;
+  box.innerHTML=list.map(function(c){
+    const esc=String(c.label).replace(/"/g,'&quot;');
+    return '<a class="occ" href="/c/'+c.id+'/" onclick="return occGo(event,\''+c.id+'\')" aria-label="'+esc+' — '+c.n+' templates">'
+      +'<span class="occ-ph" style="background-image:url(\''+c.cover+'\')"></span>'
+      +'<span class="occ-veil"></span><span class="occ-foil"></span>'
+      +'<span class="occ-in"><span class="occ-t">'+c.label+'</span>'
+      +'<span class="occ-n"><i></i>'+c.n+' template'+(c.n===1?'':'s')+'</span>'
+      +'<span class="occ-rule"></span></span></a>';
+  }).join('');
+  return true;
+}
+(function occBoot(){
+  let tries=0;
+  const t=setInterval(function(){
+    if(renderOccasions() || ++tries>40) clearInterval(t);
+  },300);
+})();
 
 function renderTabs(){
   const active = search.trim() ? 'all' : filter;
