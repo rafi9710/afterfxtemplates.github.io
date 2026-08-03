@@ -2026,6 +2026,36 @@ async function verifyPayment(r, o){
     });
     const data=await resp.json();
     if(resp.ok && data.verified){
+      // ---- GA4 purchase tracking (cart clear hone se PEHLE) ----
+      try{
+        if(typeof gtag==='function'){
+          const gaCat=function(id){
+            try{
+              const list=(typeof videos!=='undefined'&&Array.isArray(videos))?videos:[];
+              const hit=list.filter(function(v){ return String(v.id)===String(id); })[0];
+              return hit&&hit.cat?String(hit.cat):'';
+            }catch(e){ return ''; }
+          };
+          const gaItems=(Array.isArray(cart)?cart:[]).map(function(c,i){
+            return {
+              item_id: String(c.id||''),
+              item_name: String(c.title||'Template'),
+              item_category: gaCat(c.id),
+              price: Number(c.price)||0,
+              quantity: Number(c.qty)||1,
+              index: i
+            };
+          });
+          gtag('event','purchase',{
+            transaction_id: o.oid,
+            value: Number(o.total)||0,
+            currency: 'INR',
+            items: gaItems
+          });
+          console.log('[ga4] purchase sent →', o.oid, '₹'+(Number(o.total)||0), gaItems.length+' item(s)');
+        }
+      }catch(e){ console.warn('[ga4] purchase event skipped', e); }
+      // ----------------------------------------------------------
       // verified — backend ne Make trigger kar diya (delivery email jayega)
       cart=[];tcAccepted=false;saveCart();updateCount();closeCart();renderGrid();
       showToast('✓ Payment successful! Check your email shortly.');
