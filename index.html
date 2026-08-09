@@ -584,6 +584,31 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
   .tabp{padding:8px 14px;font-size:12.5px;}
 }
 @media(prefers-reduced-motion:reduce){ .tabp{transition:none;} .tabp:hover{transform:none;} }
+
+/* ===== HOW TO BUY — video popup ===== */
+.hb-btn{border:1px solid var(--gbh);background:transparent;color:var(--gold);padding:13px 30px;border-radius:3px;font-weight:600;font-size:13px;letter-spacing:1px;text-transform:uppercase;text-decoration:none;font-family:'DM Sans',sans-serif;transition:all .2s;display:inline-flex;align-items:center;gap:8px;cursor:pointer;}
+.hb-btn:hover{background:var(--gold);color:#000;border-color:var(--gold);}
+.hb-link{text-align:center;margin:-18px 0 30px;font-size:12.5px;color:var(--mt);}
+.hb-link button{background:none;border:none;color:var(--gold);font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:600;cursor:pointer;padding:0;text-decoration:none;}
+.hb-link button:hover{text-decoration:underline;}
+.hb-ov{position:fixed;inset:0;z-index:920;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(4,4,10,.86);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}
+.hb-ov.on{display:flex;}
+.hb-box{width:100%;max-width:880px;background:var(--bg2);border:1px solid var(--gb);border-radius:8px;overflow:hidden;position:relative;box-shadow:0 26px 70px rgba(0,0,0,.6);animation:hbIn .25s ease;}
+@keyframes hbIn{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
+.hb-x{position:absolute;top:10px;right:12px;z-index:3;width:34px;height:34px;border-radius:50%;border:1px solid var(--gb);background:var(--bg3);color:var(--gold);font-size:14px;line-height:1;cursor:pointer;transition:all .2s;}
+.hb-x:hover{background:var(--gold);color:#000;}
+.hb-head{padding:20px 50px 14px 20px;text-align:center;}
+.hb-head h3{font-family:'Cinzel',serif;color:var(--gold);font-size:22px;margin:0 0 6px;letter-spacing:.5px;font-weight:700;}
+.hb-head p{margin:0;font-size:13px;color:var(--mt);line-height:1.55;}
+.hb-vid{position:relative;width:100%;aspect-ratio:16/9;background:#000;}
+.hb-vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
+.hb-foot{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;padding:16px 18px 20px;}
+.hb-c1,.hb-c2{padding:12px 26px;border-radius:3px;font-weight:600;font-size:12.5px;letter-spacing:1px;text-transform:uppercase;text-decoration:none;font-family:'DM Sans',sans-serif;transition:all .2s;cursor:pointer;display:inline-flex;align-items:center;gap:7px;}
+.hb-c1{background:var(--gold);color:#000;border:none;font-weight:700;}
+.hb-c1:hover{filter:brightness(1.08);}
+.hb-c2{border:1px solid var(--gbh);color:var(--gold);background:transparent;}
+.hb-c2:hover{background:var(--gold-dim);}
+@media(max-width:600px){.hb-head h3{font-size:19px}.hb-c1,.hb-c2{width:100%;justify-content:center}}
 </style>
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-EH9THNF49G"></script>
@@ -635,6 +660,7 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
   <p class="hd">Cinematic After Effects project files for weddings, birthdays, baby name reveals, half saree, cradle ceremonies & more. Telugu + English support.</p>
   <div class="hc">
     <a href="#templates" class="bg">▶ Browse Templates</a>
+    <button class="hb-btn" onclick="openHowBuy()">▶ How to Buy</button>
     <a href="https://youtube.com/@afterfxtemplates" target="_blank" class="bo">YouTube Channel</a>
   </div>
   <div class="hstats">
@@ -688,6 +714,7 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
       </div>
     </div>
   </div>
+  <div class="hb-link">First time buying? <button onclick="openHowBuy()">Watch how it works →</button></div>
   <div id="recentSection" style="display:none;margin-bottom:34px;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
       <div>
@@ -3333,6 +3360,47 @@ function pushLater(){
     <div id="tmBody"></div>
   </div>
 </div>
+
+
+<!-- ===== HOW TO BUY — video popup ===== -->
+<div id="hbOv" class="hb-ov" onclick="if(event.target===this)closeHowBuy()">
+  <div class="hb-box" role="dialog" aria-modal="true" aria-label="How to Buy">
+    <button class="hb-x" onclick="closeHowBuy()" aria-label="Close">&#10005;</button>
+    <div class="hb-head">
+      <h3>How to Buy</h3>
+      <p>Watch the full process &mdash; choose a template, pay securely, and get the project file in your email instantly.</p>
+    </div>
+    <div class="hb-vid" id="hbVid"></div>
+    <div class="hb-foot">
+      <a href="#templates" class="hb-c1" onclick="closeHowBuy()">Browse Templates</a>
+      <a href="https://wa.me/918971738710?text=Hi%20AfterFX%20Templates!%20I%20watched%20the%20How%20to%20Buy%20video%20and%20I%20have%20a%20question." target="_blank" rel="noopener" class="hb-c2">Still Confused? WhatsApp</a>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== HOW TO BUY — video popup ===== */
+var HOWBUY_VIDEO_ID = 'iJUq3XBRnRU';
+function openHowBuy(){
+  var ov=document.getElementById('hbOv'); if(!ov) return;
+  document.getElementById('hbVid').innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+HOWBUY_VIDEO_ID+'?autoplay=1&rel=0&modestbranding=1&playsinline=1" title="How to Buy - AfterFX Templates" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
+  ov.classList.add('on'); document.body.style.overflow='hidden';
+  if(typeof gtag==='function'){ try{ gtag('event','how_to_buy_open'); }catch(e){} }
+}
+function closeHowBuy(){
+  var ov=document.getElementById('hbOv'); if(!ov) return;
+  ov.classList.remove('on');
+  document.getElementById('hbVid').innerHTML='';
+  document.body.style.overflow='';
+}
+document.addEventListener('keydown',function(e){
+  var ov=document.getElementById('hbOv');
+  if(e.key==='Escape'&&ov&&ov.classList.contains('on')) closeHowBuy();
+});
+window.addEventListener('load',function(){
+  if(location.search.indexOf('howtobuy')>-1) setTimeout(openHowBuy,500);
+});
+</script>
 
 </body>
 </html>
