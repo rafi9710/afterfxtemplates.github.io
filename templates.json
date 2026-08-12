@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "exportedAt": "2026-08-10T05:14:03.065Z",
+  "exportedAt": "2026-08-12T03:03:57.942Z",
   "categories": [
     {
       "id": "wedding",
@@ -176,6 +176,7 @@
       "cat": "namereveal",
       "price": 300,
       "url": "https://www.youtube.com/watch?v=wAjaTEwORWg",
+      "customizeOnly": true,
       "addedAt": "2026-06-26",
       "desc": "Welcome family and friends to the grand announcement of your newborn with a cinematic name reveal video that captures a divine and blessed mood. Golden light, gentle floral touches, and serene heavenly backgrounds create a truly magical atmosphere for celebrating your little one. This elegant visual journey is specially crafted for baby naming ceremonies, cradle ceremonies, and naming day celebrations, ensuring every moment of the big reveal feels sacred and joyous.\n\nOur expert design team fully personalises this horizontal 16:9 masterpiece with your baby details, names, and event information. You receive a complete, ready-to-share video file delivered directly to you, perfect for sending instantly via WhatsApp, uploading to YouTube, or playing on a big screen TV and projector for all your guests to admire."
     },
@@ -509,6 +510,7 @@
       "price": 300,
       "url": "https://www.youtube.com/watch?v=R2uBNUN2cg8",
       "orient": "v",
+      "customizeOnly": true,
       "addedAt": "2026-06-11",
       "desc": "Celebrate your auspicious South Indian wedding with a traditional invitation video designed around classic cultural motifs. Rich temple gopuram silhouettes, intricate floral kolams, and strings of fragrant marigold and jasmine come together against warm silk-inspired backdrops. Delicate mangalsutra details and sacred muhurtham elements create an authentic devotional feel, setting a divine tone for your family union.\n\nShare your joyous news effortlessly with a custom wedding invitation video tailored for modern celebrations. Simply share your event details, and our expert team will personalise the names, dates, and venue into a polished, ready-to-share final file. Delivered directly to you in the convenient vertical 9:16 format, it is fully optimized for quick sharing as a WhatsApp status, Instagram Story, or Reel with family and friends."
     },
