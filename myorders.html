@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My Orders — AfterFX Templates</title>
+<meta name="description" content="Check your past AfterFX Templates orders and download your files again.">
+<meta name="robots" content="noindex,follow">
+<link rel="canonical" href="https://afterfxtemplates.com/myorders.html">
+<link rel="icon" href="/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#C9A84C; --gold-dim:rgba(201,168,76,.35);
+  --bg:#080810; --bg2:#0e0e1a; --bg3:#13131f;
+  --tx:#e9e6de; --mut:#a49f94; --line:rgba(201,168,76,.18);
+  --ok:#3ba55d; --err:#e5534b;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.6 'DM Sans',system-ui,sans-serif}
+a{color:var(--gold)}
+.wrap{max-width:820px;margin:0 auto;padding:0 18px}
+
+header{border-bottom:1px solid var(--line);padding:16px 0;background:var(--bg2)}
+header .wrap{display:flex;align-items:center;gap:12px}
+header img{height:34px;width:auto}
+header .nm{font-family:'Cinzel',serif;font-weight:700;letter-spacing:.5px;color:var(--gold);font-size:17px}
+header .bk{margin-left:auto;font-size:14px;color:var(--mut);text-decoration:none}
+header .bk:hover{color:var(--gold)}
+
+h1{font-family:'Cinzel',serif;font-size:30px;margin:34px 0 8px;color:var(--gold);font-weight:700}
+.sub{color:var(--mut);margin:0 0 26px;font-size:15px}
+
+.card{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:18px}
+label{display:block;font-size:13px;color:var(--mut);margin-bottom:7px;letter-spacing:.3px}
+input{width:100%;padding:13px 14px;border-radius:9px;border:1px solid var(--line);
+  background:var(--bg3);color:var(--tx);font:16px 'DM Sans',sans-serif;outline:none}
+input:focus{border-color:var(--gold)}
+input#code{letter-spacing:9px;text-align:center;font-size:22px;font-weight:700}
+.btn{display:inline-block;width:100%;margin-top:14px;padding:13px 18px;border:0;border-radius:9px;
+  background:var(--gold);color:#12100a;font:700 15px 'DM Sans',sans-serif;cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn[disabled]{opacity:.55;cursor:not-allowed}
+.btn.gh{background:transparent;color:var(--gold);border:1px solid var(--gold-dim)}
+.lnk{background:none;border:0;color:var(--mut);font:14px 'DM Sans',sans-serif;cursor:pointer;
+  padding:0;margin-top:14px;text-decoration:underline}
+.lnk:hover{color:var(--gold)}
+
+.msg{margin-top:14px;font-size:14px;padding:11px 13px;border-radius:8px;display:none}
+.msg.on{display:block}
+.msg.e{background:rgba(229,83,75,.12);color:#ffb3ad;border:1px solid rgba(229,83,75,.3)}
+.msg.g{background:rgba(59,165,93,.12);color:#9fe0b4;border:1px solid rgba(59,165,93,.3)}
+
+.ord{background:var(--bg2);border:1px solid var(--line);border-radius:14px;margin-bottom:16px;overflow:hidden}
+.ohd{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;padding:15px 18px;
+  background:var(--bg3);border-bottom:1px solid var(--line)}
+.oid{font-family:'Cinzel',serif;font-weight:700;color:var(--gold);font-size:15px}
+.odt{color:var(--mut);font-size:13px}
+.otl{margin-left:auto;font-weight:700;font-size:15px}
+.it{display:flex;gap:13px;align-items:center;padding:13px 18px;border-bottom:1px solid rgba(201,168,76,.08)}
+.it:last-child{border-bottom:0}
+.it img{width:92px;height:52px;object-fit:cover;border-radius:6px;background:var(--bg3);flex:0 0 auto}
+.it .nb{width:92px;height:52px;border-radius:6px;background:var(--bg3);flex:0 0 auto}
+.it .tt{flex:1;min-width:0;font-size:14px;line-height:1.4}
+.it .tt small{display:block;color:var(--mut);font-size:12px;margin-top:2px}
+.dl{flex:0 0 auto;padding:9px 15px;border-radius:8px;background:var(--gold);color:#12100a;
+  font:700 13px 'DM Sans',sans-serif;text-decoration:none;white-space:nowrap}
+.dl:hover{filter:brightness(1.08)}
+.dl.wa{background:transparent;color:var(--mut);border:1px solid var(--line)}
+.dl.wa:hover{color:var(--gold);border-color:var(--gold-dim)}
+
+.note{font-size:13px;color:var(--mut);margin:26px 0 40px;line-height:1.7}
+.spin{display:inline-block;width:15px;height:15px;border:2px solid rgba(18,16,10,.3);
+  border-top-color:#12100a;border-radius:50%;animation:sp .7s linear infinite;vertical-align:-2px;margin-right:7px}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spin{animation:none}}
+@media(max-width:560px){
+  h1{font-size:24px}
+  .it{flex-wrap:wrap}
+  .it .tt{flex:1 1 100%;order:3}
+  .dl{order:2;margin-left:auto}
+}
+</style>
+</head>
+<body>
+
+<header><div class="wrap">
+  <img src="/logo.png" alt="AfterFX Templates">
+  <span class="nm">AfterFX Templates</span>
+  <a class="bk" href="/">← Back to store</a>
+</div></header>
+
+<div class="wrap">
+  <h1>My Orders</h1>
+  <p class="sub">Enter the email you used while buying. We'll send you a 6-digit code, then show every
+  order on that email with fresh download links.</p>
+
+  <!-- STEP 1 -->
+  <div class="card" id="s1">
+    <label for="email">Your purchase email</label>
+    <input id="email" type="email" autocomplete="email" placeholder="you@example.com" inputmode="email">
+    <button class="btn" id="b1">Send code</button>
+    <div class="msg" id="m1"></div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="card" id="s2" style="display:none">
+    <label for="code">Enter the 6-digit code sent to <span id="shown"></span></label>
+    <input id="code" type="text" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="000000">
+    <button class="btn" id="b2">View my orders</button>
+    <button class="lnk" id="back">Use a different email</button>
+    <div class="msg" id="m2"></div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="res"></div>
+
+  <p class="note" id="foot" style="display:none">
+    Files open in Google Drive. These are After Effects project files, licensed for your own use only.<br>
+    Something missing or a link not opening?
+    <a id="wahelp" href="#" target="_blank" rel="noopener">Message us on WhatsApp</a>.
+  </p>
+</div>
+
+<script>
+/* ====== yahan apna Apps Script Web App URL daalo (/exec pe khatam hona chahiye) ====== */
+var API = 'https://script.google.com/macros/s/AKfycbwOJWWTGgLlF5uL60qNU3qe7jZVXxkKnFtDbTYQxIT6sS-xwLq1hWmPD-5zKppSlKL-HA/exec';
+var WA  = '918971738710';
+
+var $ = function(id){ return document.getElementById(id); };
+var email = '';
+
+function say(el, text, good){
+  el.className = 'msg on ' + (good ? 'g' : 'e');
+  el.textContent = text;
+}
+function hide(el){ el.className = 'msg'; }
+
+function busy(btn, on, label){
+  btn.disabled = on;
+  btn.innerHTML = on ? '<span class="spin"></span>' + label : label;
+}
+
+function call(params){
+  var q = Object.keys(params).map(function(k){
+    return k + '=' + encodeURIComponent(params[k]);
+  }).join('&');
+  return fetch(API + '?' + q).then(function(r){ return r.json(); });
+}
+
+var ERRORS = {
+  bad_email:      'That email does not look right. Please check and try again.',
+  no_orders:      'No orders found on this email. Use the exact email you typed while paying — or message us on WhatsApp.',
+  too_many:       'Too many codes requested. Please try again after an hour.',
+  expired:        'That code has expired. Send a new one.',
+  wrong_code:     'Wrong code. Please check the email again.',
+  too_many_tries: 'Too many wrong attempts. Send a new code.',
+  server:         'Something went wrong at our end. Please try again in a minute.'
+};
+
+/* step 1 */
+$('b1').onclick = function(){
+  var v = $('email').value.trim();
+  hide($('m1'));
+  if (!v || v.indexOf('@') < 1){ say($('m1'), ERRORS.bad_email); return; }
+  busy(this, true, 'Sending…');
+  var btn = this;
+  call({ action:'send', email:v }).then(function(d){
+    busy(btn, false, 'Send code');
+    if (!d.ok){ say($('m1'), ERRORS[d.error] || ERRORS.server); return; }
+    email = v;
+    $('shown').textContent = v;
+    $('s1').style.display = 'none';
+    $('s2').style.display = 'block';
+    $('code').focus();
+  }).catch(function(){
+    busy(btn, false, 'Send code');
+    say($('m1'), 'Could not reach the server. Check your internet and try again.');
+  });
+};
+
+$('email').addEventListener('keydown', function(e){ if (e.key === 'Enter') $('b1').click(); });
+$('code').addEventListener('keydown',  function(e){ if (e.key === 'Enter') $('b2').click(); });
+
+/* step 2 */
+$('b2').onclick = function(){
+  var c = $('code').value.trim();
+  hide($('m2'));
+  if (c.length !== 6){ say($('m2'), 'Enter the full 6-digit code.'); return; }
+  busy(this, true, 'Checking…');
+  var btn = this;
+  call({ action:'verify', email:email, code:c }).then(function(d){
+    busy(btn, false, 'View my orders');
+    if (!d.ok){
+      var t = ERRORS[d.error] || ERRORS.server;
+      if (d.error === 'wrong_code' && typeof d.left === 'number') t += ' ' + d.left + ' attempts left.';
+      say($('m2'), t);
+      return;
+    }
+    render(d.orders);
+  }).catch(function(){
+    busy(btn, false, 'View my orders');
+    say($('m2'), 'Could not reach the server. Please try again.');
+  });
+};
+
+$('back').onclick = function(){
+  $('s2').style.display = 'none';
+  $('s1').style.display = 'block';
+  $('code').value = '';
+  hide($('m2'));
+  $('email').focus();
+};
+
+/* results */
+function esc(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+    return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c];
+  });
+}
+
+function render(orders){
+  $('s2').style.display = 'none';
+  var n = orders.length;
+  var html = '<p class="sub" style="margin:6px 0 20px">' + n +
+             (n === 1 ? ' order' : ' orders') + ' found on <strong>' + esc(email) + '</strong></p>';
+
+  orders.forEach(function(o){
+    html += '<div class="ord"><div class="ohd">' +
+              '<span class="oid">' + esc(o.orderId) + '</span>' +
+              '<span class="odt">' + esc(o.date) + ' &middot; ' + o.qty +
+                (o.qty === 1 ? ' template' : ' templates') + '</span>' +
+              '<span class="otl">&#8377;' + o.total + '</span>' +
+            '</div>';
+
+    if (!o.items.length){
+      html += '<div class="it"><div class="tt">' + esc(o.names || 'Templates') +
+              '<small>Download link not available for this old order</small></div>' +
+              wa(o.orderId, '') + '</div>';
+    } else {
+      o.items.forEach(function(t){
+        html += '<div class="it">' +
+          (t.thumb ? '<img src="' + esc(t.thumb) + '" alt="" loading="lazy">' : '<div class="nb"></div>') +
+          '<div class="tt">' + esc(t.ready ? t.title : 'Template') +
+            (t.ready ? '' : '<small>File not linked yet — message us and we\'ll send it</small>') +
+          '</div>' +
+          (t.ready
+            ? '<a class="dl" href="' + esc(t.link) + '" target="_blank" rel="noopener">Download</a>'
+            : wa(o.orderId, t.id)) +
+        '</div>';
+      });
+    }
+    html += '</div>';
+  });
+
+  $('res').innerHTML = html;
+  $('wahelp').href = 'https://wa.me/' + WA + '?text=' +
+    encodeURIComponent('Hi, I need help with my order. Email: ' + email);
+  $('foot').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function wa(orderId, id){
+  var t = 'Hi, I need my file again. Order: ' + orderId + (id ? ' | Template: ' + id : '') +
+          ' | Email: ' + email;
+  return '<a class="dl wa" target="_blank" rel="noopener" href="https://wa.me/' + WA +
+         '?text=' + encodeURIComponent(t) + '">WhatsApp</a>';
+}
+</script>
+</body>
+</html>
