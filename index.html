@@ -2755,7 +2755,16 @@ function aiLocalRespond(msg, m){
     setTimeout(function(){ aiAddMsg(aiRenderResultCards(results),'bot',['What\'s the price?','Chat on WhatsApp']); }, 950);
     return;
   }
-  aiConnectToTeam(msg);
+  aiAskUnknown(msg);
+}
+/* unknown question: try the Gemini backend once, else the WhatsApp handoff */
+const AI_MAX_ASKS=8;
+let aiAsks=0;
+function aiAskUnknown(msg){
+  if(typeof gtag==='function') gtag('event','ai_unknown_question');
+  if(aiAsks>=AI_MAX_ASKS){ aiConnectToTeam(msg); return; }
+  aiAsks++;
+  aiAskGemini(msg);
 }
 
 /* ---------- smart search over templates.json (live `videos` catalog) ---------- */
@@ -2950,7 +2959,7 @@ async function aiAskGemini(msg){
     const timer=ctrl?setTimeout(function(){ ctrl.abort(); },12000):null;
     const r=await fetch(AI_BACKEND,{
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers:{'Content-Type':'text/plain'},
       body:JSON.stringify({ message:msg, history:aiHistory.slice(-6), knowledge:aiBuildKnowledge() }),
       signal: ctrl?ctrl.signal:undefined
     });
