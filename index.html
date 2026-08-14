@@ -2734,6 +2734,7 @@ function aiIsGreeting(m){
   return /^\s*(hi+|hey+|hello+|hii+|hlo|helo|namaste|namaskaram|vanakkam|good\s+(morning|afternoon|evening|night)|start|menu|yo)\s*[!.,]*\s*$/.test(m);
 }
 function aiIsSmallTalk(m){
+  if(/^\s*(how\s*(are|r)\s*(you|u|yu)|how'?s it going|whats up|what's up|sup|kaise ho|kaisa hai|kaise hain)\s*[?!.,]*\s*$/.test(m)) return true;
   return /^\s*(thanks|thank you|thankyou|thx|ty|ok|okay|k|great|nice|good|cool|super|perfect|done|bye|goodbye|👍|🙏)\s*[!.,]*\s*$/.test(m);
 }
 /* connect to a human — the "please hold on, connecting to our team" handoff */
@@ -2770,7 +2771,11 @@ function aiAskUnknown(msg){
 /* ---------- smart search over templates.json (live `videos` catalog) ---------- */
 const AI_STOPWORDS=['i','need','a','an','the','for','my','to','want','looking','please','video','invitation','template','templates','with','of','in','on','and','me','some','show','find','you','have','got'];
 function aiTokenize(q){
-  return q.toLowerCase().replace(/[^a-z0-9 ]/g,' ').split(/\s+/).filter(function(w){ return w && AI_STOPWORDS.indexOf(w)===-1; });
+  return q.toLowerCase().replace(/[^a-z0-9 ]/g,' ').split(/\s+/).filter(function(w){ return w && w.length>=4 && AI_STOPWORDS.indexOf(w)===-1; });
+}
+/* whole-word match only — plain indexOf made "are" hit "sAREe" and "hi" hit "chaturtHI" */
+function aiWordHit(hay, w){
+  return new RegExp('\\b'+w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).test(hay);
 }
 function aiSearchTemplates(query, limit){
   const words=aiTokenize(query);
@@ -2783,8 +2788,8 @@ function aiSearchTemplates(query, limit){
     let score=0;
     for(let j=0;j<words.length;j++){
       const w=words[j];
-      if(t.indexOf(w)>=0) score+=2;
-      if(catLabel.toLowerCase().indexOf(w)>=0) score+=1;
+      if(aiWordHit(t,w)) score+=2;
+      if(aiWordHit(catLabel.toLowerCase(),w)) score+=1;
     }
     if(score>0) scored.push({v:v,score:score});
   }
