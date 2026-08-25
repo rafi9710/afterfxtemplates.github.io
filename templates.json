@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "exportedAt": "2026-08-24T08:14:45.522Z",
+  "exportedAt": "2026-08-25T06:14:48.992Z",
   "categories": [
     {
       "id": "wedding",
@@ -52,6 +52,15 @@
     }
   ],
   "templates": [
+    {
+      "id": "Vf8Wvy37Z7w",
+      "title": "wedding",
+      "thumb": "https://i.ytimg.com/vi/Vf8Wvy37Z7w/mqdefault.jpg",
+      "cat": "wedding",
+      "price": 300,
+      "url": "https://www.youtube.com/watch?v=Vf8Wvy37Z7w",
+      "desc": "Bring your traditional South Indian wedding invitation video to life with this gorgeous After Effects project, designed to celebrate the sacred union of two families. The visual design is rich with heritage, featuring intricate temple gopuram motifs, auspicious marigold and jasmine garlands, traditional silk textures, and vibrant floral kolam patterns that set a divine tone for your muhurtham. Golden light filters through the mandap as sacred symbols frame your auspicious date and venue details, creating an authentic and heartfelt prelude for your guests.\n\nThis is an Adobe After Effects project file that you download and customize with your own text and event details. Simply open the project in After Effects CC 2020 or above, type in your names, wedding dates, and venue information, and render your final video. Crafted in a horizontal 16:9 widescreen format, it is perfectly proportioned for sharing on YouTube, sending via WhatsApp, or projecting on the big screen at your wedding venue."
+    },
     {
       "id": "DVRkzr5rCBs",
       "title": "Golden Lotus Vertical",
@@ -958,15 +967,6 @@
       "url": "https://www.youtube.com/watch?v=cofH5x1U-yU",
       "orient": "v",
       "desc": "Celebrate your special day with a traditional Indian wedding invitation video designed to capture the true essence of a South Indian celebration. Framed by intricate temple gopuram motifs and vibrant floral kolams of marigold and jasmine, this elegant design brings together rich silk textures and sacred muhurtham elements. It is the perfect digital canvas to announce your union, complete with graceful spaces for the mangalsutra imagery and all your sacred wedding details.\n\nThis is an Adobe After Effects project file ready for your creative touch. Simply download the project and open it in After Effects to effortlessly customize the names, date, and venue with your personal information before rendering your final video. Crafted in a vertical nine by sixteen format, it is fully optimized to share easily as a WhatsApp status or an Instagram story with family and friends."
-    },
-    {
-      "id": "Vf8Wvy37Z7w",
-      "title": "wedding",
-      "thumb": "https://i.ytimg.com/vi/Vf8Wvy37Z7w/mqdefault.jpg",
-      "cat": "wedding",
-      "price": 300,
-      "url": "https://www.youtube.com/watch?v=Vf8Wvy37Z7w",
-      "desc": "Bring your traditional South Indian wedding invitation video to life with this gorgeous After Effects project, designed to celebrate the sacred union of two families. The visual design is rich with heritage, featuring intricate temple gopuram motifs, auspicious marigold and jasmine garlands, traditional silk textures, and vibrant floral kolam patterns that set a divine tone for your muhurtham. Golden light filters through the mandap as sacred symbols frame your auspicious date and venue details, creating an authentic and heartfelt prelude for your guests.\n\nThis is an Adobe After Effects project file that you download and customize with your own text and event details. Simply open the project in After Effects CC 2020 or above, type in your names, wedding dates, and venue information, and render your final video. Crafted in a horizontal 16:9 widescreen format, it is perfectly proportioned for sharing on YouTube, sending via WhatsApp, or projecting on the big screen at your wedding venue."
     },
     {
       "id": "ssnmd2jj_qI",
