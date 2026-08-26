@@ -321,6 +321,13 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
         <div class="hint">If ON: customers see a "Customize / Enquire" button instead of Add to Cart, and no price.</div>
       </div>
 
+      <div class="field">
+        <label style="display:flex;align-items:center;gap:9px;cursor:pointer;">
+          <input type="checkbox" id="fTrend" style="width:auto;margin:0;"> &#128293; Show as TRENDING on the website
+        </label>
+        <div class="hint">Puts the gold &#128293; TRENDING badge on this template's card in the storefront. Tick as many as you like &mdash; keep it to 6&ndash;10 or the badge stops meaning anything.</div>
+      </div>
+
       <!-- ===== DETAIL PAGE FIELDS (added 2026-07-13) — ALL OPTIONAL =====
            These fill the template detail page customers see when they click a card.
            Leave any of them blank and a sensible default is used, or the row is
@@ -519,6 +526,10 @@ async function fetchVideos(){
         if(localStorage.getItem('afx_co')===null){
           setCustOnly(j.templates.filter(t=>t.customizeOnly).map(t=>t.id));
         }
+        // seed manual trending flags from published file (first load only)
+        if(localStorage.getItem('afx_trend')===null){
+          setTrending(j.templates.filter(t=>t.trending).map(t=>t.id));
+        }
         // seed custom categories published in the file (first load only) so they survive on a fresh browser
         if(localStorage.getItem('afx_cats')===null && Array.isArray(j.categories)){
           const baseIds=new Set(BASE_CATS.map(c=>c.id));
@@ -684,6 +695,11 @@ function getExtras(){return JSON.parse(localStorage.getItem('afx_extras')||'[]')
 function setExtras(a){afxSet('afx_extras',a);}
 function getCustOnly(){return JSON.parse(localStorage.getItem('afx_co')||'[]');}
 function setCustOnly(a){afxSet('afx_co',a);}
+/* MANUAL TRENDING (2026-08-26) — same id-list pattern as customize-only.
+   Ticking the box here writes trending:true into templates.json on export,
+   and the storefront shows the gold "TRENDING" badge on exactly those cards. */
+function getTrending(){return JSON.parse(localStorage.getItem('afx_trend')||'[]');}
+function setTrending(a){afxSet('afx_trend',a);}
 function getOrder(){return JSON.parse(localStorage.getItem('afx_order')||'[]');}
 function setOrder(a){afxSet('afx_order',a);}
 
@@ -753,7 +769,7 @@ function removeCategory(id){
 
 /* STATS */
 function renderStats(){
-  const custom=getCustom(), hidden=getHidden(), extras=getExtras();
+  const custom=getCustom(), hidden=getHidden(), extras=getExtras(), trend=getTrending();
   const total=allVideos.length+extras.length;
   const customCount=Object.keys(custom).length;
   document.getElementById('stats').innerHTML=`
@@ -761,6 +777,7 @@ function renderStats(){
     <div class="stat"><div class="num">${customCount}</div><div class="lbl">Customized</div></div>
     <div class="stat"><div class="num">${hidden.length}</div><div class="lbl">Hidden</div></div>
     <div class="stat"><div class="num">${extras.length}</div><div class="lbl">Custom Added</div></div>
+    <div class="stat"><div class="num" style="color:var(--gold);">${trend.length}</div><div class="lbl">Trending</div></div>
   `;
 }
 
@@ -772,7 +789,7 @@ function setTab(t){
 }
 
 function getMergedList(){
-  const custom=getCustom(), extras=getExtras(), co=getCustOnly();
+  const custom=getCustom(), extras=getExtras(), co=getCustOnly(), tr=getTrending();
   const merged=allVideos.map(v=>{
     const c=custom[v.id]||{};
     return {
@@ -788,6 +805,7 @@ function getMergedList(){
       url:v.url,
       addedAt:v.addedAt,
       customizeOnly:co.includes(v.id),
+      trending:tr.includes(v.id),
       isCustomized:!!custom[v.id],
       isExtra:false,
       readyPrice:c.readyPrice||v.readyPrice,
@@ -801,7 +819,7 @@ function getMergedList(){
   const baseIds=new Set(allVideos.map(v=>v.id));
   // skip any custom-added entry whose id already exists in the base list (avoids duplicates after a round-trip)
   const cleanExtras=extras.filter(e=>!baseIds.has(e.id));
-  const combined=[...cleanExtras.map(e=>({...e,orient:e.orient||'h',customizeOnly:co.includes(e.id),isExtra:true,isCustomized:false})),...merged];
+  const combined=[...cleanExtras.map(e=>({...e,orient:e.orient||'h',customizeOnly:co.includes(e.id),trending:tr.includes(e.id),isExtra:true,isCustomized:false})),...merged];
 
   /* Apply the saved display order.
      FIX (2026-07-14): anything NOT yet in the saved order is a brand-new
@@ -860,6 +878,7 @@ function exportForWebsite(){
       const o={id:t.id,title:t.title,thumb:t.thumb,cat:t.cat,price:t.price,url:t.url};
       if(t.orient && t.orient!=='h') o.orient=t.orient;
       if(t.customizeOnly) o.customizeOnly=true;
+      if(t.trending) o.trending=true;
       if(t.addedAt) o.addedAt=t.addedAt;
       ['readyPrice','duration','fileSize','aeVersion','plugins','desc'].forEach(k=>{ if(t[k]) o[k]=t[k]; });
       return o;
@@ -899,6 +918,7 @@ function renderList(){
     else if(t.isCustomized) badges.push('<div class="badge green">EDITED</div>');
     if(isHidden) badges.push('<div class="badge red" style="left:auto;right:8px;">HIDDEN</div>');
     if(t.customizeOnly) badges.push('<div class="badge" style="top:auto;bottom:8px;background:var(--gold);color:#000;">CUSTOMIZE ONLY</div>');
+    if(t.trending) badges.push('<div class="badge" style="top:auto;bottom:8px;left:auto;right:8px;border:1px solid var(--gold);">&#128293; TRENDING</div>');
 
     const reorderRow = canReorder
       ? `<div class="tpl-actions" style="margin-top:6px;">
@@ -958,6 +978,7 @@ function openEditModal(id,isExtra){
   setThumbTab('upload');
   updatePreviewImg(t.thumb);
   document.getElementById('fCustOnly').checked=getCustOnly().includes(id);
+  document.getElementById('fTrend').checked=getTrending().includes(id);
   fillDetailFields(t);
   document.getElementById('editModal').classList.add('on');
 }
@@ -980,6 +1001,7 @@ function openAddModal(){
   setThumbTab('upload');
   updatePreviewImg('');
   document.getElementById('fCustOnly').checked=false;
+  document.getElementById('fTrend').checked=false;
   fillDetailFields({});
   document.getElementById('editModal').classList.add('on');
 }
@@ -1240,6 +1262,14 @@ function saveTemplate(){
     setCustOnly(co);
   }
 
+  // persist manual TRENDING flag
+  if(savedId){
+    const trChecked=document.getElementById('fTrend').checked;
+    let tr=getTrending().filter(x=>x!==savedId);
+    if(trChecked) tr.push(savedId);
+    setTrending(tr);
+  }
+
   closeModal();
   renderStats();renderStorageBar();
   renderList();
@@ -1274,6 +1304,7 @@ function confirmReset(){
     localStorage.removeItem('afx_hidden');
     localStorage.removeItem('afx_extras');
     localStorage.removeItem('afx_co');
+    localStorage.removeItem('afx_trend');
     localStorage.removeItem('afx_order');
     renderStats();renderStorageBar();
     renderList();

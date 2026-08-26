@@ -1212,7 +1212,16 @@ function computeTrending(){
   entries.sort(function(a,b){ return b[1]-a[1]; });
   TRENDING_IDS=new Set(entries.slice(0,10).map(function(e){ return e[0]; }));
 }
-function isTrending(v){ return TRENDING_IDS.has(String(v.id)); }
+/* MANUAL TRENDING (2026-08-26)
+   trending:true comes from templates.json (ticked in admin.html).
+   TRENDING_MANUAL_ONLY = true  -> ONLY the templates you ticked show the badge.
+   TRENDING_MANUAL_ONLY = false -> your ticked ones PLUS the old automatic
+                                   top-10-most-viewed-in-this-browser badge. */
+var TRENDING_MANUAL_ONLY = true;
+function isTrending(v){
+  if(v && v.trending===true) return true;
+  return TRENDING_MANUAL_ONLY ? false : TRENDING_IDS.has(String(v.id));
+}
 computeTrending(); // populate from any existing stored view history before first render
 
 function detectCat(t){
