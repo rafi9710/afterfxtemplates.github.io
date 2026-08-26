@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "exportedAt": "2026-08-25T06:14:48.992Z",
+  "exportedAt": "2026-08-26T09:59:17.816Z",
   "categories": [
     {
       "id": "wedding",
@@ -59,6 +59,7 @@
       "cat": "wedding",
       "price": 300,
       "url": "https://www.youtube.com/watch?v=Vf8Wvy37Z7w",
+      "trending": true,
       "desc": "Bring your traditional South Indian wedding invitation video to life with this gorgeous After Effects project, designed to celebrate the sacred union of two families. The visual design is rich with heritage, featuring intricate temple gopuram motifs, auspicious marigold and jasmine garlands, traditional silk textures, and vibrant floral kolam patterns that set a divine tone for your muhurtham. Golden light filters through the mandap as sacred symbols frame your auspicious date and venue details, creating an authentic and heartfelt prelude for your guests.\n\nThis is an Adobe After Effects project file that you download and customize with your own text and event details. Simply open the project in After Effects CC 2020 or above, type in your names, wedding dates, and venue information, and render your final video. Crafted in a horizontal 16:9 widescreen format, it is perfectly proportioned for sharing on YouTube, sending via WhatsApp, or projecting on the big screen at your wedding venue."
     },
     {
@@ -69,6 +70,7 @@
       "price": 300,
       "url": "https://www.youtube.com/shorts/DVRkzr5rCBs",
       "orient": "v",
+      "trending": true,
       "addedAt": "2026-08-24",
       "duration": "53sec",
       "aeVersion": "2024",
@@ -92,6 +94,7 @@
       "cat": "wedding",
       "price": 300,
       "url": "https://www.youtube.com/watch?v=hB79xjvkzSY",
+      "trending": true,
       "addedAt": "2026-08-09",
       "duration": "53",
       "fileSize": "61",
@@ -129,6 +132,7 @@
       "price": 300,
       "url": "https://www.youtube.com/shorts/zSIL42M4aN0",
       "orient": "v",
+      "trending": true,
       "addedAt": "2026-07-23",
       "duration": "31",
       "fileSize": "38",
