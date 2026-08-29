@@ -359,7 +359,7 @@ async function doCopy(btn,label){
 
 $("dirFwd").addEventListener("click",()=>{ if(fwd) return; fwd=true;  $("input").value=""; applyMode(); });
 $("dirRev").addEventListener("click",()=>{ if(!fwd) return; fwd=false; $("input").value=""; applyMode(); });
-$("input").addEventListener("input",render);
+$("input").addEventListener("input",onInput);
 $("copy").addEventListener("click",()=>doCopy($("copy"),"Copy"));
 $("copy2").addEventListener("click",()=>doCopy($("copy2"),"Copy result"));
 $("clear").addEventListener("click",()=>{ $("input").value=""; render(); $("input").focus(); });
@@ -498,7 +498,7 @@ function translit(s){
   return out;
 }
 
-let enOn=false, pend="", anchor=0, lastLen=0;
+let enOn=false, pend="", anchor=0, lastLen=0, lastWord="";
 let sugs=[], sel=0, sugTimer=null, sugCtrl=null, googleDead=false;
 try{ enOn = localStorage.getItem("afxEnType")==="1"; }catch{}
 
@@ -511,27 +511,15 @@ function setEn(on){
 $("tglEn").addEventListener("click",()=>{ setEn(!enOn); $("input").focus(); });
 
 function resetWord(){
-  pend=""; lastLen=0; sugs=[]; sel=0;
+  pend=""; lastLen=0; lastWord=""; sugs=[]; sel=0;
   if(sugCtrl){ sugCtrl.abort(); sugCtrl=null; }
   clearTimeout(sugTimer);
   $("sugg").classList.remove("on");
 }
 
-// Replace the region the current word occupies, and remember its new length.
-// NOT named put() — the reverse index already owns that name.
-function writeWord(text,doRender){
-  const ta=$("input");
-  ta.setRangeText(text,anchor,anchor+lastLen,"end");
-  lastLen=text.length;
-  $("inc").textContent=ta.value.length;
-  if(doRender!==false) render();
-}
+const isL = c => !!c && /[A-Za-z]/.test(c);
 
-// The raw English stays visible while typing, exactly like a normal IME.
-// Telugu only lands when a suggestion is taken.
-function paint(){ writeWord(pend,false); }   // skip the convert until the word is settled
-
-/* ---- put the dropdown under the caret, via a mirror of the textarea ---- */
+/* ---- dropdown sits under the caret, measured with a mirror of the textarea ---- */
 function placeSugg(){
   const ta=$("input"), mir=$("mirror"), box=$("sugg");
   const cs=getComputedStyle(ta);
@@ -544,33 +532,33 @@ function placeSugg(){
   dot.textContent="\u200b";
   mir.appendChild(dot);
   const lh=parseFloat(cs.lineHeight)||24;
-  box.style.left=Math.min(dot.offsetLeft, ta.clientWidth-110)+"px";
+  box.style.left=Math.max(0,Math.min(dot.offsetLeft, ta.clientWidth-120))+"px";
   box.style.top=(dot.offsetTop - ta.scrollTop + lh + 4)+"px";
 }
 
 function drawSugs(){
   const box=$("sugg");
-  if(!sugs.length){ box.classList.remove("on"); return; }
+  if(!sugs.length||!pend){ box.classList.remove("on"); return; }
   box.innerHTML=sugs.map((s,i)=>
     '<span class="s'+(i===sel?" sel":"")+(s===pend?" raw":"")+'" data-i="'+i+'">'+esc(s)+"</span>").join("");
   box.classList.add("on");
   placeSugg();
 }
-$("sugg").addEventListener("mousedown",e=>{
-  e.preventDefault();                       // keep focus in the textarea
-  const s=e.target.closest(".s"); if(!s) return;
-  sel=+s.dataset.i; accept(); $("input").focus();
-});
 
-function accept(){
-  if(sugs.length && sugs[sel]!==undefined) writeWord(sugs[sel]);
-  resetWord();
+// Tapping a suggestion swaps it in for the English word still sitting in the box.
+$("sugg").addEventListener("mousedown",e=>{ e.preventDefault(); takeSugg(e); });
+$("sugg").addEventListener("touchstart",e=>{ e.preventDefault(); takeSugg(e); },{passive:false});
+function takeSugg(e){
+  const s=e.target.closest(".s"); if(!s) return;
+  const pick=sugs[+s.dataset.i];
+  const ta=$("input");
+  ta.setRangeText(pick,anchor,anchor+lastLen,"end");
+  resetWord(); render(); ta.focus();
 }
 
 // Always offer something: Google first, then the offline rules, then the raw English.
 function buildList(google){
-  const rule=translit(pend);
-  const out=[];
+  const rule=translit(pend), out=[];
   for(const s of google) if(!out.includes(s)) out.push(s);
   if(!out.includes(rule)) out.push(rule);
   if(!out.includes(pend)) out.push(pend);
@@ -579,7 +567,7 @@ function buildList(google){
 
 async function askGoogle(word){
   if(!word) return;
-  if(googleDead){ sugs=buildList([]); sel=0; drawSugs(); return; }
+  if(googleDead){ if(word===pend){ sugs=buildList([]); sel=0; drawSugs(); } return; }
   if(sugCtrl) sugCtrl.abort();
   sugCtrl=new AbortController();
   const url="https://inputtools.google.com/request?text="+encodeURIComponent(word)
@@ -587,52 +575,61 @@ async function askGoogle(word){
   try{
     const r=await fetch(url,{signal:sugCtrl.signal});
     const j=await r.json();
-    if(word!==pend) return;                 // the user typed on while we waited
+    if(word!==pend) return;                       // the user typed on while we waited
     const list=(j[0]==="SUCCESS" && j[1] && j[1][0] && j[1][0][1]) || [];
     sugs=buildList(list); sel=0; drawSugs();
   }catch(err){
     if(err.name==="AbortError") return;
-    googleDead=true;                        // blocked or offline: fall back to the rules
+    googleDead=true;                              // blocked or offline: rules carry on
     if(word===pend){ sugs=buildList([]); sel=0; drawSugs(); }
   }
 }
 
+/* ---- driven by the input event, not keydown.
+   Android keyboards do not report real letters in keydown (they send "Unidentified"
+   because they predict the word first), so the old key-based version never fired
+   on a phone. Reading the textarea after each change works on every keyboard. ---- */
+function onInput(){
+  const ta=$("input");
+  if(!enOn||!fwd){ resetWord(); render(); return; }
+
+  const v=ta.value, pos=ta.selectionStart;
+
+  // a separator just landed -> settle the word sitting before it
+  if(pos>0 && !isL(v[pos-1])){
+    let e=pos-1, s=e;
+    while(s>0 && isL(v[s-1])) s--;
+    const word=v.slice(s,e);
+    if(word){
+      const pick=(sugs.length && lastWord===word) ? sugs[sel] : translit(word);
+      ta.setRangeText(pick,s,e);
+      const caret=s+pick.length+(pos-e);
+      ta.selectionStart=ta.selectionEnd=caret;
+    }
+    resetWord(); render(); return;
+  }
+
+  // mid-word: find the English run the caret sits in
+  let s=pos;
+  while(s>0 && isL(v[s-1])) s--;
+  const word=v.slice(s,pos);
+  if(!word){ resetWord(); render(); return; }
+
+  anchor=s; pend=word; lastLen=word.length; lastWord=word;
+  $("inc").textContent=v.length;      // skip the full convert until the word is settled
+  clearTimeout(sugTimer);
+  sugTimer=setTimeout(()=>askGoogle(word),140);
+}
+
+// keydown is now only for the extras a physical keyboard offers
 $("input").addEventListener("keydown",e=>{
-  if(!enOn||!fwd) return;
-  if(e.ctrlKey||e.metaKey||e.altKey) return;
-  const k=e.key;
-
-  if(sugs.length){
-    if(k==="ArrowDown"){ e.preventDefault(); sel=(sel+1)%sugs.length; drawSugs(); return; }
-    if(k==="ArrowUp"){ e.preventDefault(); sel=(sel-1+sugs.length)%sugs.length; drawSugs(); return; }
-    if(k==="Escape"){ e.preventDefault(); sugs=[]; drawSugs(); return; }
-    if(k==="Enter"||k===" "){ accept(); return; }   // let the space/newline itself through
-  } else if(pend && (k==="Enter"||k===" ")){
-    writeWord(translit(pend)); resetWord(); return;
-  }
-
-  if(/^[A-Za-z]$/.test(k)){
-    e.preventDefault();
-    if(!pend){ anchor=$("input").selectionStart; lastLen=0; }
-    pend+=k; paint();
-    clearTimeout(sugTimer);
-    const snap=pend;
-    sugTimer=setTimeout(()=>askGoogle(snap),140);
-    return;
-  }
-  if(k==="Backspace"&&pend){
-    e.preventDefault();
-    pend=pend.slice(0,-1); paint();
-    if(!pend){ resetWord(); return; }
-    clearTimeout(sugTimer);
-    const snap=pend;
-    sugTimer=setTimeout(()=>askGoogle(snap),140);
-    return;
-  }
-  if(k!=="Shift"&&k!=="CapsLock") resetWord();
+  if(!enOn||!fwd||!sugs.length) return;
+  if(e.key==="ArrowDown"){ e.preventDefault(); sel=(sel+1)%sugs.length; drawSugs(); }
+  else if(e.key==="ArrowUp"){ e.preventDefault(); sel=(sel-1+sugs.length)%sugs.length; drawSugs(); }
+  else if(e.key==="Escape"){ e.preventDefault(); sugs=[]; drawSugs(); }
 });
-$("input").addEventListener("mousedown",resetWord);
-$("input").addEventListener("blur",()=>setTimeout(resetWord,150));
+$("input").addEventListener("blur",()=>setTimeout(()=>{ resetWord(); render(); },200));
+$("input").addEventListener("click",()=>{ resetWord(); });
 
 /* ============ ANU preview font ============ */
 const SEEN=["Reshma","Vasantha","Kalaanjali","Dharani"];   // first available one becomes the default
