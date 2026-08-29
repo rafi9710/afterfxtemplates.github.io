@@ -48,6 +48,14 @@ font-size:13px;padding:0 3px;border-radius:2px}
 display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .panefoot button{padding:7px 14px}
 .panefoot .note{font:11px/1.3 var(--mono);color:var(--dim)}
+.sugg{display:none;gap:6px;flex-wrap:wrap;align-items:center;padding:9px 12px;
+border-bottom:1px solid var(--rule);background:#fffdf5}
+.sugg.on{display:flex}
+.sugg .s{font-family:var(--tel);font-size:19px;padding:4px 11px;cursor:pointer;border-radius:4px;
+border:1.5px solid var(--rule);background:var(--card);line-height:1.4}
+.sugg .s.sel{background:var(--done);border-color:var(--done);color:#fff}
+.sugg .s:hover{border-color:var(--done)}
+.sugg .lbl{font:10px/1.4 var(--mono);color:var(--dim);margin-right:2px}
 .typebar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .tgl{font:11px/1 var(--mono);padding:5px 10px;cursor:pointer;border:1.5px solid var(--rule);
 border-radius:20px;background:var(--card);color:var(--dim)}
@@ -124,6 +132,7 @@ padding:14px 18px;font-size:13.5px;color:var(--dim)}
 <div class="pane"><div class="plabel"><span id="labIn"></span>
 <span class="typebar"><span class="tgl" id="tglEn" title="Type in English letters, get Telugu">abc &rarr; తె</span>
 <span id="inc">0</span></span></div>
+<div class="sugg" id="sugg"></div>
 <div class="keyhelp hide" id="keyhelp">
 <b>aa</b>ఆ <b>ee</b>ఈ <b>oo</b>ఊ <b>E</b>ఏ <b>O</b>ఓ <b>ai</b>ఐ <b>au</b>ఔ <b>R</b>ఋ &nbsp;
 <b>T</b>ట <b>D</b>డ <b>N</b>ణ <b>L</b>ళ <b>Sh</b>ష <b>sh</b>శ <b>x</b>క్ష <b>jn</b>జ్ఞ &nbsp;
@@ -483,40 +492,106 @@ function translit(s){
 }
 
 let enOn=false, pend="", anchor=0, lastLen=0;
+let sugs=[], sel=0, sugTimer=null, sugCtrl=null, googleDead=false;
 try{ enOn = localStorage.getItem("afxEnType")==="1"; }catch{}
 
 function setEn(on){
-  enOn=on; pend=""; lastLen=0;
+  enOn=on; resetWord();
   $("tglEn").classList.toggle("on",on);
   $("keyhelp").classList.toggle("hide",!on);
   try{ localStorage.setItem("afxEnType",on?"1":"0"); }catch{}
 }
 $("tglEn").addEventListener("click",()=>{ setEn(!enOn); $("input").focus(); });
 
-function paint(){
+function resetWord(){
+  pend=""; lastLen=0; sugs=[]; sel=0;
+  if(sugCtrl){ sugCtrl.abort(); sugCtrl=null; }
+  clearTimeout(sugTimer);
+  $("sugg").classList.remove("on");
+}
+
+// Write `text` over the region the current word occupies, and remember its new length.
+function put(text){
   const ta=$("input");
-  ta.setRangeText(translit(pend),anchor,anchor+lastLen,"end");
-  lastLen=translit(pend).length;
+  ta.setRangeText(text,anchor,anchor+lastLen,"end");
+  lastLen=text.length;
   render();
+}
+function paint(){ put(translit(pend)); }
+
+/* ---- Google Input Tools: the same suggestion source easytelugutyping uses ---- */
+function drawSugs(){
+  const box=$("sugg");
+  if(!sugs.length){ box.classList.remove("on"); return; }
+  box.innerHTML='<span class="lbl">space to pick</span>'
+    + sugs.map((s,i)=>'<span class="s'+(i===sel?" sel":"")+'" data-i="'+i+'">'+esc(s)+"</span>").join("");
+  box.classList.add("on");
+}
+$("sugg").addEventListener("click",e=>{
+  const s=e.target.closest(".s"); if(!s) return;
+  sel=+s.dataset.i; accept(); $("input").focus();
+});
+
+function accept(){
+  if(sugs.length && sugs[sel]) put(sugs[sel]);
+  resetWord();
+}
+
+async function askGoogle(word){
+  if(googleDead||!word) return;
+  if(sugCtrl) sugCtrl.abort();
+  sugCtrl=new AbortController();
+  const url="https://inputtools.google.com/request?text="+encodeURIComponent(word)
+    +"&itc=te-t-i0-und&num=6&cp=0&cs=1&ie=utf-8&oe=utf-8&app=afx";
+  try{
+    const r=await fetch(url,{signal:sugCtrl.signal});
+    const j=await r.json();
+    if(j[0]!=="SUCCESS") return;
+    const list=(j[1] && j[1][0] && j[1][0][1]) || [];
+    if(word!==pend) return;                 // the user typed on while we waited
+    sugs=list.slice(0,6); sel=0; drawSugs();
+  }catch(err){
+    if(err.name==="AbortError") return;
+    // Blocked or offline — stop asking and let the offline rules carry the typing.
+    googleDead=true;
+    $("sugg").classList.remove("on");
+  }
 }
 
 $("input").addEventListener("keydown",e=>{
   if(!enOn||!fwd) return;
   if(e.ctrlKey||e.metaKey||e.altKey) return;
-  if(/^[A-Za-z]$/.test(e.key)){
+  const k=e.key;
+
+  if(sugs.length){
+    if(k==="ArrowDown"){ e.preventDefault(); sel=(sel+1)%sugs.length; drawSugs(); return; }
+    if(k==="ArrowUp"){ e.preventDefault(); sel=(sel-1+sugs.length)%sugs.length; drawSugs(); return; }
+    if(k==="Escape"){ e.preventDefault(); sugs=[]; drawSugs(); return; }
+    if(k==="Enter"||k===" "){ accept(); return; }   // let the space/newline itself through
+  }
+
+  if(/^[A-Za-z]$/.test(k)){
     e.preventDefault();
     if(!pend){ anchor=$("input").selectionStart; lastLen=0; }
-    pend+=e.key; paint();
-  } else if(e.key==="Backspace"&&pend){
+    pend+=k; paint();
+    clearTimeout(sugTimer);
+    const snap=pend;
+    sugTimer=setTimeout(()=>askGoogle(snap),140);
+    return;
+  }
+  if(k==="Backspace"&&pend){
     e.preventDefault();
     pend=pend.slice(0,-1); paint();
-    if(!pend) lastLen=0;
-  } else if(e.key!=="Shift"&&e.key!=="CapsLock"){
-    pend=""; lastLen=0;                       // space, punctuation, arrows all finish the word
+    if(!pend){ resetWord(); return; }
+    clearTimeout(sugTimer);
+    const snap=pend;
+    sugTimer=setTimeout(()=>askGoogle(snap),140);
+    return;
   }
+  if(k!=="Shift"&&k!=="CapsLock") resetWord();
 });
-$("input").addEventListener("mousedown",()=>{ pend=""; lastLen=0; });
-$("input").addEventListener("blur",()=>{ pend=""; lastLen=0; });
+$("input").addEventListener("mousedown",resetWord);
+$("input").addEventListener("blur",()=>setTimeout(resetWord,150));
 
 /* ============ ANU preview font ============ */
 const SEEN=["Reshma","Vasantha","Kalaanjali","Dharani"];   // first available one becomes the default
