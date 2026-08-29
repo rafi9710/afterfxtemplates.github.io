@@ -48,6 +48,14 @@ font-size:13px;padding:0 3px;border-radius:2px}
 display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .panefoot button{padding:7px 14px}
 .panefoot .note{font:11px/1.3 var(--mono);color:var(--dim)}
+.typebar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tgl{font:11px/1 var(--mono);padding:5px 10px;cursor:pointer;border:1.5px solid var(--rule);
+border-radius:20px;background:var(--card);color:var(--dim)}
+.tgl.on{background:var(--done);border-color:var(--done);color:#fff}
+.keyhelp{padding:10px 14px;border-bottom:1px solid var(--rule);background:#f7f8f9;
+font:11px/1.9 var(--mono);color:var(--dim)}
+.keyhelp b{color:var(--ink);font-weight:600}
+.keyhelp.hide{display:none}
 .ocr{margin-bottom:14px;background:var(--card);border:1px solid var(--rule);border-radius:5px;
 display:flex;gap:14px;align-items:center;padding:12px 14px;flex-wrap:wrap}
 .ocr.hide{display:none}
@@ -113,7 +121,14 @@ padding:14px 18px;font-size:13.5px;color:var(--dim)}
 <div class="ocrstat" id="ocrstat">reads Telugu off a photo</div>
 </div>
 <div class="panes">
-<div class="pane"><div class="plabel"><span id="labIn"></span><span id="inc">0</span></div>
+<div class="pane"><div class="plabel"><span id="labIn"></span>
+<span class="typebar"><span class="tgl" id="tglEn" title="Type in English letters, get Telugu">abc &rarr; \u0C24\u0C46</span>
+<span id="inc">0</span></span></div>
+<div class="keyhelp hide" id="keyhelp">
+<b>aa</b>\u0C06 <b>ee</b>\u0C08 <b>oo</b>\u0C0A <b>E</b>\u0C0F <b>O</b>\u0C13 <b>ai</b>\u0C10 <b>au</b>\u0C14 <b>R</b>\u0C0B &nbsp;
+<b>T</b>\u0C1F <b>D</b>\u0C21 <b>N</b>\u0C23 <b>L</b>\u0C33 <b>Sh</b>\u0C37 <b>sh</b>\u0C36 <b>x</b>\u0C15\u0C4D\u0C37 <b>jn</b>\u0C1C\u0C4D\u0C1E &nbsp;
+n/m before a consonant becomes \u0C02 &nbsp;\u00b7&nbsp; space finishes a word
+</div>
 <textarea id="input"></textarea></div>
 <div class="pane"><div class="plabel"><span id="labOut"></span><span id="outc">0</span></div>
 <div class="out" id="output"></div>
@@ -273,6 +288,9 @@ function applyMode(){
   $("input").className = fwd?"tel":"anu";
   $("output").className = "out " + (fwd?"anu":"tel");
   $("ocr").classList.toggle("hide",!fwd);
+  $("tglEn").style.display = fwd ? "" : "none";
+  $("keyhelp").classList.toggle("hide",!fwd||!enOn);
+  pend=""; lastLen=0;
   $("fontbar").style.display = fwd ? "" : "none";
   if(fwd) applyFont(); else $("output").classList.remove("preview");
   $("dirFwd").classList.toggle("on",fwd); $("dirRev").classList.toggle("on",!fwd);
@@ -415,6 +433,91 @@ window.addEventListener("paste",e=>{
 });
 
 
+/* ============ English -> Telugu typing ============ */
+const CONS_TL=[
+ ["kSh","\u0C15\u0C4D\u0C37"],["ksh","\u0C15\u0C4D\u0C37"],["x","\u0C15\u0C4D\u0C37"],
+ ["jn","\u0C1C\u0C4D\u0C1E"],["gn","\u0C1C\u0C4D\u0C1E"],
+ ["chh","\u0C1B"],["Ch","\u0C1B"],["ch","\u0C1A"],["c","\u0C1A"],
+ ["shh","\u0C37"],["Sh","\u0C37"],["sh","\u0C36"],["S","\u0C36"],
+ ["kh","\u0C16"],["gh","\u0C18"],["jh","\u0C1D"],["ph","\u0C2B"],["f","\u0C2B"],["bh","\u0C2D"],
+ ["Th","\u0C20"],["Dh","\u0C22"],["th","\u0C25"],["dh","\u0C27"],
+ ["ng","\u0C19"],["ny","\u0C1E"],
+ ["k","\u0C15"],["g","\u0C17"],["j","\u0C1C"],
+ ["T","\u0C1F"],["D","\u0C21"],["N","\u0C23"],
+ ["t","\u0C24"],["d","\u0C26"],["n","\u0C28"],
+ ["p","\u0C2A"],["b","\u0C2C"],["m","\u0C2E"],
+ ["y","\u0C2F"],["RR","\u0C31"],["r","\u0C30"],["L","\u0C33"],["l","\u0C32"],
+ ["v","\u0C35"],["w","\u0C35"],["s","\u0C38"],["h","\u0C39"],["z","\u0C1C"],["q","\u0C15"]];
+const VOW_TL=[
+ ["aa","\u0C06","\u0C3E"],["A","\u0C06","\u0C3E"],
+ ["ii","\u0C08","\u0C40"],["ee","\u0C08","\u0C40"],["I","\u0C08","\u0C40"],
+ ["uu","\u0C0A","\u0C42"],["oo","\u0C0A","\u0C42"],["U","\u0C0A","\u0C42"],
+ ["ai","\u0C10","\u0C48"],["ay","\u0C10","\u0C48"],
+ ["au","\u0C14","\u0C4C"],["ou","\u0C14","\u0C4C"],["ow","\u0C14","\u0C4C"],
+ ["E","\u0C0F","\u0C47"],["O","\u0C13","\u0C4B"],["R","\u0C0B","\u0C43"],
+ ["a","\u0C05",""],["i","\u0C07","\u0C3F"],["u","\u0C09","\u0C41"],
+ ["e","\u0C0E","\u0C46"],["o","\u0C12","\u0C4A"]];
+const MOD_TL={"M":"\u0C02","H":"\u0C03"};
+
+function pick(s,i,list){ for(const e of list) if(s.startsWith(e[0],i)) return e; return null; }
+function translit(s){
+  let out="",i=0;
+  while(i<s.length){
+    if(MOD_TL[s[i]]){ out+=MOD_TL[s[i]]; i++; continue; }
+    const c=pick(s,i,CONS_TL);
+    if(c){
+      i+=c[0].length;
+      const v=pick(s,i,VOW_TL);
+      if(v){ out+=c[1]+v[2]; i+=v[0].length; continue; }
+      // n / m with no vowel after becomes the anusvara (andi -> \u0C05\u0C02\u0C26\u0C3F),
+      // except when doubled, where the real cluster is meant (kannaa -> \u0C15\u0C28\u0C4D\u0C28\u0C3E)
+      if((c[0]==="n"||c[0]==="m") && s[i]!==c[0]) out+="\u0C02";
+      else out+=c[1]+VIR;
+      continue;
+    }
+    const v=pick(s,i,VOW_TL);
+    if(v){ out+=v[1]; i+=v[0].length; continue; }
+    out+=s[i]; i++;
+  }
+  return out;
+}
+
+let enOn=false, pend="", anchor=0, lastLen=0;
+try{ enOn = localStorage.getItem("afxEnType")==="1"; }catch{}
+
+function setEn(on){
+  enOn=on; pend=""; lastLen=0;
+  $("tglEn").classList.toggle("on",on);
+  $("keyhelp").classList.toggle("hide",!on);
+  try{ localStorage.setItem("afxEnType",on?"1":"0"); }catch{}
+}
+$("tglEn").addEventListener("click",()=>{ setEn(!enOn); $("input").focus(); });
+
+function paint(){
+  const ta=$("input");
+  ta.setRangeText(translit(pend),anchor,anchor+lastLen,"end");
+  lastLen=translit(pend).length;
+  render();
+}
+
+$("input").addEventListener("keydown",e=>{
+  if(!enOn||!fwd) return;
+  if(e.ctrlKey||e.metaKey||e.altKey) return;
+  if(/^[A-Za-z]$/.test(e.key)){
+    e.preventDefault();
+    if(!pend){ anchor=$("input").selectionStart; lastLen=0; }
+    pend+=e.key; paint();
+  } else if(e.key==="Backspace"&&pend){
+    e.preventDefault();
+    pend=pend.slice(0,-1); paint();
+    if(!pend) lastLen=0;
+  } else if(e.key!=="Shift"&&e.key!=="CapsLock"){
+    pend=""; lastLen=0;                       // space, punctuation, arrows all finish the word
+  }
+});
+$("input").addEventListener("mousedown",()=>{ pend=""; lastLen=0; });
+$("input").addEventListener("blur",()=>{ pend=""; lastLen=0; });
+
 /* ============ ANU preview font ============ */
 const SEEN=["Reshma","Vasantha","Kalaanjali","Dharani"];   // first available one becomes the default
 
@@ -484,6 +587,7 @@ $("xthumb").addEventListener("click",()=>{
   $("input").focus();
 });
 
+setEn(enOn);
 applyMode();
 </script>
 </body></html>
