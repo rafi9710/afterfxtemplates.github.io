@@ -511,13 +511,15 @@ function resetWord(){
 }
 
 // Write `text` over the region the current word occupies, and remember its new length.
-function put(text){
+// NOT named put() — the reverse index already owns that name and a clash silently
+// overwrote it, which killed the whole script on load.
+function writeWord(text){
   const ta=$("input");
   ta.setRangeText(text,anchor,anchor+lastLen,"end");
   lastLen=text.length;
   render();
 }
-function paint(){ put(translit(pend)); }
+function paint(){ writeWord(translit(pend)); }
 
 /* ---- Google Input Tools: the same suggestion source easytelugutyping uses ---- */
 function drawSugs(){
@@ -533,7 +535,7 @@ $("sugg").addEventListener("click",e=>{
 });
 
 function accept(){
-  if(sugs.length && sugs[sel]) put(sugs[sel]);
+  if(sugs.length && sugs[sel]) writeWord(sugs[sel]);
   resetWord();
 }
 
