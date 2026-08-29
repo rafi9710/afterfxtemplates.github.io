@@ -416,7 +416,7 @@ window.addEventListener("paste",e=>{
 
 
 /* ============ ANU preview font ============ */
-const SEEN=["Vasantha","Kalaanjali","Dharani","Reshma"];
+const SEEN=["Reshma","Vasantha","Kalaanjali","Dharani"];   // first available one becomes the default
 
 // A symbol font carries glyphs at U+F0xx; a normal font has none there and falls back,
 // measuring identically to the generic fallback. That width gap is how we spot ANU fonts
@@ -435,7 +435,8 @@ function fillFonts(names,keep){
     + names.map(n=>'<option value="'+n.replace(/"/g,"&quot;")+'">'+n+"</option>").join("");
   if(keep && names.includes(keep)) sel.value=keep;
 }
-fillFonts(SEEN.filter(isSymbolFont).length ? SEEN.filter(isSymbolFont) : SEEN);
+const AVAIL=SEEN.filter(isSymbolFont);
+fillFonts(AVAIL.length ? AVAIL : SEEN);
 
 function applyFont(){
   const n=$("fontname").value;
@@ -446,6 +447,10 @@ function applyFont(){
   $("fontwarn").textContent = isSymbolFont(n) ? "" : "no ANU glyphs in this font";
 }
 $("fontname").addEventListener("change",applyFont);
+
+// Show real Telugu straight away instead of a wall of boxes. On a machine with no ANU
+// font installed AVAIL is empty, so it stays on raw codes and nothing looks broken.
+if(AVAIL.length){ $("fontname").value=AVAIL[0]; applyFont(); }
 
 $("loadfonts").addEventListener("click",async()=>{
   if(!window.queryLocalFonts){
