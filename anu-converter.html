@@ -374,6 +374,13 @@ $("stat").innerHTML="table: <b>"+Object.keys(D.base).length+"</b> syllables \u00
 
 /* ================= OCR ================= */
 const OCR_API="https://afterfx-api.vercel.app/api/ocr", OCR_TOKEN="afx-desc-9k2m7x";
+// Visit the page once as ?owner=YOURKEY to store it; after that this browser skips the caps.
+let ownerKey="";
+try{
+  const q=new URLSearchParams(location.search).get("owner");
+  if(q){ localStorage.setItem("afxOwner",q); history.replaceState({},"",location.pathname); }
+  ownerKey=localStorage.getItem("afxOwner")||"";
+}catch{}
 let ocrBusy=false, tick=null;
 
 function shrink(file){
@@ -414,7 +421,8 @@ async function runOCR(file){
     $("thumb").src=durl; $("thumbwrap").classList.add("on");
     startTimer();
     const r=await fetch(OCR_API,{method:"POST",
-      headers:{"Content-Type":"application/json","X-Afx-Token":OCR_TOKEN},
+      headers:Object.assign({"Content-Type":"application/json","X-Afx-Token":OCR_TOKEN},
+        ownerKey?{"X-Afx-Owner":ownerKey}:{}),
       body:JSON.stringify({image:m[2],mimeType:m[1]})});
     stopTimer();
     const j=await r.json();
@@ -422,12 +430,17 @@ async function runOCR(file){
       if(!j.text){ say('<span class="bad">no text found on that image</span>'); }
       else{
         $("input").value=j.text; render();
+        const quota = j.owner ? "" :
+          "<br>"+(j.left>0 ? j.left+" more photo"+(j.left===1?"":"s")+" today"
+                           : "that was the last photo for today");
         say((j.lines||0)+" lines read \u00b7 check the names and numbers"
-            +"<br>then copy the ANU on the right"
+            +"<br>then copy the ANU on the right"+quota
             +'<br><span style="opacity:.6">'+(j.model||"?")+"</span>");
       }
+    } else if(r.status===429){
+      say('<span class="bad">'+esc(j.error||"daily limit reached")+"</span>");
     } else {
-      say('<span class="bad">'+(j.error||("HTTP "+r.status))+"</span>");
+      say('<span class="bad">'+esc(j.error||("HTTP "+r.status))+"</span>");
     }
   }catch(e){
     stopTimer();
