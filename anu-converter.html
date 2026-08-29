@@ -388,7 +388,9 @@ async function runOCR(file){
       if(!j.text){ say('<span class="bad">no text found on that image</span>'); }
       else{
         $("input").value=j.text; render();
-        say((j.lines||0)+" lines read \u00b7 check the names and numbers<br>then copy the ANU on the right");
+        say((j.lines||0)+" lines read \u00b7 check the names and numbers"
+            +"<br>then copy the ANU on the right"
+            +'<br><span style="opacity:.6">'+(j.model||"?")+"</span>");
       }
     } else {
       say('<span class="bad">'+(j.error||("HTTP "+r.status))+"</span>");
