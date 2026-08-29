@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Telugu &harr; ANU converter</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#eef0f2;--card:#fff;--ink:#14161a;--dim:#5d646e;--rule:#ccd1d7;
+--accent:#c8102e;--blue:#1d4ed8;--done:#127050;--miss:#b45309;
+--mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;--tel:'Noto Sans Telugu',system-ui,sans-serif;
+--hue:var(--accent)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+header{background:var(--card);border-bottom:2px solid var(--ink);padding:14px 20px}
+h1{margin:0;font-size:19px;border-left:5px solid var(--hue);padding-left:10px}
+.sub{color:var(--dim);font-size:13px;margin-top:4px;padding-left:15px}
+.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+button{font:inherit;font-size:13px;padding:8px 14px;cursor:pointer;background:var(--card);
+color:var(--ink);border:1.5px solid var(--ink);border-radius:3px}
+button:hover{background:var(--ink);color:var(--card)}
+button.primary{background:var(--hue);border-color:var(--hue);color:#fff;filter:none}
+button.primary:hover{opacity:.85;background:var(--hue);color:#fff}
+.toggle{display:flex;border:1.5px solid var(--ink);border-radius:3px;overflow:hidden}
+.toggle button{border:0;border-radius:0;padding:8px 16px;font-weight:600}
+.toggle button:not(.on){background:var(--card);color:var(--dim)}
+.toggle button.on{background:var(--hue);color:#fff}
+.toggle button + button{border-left:1.5px solid var(--ink)}
+.stat{margin-left:auto;font:12px/1 var(--mono);color:var(--dim)}
+.stat b{color:var(--done)}
+main{padding:18px 20px 40px;max-width:1400px;margin:0 auto}
+.panes{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:820px){.panes{grid-template-columns:1fr}}
+.pane{background:var(--card);border:1px solid var(--rule);border-radius:5px;display:flex;flex-direction:column;overflow:hidden}
+.plabel{font:11px/1 var(--mono);color:var(--dim);padding:10px 12px;border-bottom:1px solid var(--rule);
+display:flex;justify-content:space-between}
+.plabel b{color:var(--ink)}
+textarea,.out{border:0;padding:14px;min-height:290px;width:100%;background:var(--card);color:var(--ink)}
+textarea:focus{outline:none}
+textarea.tel,.out.tel{font-family:var(--tel);font-size:22px;line-height:1.9}
+textarea.anu,.out.anu{font:15px/1.8 var(--mono)}
+textarea{resize:vertical}
+.out{white-space:pre-wrap;word-break:break-word;-webkit-user-select:text;user-select:text;cursor:text}
+.out.anu{word-break:break-all}
+.out .m{background:#fef3c7;border-bottom:2px solid var(--miss);font-family:var(--mono);
+font-size:13px;padding:0 3px;border-radius:2px}
+.panefoot{border-top:1px solid var(--rule);padding:10px 12px;background:#f7f8f9;
+display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.panefoot button{padding:7px 14px}
+.panefoot .note{font:11px/1.3 var(--mono);color:var(--dim)}
+.ocr{margin-bottom:14px;background:var(--card);border:1px solid var(--rule);border-radius:5px;
+display:flex;gap:14px;align-items:center;padding:12px 14px;flex-wrap:wrap}
+.ocr.hide{display:none}
+.drop{flex:1;min-width:220px;border:2px dashed var(--rule);border-radius:5px;padding:14px 16px;
+text-align:center;cursor:pointer;color:var(--dim);font-size:13.5px;transition:.15s}
+.drop:hover,.drop.over{border-color:var(--hue);background:#fafbfc;color:var(--ink)}
+.drop b{color:var(--ink)}
+.ocr input[type=file]{display:none}
+.thumbwrap{position:relative;display:none}
+.thumbwrap.on{display:block}
+.thumb{width:64px;height:64px;object-fit:cover;border-radius:4px;border:1px solid var(--rule);display:block}
+.xbtn{position:absolute;top:-7px;right:-7px;width:20px;height:20px;padding:0;line-height:1;
+border-radius:50%;border:1.5px solid var(--ink);background:var(--card);color:var(--ink);
+font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.xbtn:hover{background:var(--hue);border-color:var(--hue);color:#fff}
+.ocrstat{font:12px/1.6 var(--mono);color:var(--dim);min-width:150px}
+.ocrstat .live{color:var(--hue);font-weight:600}
+.ocrstat .bad{color:#b91c1c}
+.spin{display:inline-block;width:11px;height:11px;margin-right:6px;vertical-align:-1px;
+border:2px solid var(--rule);border-top-color:var(--hue);border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.fontbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-left:auto}
+.fontbar select{font:12px/1 var(--mono);padding:6px 9px;min-width:165px;max-width:230px;
+border:1.5px solid var(--rule);border-radius:3px;background:var(--card);color:var(--ink)}
+.fontbar select:focus{outline:none;border-color:var(--hue)}
+.fontbar button{padding:6px 11px;font-size:12px}
+.fontbar .warn{font:11px/1.3 var(--mono);color:var(--miss)}
+.out.anu.preview{font-family:var(--anu),ui-monospace,monospace;font-size:25px;
+line-height:1.75;word-break:normal;overflow-wrap:break-word}
+.gaps{margin-top:16px;background:#fffbeb;border:1px solid #fcd34d;border-radius:5px;padding:14px 16px}
+.gaps h2{margin:0 0 4px;font-size:14px;color:var(--miss)}
+.gaps p{margin:0 0 10px;font-size:13px;color:var(--dim)}
+.gl{display:flex;flex-wrap:wrap;gap:6px}
+.gl span{background:#fff;border:1px solid #fcd34d;border-radius:3px;padding:4px 9px;
+font-family:var(--tel);font-size:17px}
+.gl span.code{font:12px/1 var(--mono);padding:6px 8px}
+.steps{margin-top:18px;background:var(--card);border:1px solid var(--rule);border-radius:5px;
+padding:14px 18px;font-size:13.5px;color:var(--dim)}
+.steps b{color:var(--ink)}
+.steps ol{margin:8px 0 0;padding-left:20px}.steps li{margin:4px 0}
+</style>
+</head>
+<body>
+<header>
+<h1 id="title">Telugu &rarr; ANU</h1>
+<div class="sub" id="subtitle"></div>
+<div class="bar">
+<div class="toggle">
+<button id="dirFwd" class="on">Telugu &rarr; ANU</button>
+<button id="dirRev">ANU &rarr; Telugu</button>
+</div>
+<button id="copy" class="primary">Copy</button>
+<button id="sample">Sample</button>
+<button id="clear">Clear</button>
+<div class="stat" id="stat"></div>
+</div>
+</header>
+<main>
+<div class="ocr" id="ocr">
+<div class="drop" id="drop"><b>Drop a card photo</b> &mdash; or click to pick one
+<input type="file" id="file" accept="image/*"></div>
+<div class="thumbwrap" id="thumbwrap"><img class="thumb" id="thumb"><button class="xbtn" id="xthumb" title="Clear the photo and start fresh">&times;</button></div>
+<div class="ocrstat" id="ocrstat">reads Telugu off a photo</div>
+</div>
+<div class="panes">
+<div class="pane"><div class="plabel"><span id="labIn"></span><span id="inc">0</span></div>
+<textarea id="input"></textarea></div>
+<div class="pane"><div class="plabel"><span id="labOut"></span><span id="outc">0</span></div>
+<div class="out" id="output"></div>
+<div class="panefoot"><button id="copy2" class="primary">Copy result</button>
+<span class="note" id="footnote"></span>
+<div class="fontbar" id="fontbar">
+<span class="note">preview font</span>
+<select id="fontname"></select>
+<button id="loadfonts" title="List the fonts installed on this computer">My fonts</button>
+<span class="warn" id="fontwarn"></span>
+</div></div></div>
+</div>
+<div class="gaps" id="gaps" hidden>
+<div id="gapA" hidden>
+<h2 id="gapTitle">Not in the table yet</h2>
+<p>These came through unchanged. Send them over and they get added.</p>
+<div class="gl" id="gl"></div>
+</div>
+<div id="gapB" hidden>
+<h2>English text</h2>
+<p>ANU fonts hold Telugu glyphs only &mdash; there is no A&ndash;Z in them, so this cannot be
+converted by any tool. In Photoshop put this on its own layer in a normal Latin font.</p>
+<div class="gl" id="glB"></div>
+</div>
+</div>
+<div class="steps" id="steps"></div>
+</main>
+<script>
+const D = {"base": {"క": [191, 163], "కా": [191, 177], "కి": [191, 236], "కీ": [191, 161], "కు": [197, 163, 148], "కూ": [197, 163, 76], "కృ": [191, 163, 127], "కె": [194, 191], "కే": [185, 191], "కై": [194, 191, 213], "కొ": [191, 61], "కో": [191, 195], "కౌ": [191, 154], "కం": [191, 163, 43], "కః": [191, 163, 39], "క్": [191, 249], "ఖ": [75], "ఖా": [85, 178], "ఖి": [207], "ఖీ": [70], "ఖు": [75, 84], "ఖూ": [75, 214], "ఖృ": [75, 127], "ఖె": [85, 201], "ఖే": [85, 241], "ఖై": [85, 201, 213], "ఖొ": [85, 164], "ఖో": [85, 203], "ఖౌ": [85, 133], "ఖం": [75, 43], "ఖః": [75, 39], "ఖ్": [85, 217], "గ": [62, 183], "గా": [62, 177], "గి": [208], "గీ": [94], "గు": [62, 183, 84], "గూ": [62, 183, 214], "గృ": [62, 183, 127], "గె": [194, 62], "గే": [185, 62], "గై": [194, 62, 213], "గొ": [62, 61], "గో": [62, 195], "గౌ": [62, 154], "గం": [62, 183, 43], "గః": [62, 183, 39], "గ్": [62, 180], "ఘ": [124, 152, 159, 84], "ఘా": [124, 152, 159, 214], "ఘి": [124, 152, 190, 84], "ఘీ": [124, 152, 211, 84], "ఘు": [124, 152, 159, 84, 84], "ఘూ": [124, 152, 159, 84, 214], "ఘృ": [124, 152, 159, 84, 127], "ఘె": [153, 124, 152, 84], "ఘే": [157, 124, 152, 84], "ఘై": [153, 124, 152, 84, 174], "ఘొ": [124, 152, 159, 84, 164], "ఘో": [124, 152, 159, 84, 203], "ఘౌ": [124, 152, 159, 84, 242], "ఘం": [124, 152, 159, 84, 43], "ఘః": [124, 152, 159, 84, 39], "ఘ్": [124, 152, 116, 84], "ఙృ": [127], "ఙం": [43], "ఙః": [39], "చ": [35, 225], "చా": [35, 144], "చి": [186], "చీ": [78], "చు": [35, 225, 84], "చూ": [35, 225, 214], "చృ": [35, 225, 127], "చె": [35, 238], "చే": [35, 251], "చై": [35, 238, 213], "చొ": [35, 61], "చో": [35, 195], "చౌ": [35, 234], "చం": [35, 225, 43], "చః": [35, 225, 39], "చ్": [35, 89], "ఛ": [35, 243, 225], "ఛా": [35, 243, 144], "ఛి": [186, 243], "ఛీ": [78, 243], "ఛు": [35, 243, 225, 84], "ఛూ": [35, 243, 225, 214], "ఛృ": [35, 243, 225, 127], "ఛె": [35, 243, 238], "ఛే": [35, 243, 251], "ఛై": [35, 243, 238, 213], "ఛొ": [35, 243, 61], "ఛో": [35, 243, 195], "ఛౌ": [35, 243, 234], "ఛం": [35, 243, 225, 43], "ఛః": [35, 243, 225, 39], "ఛ్": [35, 243, 89], "జ": [200], "జా": [67, 178], "జి": [155], "జీ": [74], "జు": [69], "జూ": [112], "జృ": [200, 127], "జె": [67, 201], "జే": [67, 241], "జై": [67, 201, 213], "జొ": [67, 164], "జో": [67, 203], "జౌ": [67, 133], "జం": [200, 43], "జః": [200, 39], "జ్": [67, 217], "ఝ": [115, 193, 97], "ఝా": [115, 193, 97, 178], "ఝి": [93, 97], "ఝీ": [175, 97], "ఝు": [115, 193, 97, 84], "ఝూ": [115, 193, 97, 214], "ఝృ": [115, 193, 97, 127], "ఝె": [194, 115, 97], "ఝే": [185, 115, 97], "ఝై": [194, 115, 97, 174], "ఝొ": [194, 115, 97, 84], "ఝో": [194, 115, 97, 178], "ఝౌ": [115, 193, 97, 242], "ఝం": [115, 193, 97, 43], "ఝః": [115, 193, 97, 39], "ఝ్": [115, 89, 97], "ఞృ": [127], "ఞం": [43], "ఞః": [39], "ట": [179], "టా": [123, 178], "టి": [123, 236], "టీ": [123, 161], "టు": [179, 84], "టూ": [179, 214], "టృ": [179, 127], "టె": [102, 201], "టే": [102, 241], "టై": [102, 201, 174], "టొ": [123, 164], "టో": [123, 203], "టౌ": [123, 133], "టం": [179, 43], "టః": [179, 39], "ట్": [123, 217], "ఠ": [115, 196, 193], "ఠా": [115, 196, 144], "ఠి": [93, 196], "ఠీ": [175, 196], "ఠు": [115, 196, 193, 84], "ఠూ": [115, 196, 193, 214], "ఠృ": [115, 196, 193, 127], "ఠె": [194, 115, 196], "ఠే": [185, 115, 196], "ఠై": [194, 115, 196, 213], "ఠొ": [115, 196, 61], "ఠో": [115, 196, 195], "ఠౌ": [115, 196, 154], "ఠం": [115, 196, 193, 43], "ఠః": [115, 196, 193, 39], "ఠ్": [115, 196, 89], "డ": [38, 131], "డా": [38, 134], "డి": [38, 141], "డీ": [38, 158], "డు": [38, 131, 84], "డూ": [38, 131, 214], "డృ": [38, 131, 127], "డె": [38, 238], "డే": [38, 251], "డై": [38, 238, 213], "డొ": [38, 61], "డో": [38, 195], "డౌ": [38, 234], "డం": [38, 131, 43], "డః": [38, 131, 39], "డ్": [38, 142], "ఢ": [38, 243, 131], "ఢా": [38, 243, 134], "ఢి": [38, 243, 141], "ఢీ": [38, 243, 158], "ఢు": [38, 243, 131, 84], "ఢూ": [38, 243, 131, 214], "ఢృ": [38, 243, 131, 127], "ఢె": [38, 243, 238], "ఢే": [38, 243, 251], "ఢై": [38, 243, 238, 213], "ఢొ": [38, 243, 61], "ఢో": [38, 243, 195], "ఢౌ": [38, 243, 234], "ఢం": [38, 243, 131, 43], "ఢః": [38, 243, 131, 39], "ఢ్": [38, 243, 142], "ణ": [68], "ణా": [68, 178], "ణి": [68, 236], "ణీ": [68, 161], "ణు": [68, 84], "ణూ": [68, 214], "ణృ": [68, 127], "ణె": [68, 201], "ణే": [68, 241], "ణై": [68, 201, 174], "ణొ": [68, 61], "ణో": [68, 195], "ణౌ": [68, 133], "ణం": [68, 43], "ణః": [68, 39], "ణ్": [68, 89], "త": [212, 225], "తా": [212, 144], "తి": [220], "తీ": [114], "తు": [212, 225, 84], "తూ": [212, 225, 214], "తృ": [212, 225, 127], "తె": [212, 238], "తే": [212, 251], "తై": [212, 238, 213], "తొ": [212, 61], "తో": [212, 195], "తౌ": [212, 234], "తం": [212, 225, 43], "తః": [212, 225, 39], "త్": [212, 89], "థ": [60, 184, 138], "థా": [60, 184, 145], "థి": [126, 184], "థీ": [66, 184], "థు": [60, 184, 138, 84], "థూ": [60, 184, 138, 214], "థృ": [60, 184, 138, 127], "థె": [60, 184, 238], "థే": [60, 184, 251], "థై": [60, 184, 238, 213], "థొ": [60, 184, 61], "థో": [60, 184, 195], "థౌ": [60, 184, 234], "థం": [60, 184, 138, 43], "థః": [60, 184, 138, 39], "థ్": [60, 184, 142], "ద": [60, 138], "దా": [60, 145], "ది": [126], "దీ": [66], "దు": [60, 138, 84], "దూ": [60, 138, 214], "దృ": [60, 138, 127], "దె": [60, 238], "దే": [60, 251], "దై": [60, 238, 213], "దొ": [60, 61], "దో": [60, 195], "దౌ": [60, 234], "దం": [60, 138, 43], "దః": [60, 138, 39], "ద్": [60, 142], "ధ": [60, 243, 138], "ధా": [60, 243, 145], "ధి": [126, 243], "ధీ": [66, 243], "ధు": [60, 243, 138, 84], "ధూ": [60, 243, 138, 214], "ధృ": [60, 243, 138, 127], "ధె": [60, 243, 238], "ధే": [60, 243, 251], "ధై": [60, 243, 238, 213], "ధొ": [60, 243, 61], "ధో": [60, 243, 195], "ధౌ": [60, 243, 234], "ధం": [60, 243, 138, 43], "ధః": [60, 243, 138, 39], "ధ్": [60, 243, 142], "న": [113], "నా": [72, 144], "ని": [147], "నీ": [250], "ను": [113, 84], "నూ": [113, 214], "నృ": [113, 127], "నె": [72, 238], "నే": [72, 251], "నై": [72, 238, 213], "నొ": [72, 61], "నో": [72, 195], "నౌ": [72, 234], "నం": [113, 43], "నః": [113, 39], "న్": [72, 142], "ప": [124, 159], "పా": [98, 205], "పి": [124, 190], "పీ": [124, 211], "పు": [124, 159, 218], "పూ": [124, 159, 80], "పృ": [124, 159, 127], "పె": [153, 124], "పే": [157, 124], "పై": [153, 124, 213], "పొ": [98, 245], "పో": [98, 254], "పౌ": [98, 229], "పం": [124, 159, 43], "పః": [124, 159, 39], "ప్": [124, 116], "ఫ": [124, 152, 159], "ఫా": [98, 152, 205], "ఫి": [124, 152, 190], "ఫీ": [124, 152, 211], "ఫు": [124, 152, 159, 218], "ఫూ": [124, 152, 159, 80], "ఫృ": [124, 152, 159, 127], "ఫె": [153, 124, 152], "ఫే": [157, 124, 152], "ఫై": [153, 124, 152, 213], "ఫొ": [98, 152, 245], "ఫో": [98, 152, 254], "ఫౌ": [98, 152, 229], "ఫం": [124, 152, 159, 43], "ఫః": [124, 152, 159, 39], "ఫ్": [124, 152, 116], "బ": [139], "బా": [117, 178], "బి": [95], "బీ": [59], "బు": [139, 84], "బూ": [139, 214], "బృ": [139, 127], "బె": [117, 201], "బే": [117, 241], "బై": [117, 201, 213], "బొ": [117, 164], "బో": [117, 203], "బౌ": [117, 133], "బం": [139, 43], "బః": [139, 39], "బ్": [117, 217], "భ": [117, 243, 132], "భా": [117, 243, 178], "భి": [95, 243], "భీ": [59, 243], "భు": [117, 243, 132, 84], "భూ": [117, 243, 132, 214], "భృ": [117, 243, 132, 127], "భె": [117, 243, 201], "భే": [117, 243, 241], "భై": [117, 243, 201, 213], "భొ": [117, 243, 164], "భో": [117, 243, 203], "భౌ": [117, 243, 133], "భం": [117, 243, 132, 43], "భః": [117, 243, 132, 39], "భ్": [117, 243, 217], "మ": [101, 84], "మా": [101, 214], "మి": [36, 84], "మీ": [77, 84], "ము": [101, 84, 84], "మూ": [101, 84, 214], "మృ": [101, 84, 127], "మె": [121, 238, 84], "మే": [121, 251, 84], "మై": [121, 238, 84, 174], "మొ": [121, 238, 84, 84], "మో": [121, 238, 214], "మౌ": [101, 84, 242], "మం": [101, 84, 43], "మః": [101, 84, 39], "మ్": [121, 142, 84], "య": [106, 225, 84], "యా": [106, 225, 214], "యి": [115, 84, 84], "యీ": [115, 84, 214], "యు": [106, 225, 84, 84], "యూ": [106, 225, 84, 214], "యృ": [106, 225, 84, 127], "యె": [106, 238, 84], "యే": [106, 251, 84], "యై": [106, 238, 174, 84], "యొ": [106, 238, 84, 84], "యో": [106, 238, 214], "యౌ": [106, 225, 84, 242], "యం": [106, 225, 84, 43], "యః": [106, 225, 84, 39], "య్": [106, 89, 84], "ర": [115, 193], "రా": [115, 144], "రి": [93], "రీ": [175], "రు": [115, 193, 84], "రూ": [115, 193, 214], "రృ": [115, 193, 127], "రె": [194, 115], "రే": [185, 115], "రై": [194, 115, 213], "రొ": [115, 61], "రో": [115, 195], "రౌ": [115, 154], "రం": [115, 193, 43], "రః": [115, 193, 39], "ర్": [115, 89], "ఱ": [105], "ఱా": [105, 178], "ఱి": [105, 236], "ఱీ": [105, 161], "ఱు": [105, 84], "ఱూ": [105, 214], "ఱృ": [105, 127], "ఱె": [105, 201], "ఱే": [105, 241], "ఱై": [105, 201, 174], "ఱొ": [105, 61], "ఱో": [105, 195], "ఱౌ": [105, 133], "ఱం": [105, 43], "ఱః": [105, 39], "ఱ్": [105, 89], "ల": [92], "లా": [253, 178], "లి": [42], "లీ": [169], "లు": [92, 84], "లూ": [92, 214], "లృ": [92, 127], "లె": [253, 201], "లే": [253, 241], "లై": [253, 201, 213], "లొ": [253, 164], "లో": [253, 203], "లౌ": [253, 133], "లం": [92, 43], "లః": [92, 39], "ల్": [253, 217], "ళ": [222, 248], "ళా": [222, 178], "ళి": [91], "ళీ": [176], "ళు": [222, 248, 151], "ళూ": [222, 248, 83], "ళృ": [222, 248, 127], "ళె": [222, 232], "ళే": [222, 226], "ళై": [222, 232, 213], "ళొ": [222, 164], "ళో": [222, 203], "ళౌ": [222, 133], "ళం": [222, 248, 43], "ళః": [222, 248, 39], "ళ్": [222, 217], "వ": [101], "వా": [121, 144], "వి": [36], "వీ": [77], "వు": [101, 218], "వూ": [101, 80], "వృ": [101, 127], "వె": [121, 238], "వే": [121, 251], "వై": [121, 238, 213], "వొ": [121, 61], "వో": [121, 195], "వౌ": [121, 234], "వం": [101, 43], "వః": [101, 39], "వ్": [121, 142], "శ": [88, 248], "శా": [88, 230], "శి": [165], "శీ": [111], "శు": [88, 248, 151], "శూ": [88, 248, 83], "శృ": [88, 248, 127], "శె": [88, 232], "శే": [88, 226], "శై": [88, 232, 213], "శొ": [88, 164], "శో": [88, 203], "శౌ": [88, 133], "శం": [88, 248, 43], "శః": [88, 248, 39], "శ్": [88, 217], "ష": [119, 159], "షా": [99, 205], "షి": [119, 190], "షీ": [119, 211], "షు": [119, 159, 167], "షూ": [119, 159, 79], "షృ": [119, 159, 127], "షె": [153, 119], "షే": [157, 119], "షై": [153, 119, 213], "షొ": [99, 254], "షో": [99, 254], "షౌ": [99, 229], "షం": [119, 159, 43], "షః": [119, 159, 39], "ష్": [119, 116], "స": [100, 159], "సా": [107, 205], "సి": [100, 190], "సీ": [100, 211], "సు": [100, 159, 84], "సూ": [100, 159, 214], "సృ": [100, 159, 127], "సె": [153, 100], "సే": [157, 100], "సై": [153, 100, 213], "సొ": [107, 245], "సో": [107, 254], "సౌ": [107, 229], "సం": [100, 159, 43], "సః": [100, 159, 39], "స్": [100, 116], "హ": [86, 159, 178], "హా": [86, 159, 228], "హి": [86, 190, 178], "హీ": [86, 211, 178], "హు": [86, 159, 81], "హూ": [86, 159, 65], "హృ": [86, 159, 178, 127], "హె": [153, 86, 178], "హే": [157, 86, 178], "హై": [153, 86, 213, 178], "హొ": [86, 159, 178, 61], "హో": [86, 159, 178, 195], "హౌ": [86, 159, 178, 133], "హం": [86, 159, 178, 43], "హః": [86, 159, 178, 39], "హ్": [86, 116, 178], "అ": [110], "ఆ": [128], "ఇ": [130], "ఈ": [135], "ఉ": [150], "ఊ": [125], "ఋ": [139, 84, 84], "ఎ": [109], "ఏ": [64], "ఐ": [215], "ఒ": [255], "ఓ": [122], "ఔ": [87]}, "vattu": {"క": [216], "ఖ": [137], "గ": [90], "ఘ": [233], "చ": [204], "ఛ": [204, 219], "జ": [168], "ట": [188], "ఠ": [247], "డ": [166], "ణ": [146], "త": [239], "థ": [156], "ద": [221], "ధ": [198], "న": [149], "ప": [206], "ఫ": [206, 219], "బ": [210], "భ": [210, 219], "మ": [136], "య": [171], "ల": [162], "ళ": [223], "వ": [199], "శ": [244], "ష": [140], "స": [224], "హ": [189], "ఞ": [227]}, "ra": [231], "marks": {"ం": [43], "ః": [39]}, "punct": {"0": [48], "1": [49], "2": [50], "3": [51], "4": [52], "5": [53], "6": [54], "7": [55], "8": [56], "9": [57], ".": [46], ",": [44], "!": [33], "?": [63], ":": [58], ";": [209], "(": [40], ")": [41], "-": [96], "/": [47], "&": [202], "%": [37], "|": [246]}, "lig": {"శ్రీ": [108], "త్రీ": [231, 114], "ద్వి": [126, 199], "ద్వీ": [66, 199], "స్త్రీ": [129, 100, 211, 239], "స్త్రి": [129, 100, 190, 239]}};
+const VIR="\u0C4D", RAC="\u0C30";
+const CONS=new Set("\u0C15\u0C16\u0C17\u0C18\u0C19\u0C1A\u0C1B\u0C1C\u0C1D\u0C1E\u0C1F\u0C20\u0C21\u0C22\u0C23\u0C24\u0C25\u0C26\u0C27\u0C28\u0C2A\u0C2B\u0C2C\u0C2D\u0C2E\u0C2F\u0C30\u0C32\u0C33\u0C35\u0C36\u0C37\u0C38\u0C39".split(""));
+const VOW=new Set("\u0C3E\u0C3F\u0C40\u0C41\u0C42\u0C43\u0C46\u0C47\u0C48\u0C4A\u0C4B\u0C4C".split(""));
+const MARK=new Set(["\u0C02","\u0C03"]);
+
+/* ================= Telugu -> ANU ================= */
+function encode(t){
+  const r=[],gaps=new Set(); let i=0;
+  while(i<t.length){
+    let lig=null;
+    for(const k in D.lig) if(t.startsWith(k,i)&&(!lig||k.length>lig.length)) lig=k;
+    if(lig){ r.push(...D.lig[lig]); i+=lig.length; continue; }
+    const ch=t[i];
+    if(!CONS.has(ch)){
+      if(D.base[ch]){
+        r.push(...D.base[ch]); i++;
+        if(MARK.has(t[i])){ r.push(...D.marks[t[i]]); i++; }
+        continue;
+      }
+      if(MARK.has(ch)) r.push(...D.marks[ch]);
+      else if(D.punct[ch]) r.push(...D.punct[ch]);
+      else if(ch===" ") r.push(32);
+      else if(ch==="\n") r.push("\n");
+      else { r.push(ch); gaps.add(ch); }
+      i++; continue;
+    }
+    const base=ch,vat=[]; let vow="",mk="",vir=false; i++;
+    while(i+1<t.length&&t[i]===VIR&&CONS.has(t[i+1])){ vat.push(t[i+1]); i+=2; }
+    if(t[i]===VIR){ vir=true; i++; }
+    else if(VOW.has(t[i])){ vow=t[i]; i++; }
+    if(MARK.has(t[i])){ mk=t[i]; i++; }
+    const pre=[],suf=[];
+    for(const x of vat){
+      if(x===RAC) pre.push(...D.ra);
+      else if(D.vattu[x]) suf.push(...D.vattu[x]);
+      else gaps.add(base+VIR+x);
+    }
+    const k=base+(vir?VIR:vow);
+    if(D.base[k]) r.push(...pre,...D.base[k],...suf);
+    else { gaps.add(k); r.push(k); }
+    if(mk) r.push(...D.marks[mk]);
+  }
+  return {r,gaps:[...gaps]};
+}
+
+/* ================= ANU -> Telugu ================= */
+const REV=new Map(); let MAXLEN=1;
+function put(c,u){ const k=c.join(","); if(!REV.has(k)){ REV.set(k,u); if(c.length>MAXLEN) MAXLEN=c.length; } }
+for(const k in D.punct) put(D.punct[k],k);
+for(const k in D.base)  REV.set(D.base[k].join(","),k);
+for(const k in D.base)  MAXLEN=Math.max(MAXLEN,D.base[k].length);
+const LIG=new Map(); let LIGMAX=1;
+for(const k in D.lig){ LIG.set(D.lig[k].join(","),k); LIGMAX=Math.max(LIGMAX,D.lig[k].length); }
+const VAT=Object.entries(D.vattu).filter(([c,v])=>v.length)
+            .map(([c,v])=>[v,c]).sort((a,b)=>b[0].length-a[0].length);
+const MARKCODE={}; for(const m in D.marks) MARKCODE[D.marks[m].join(",")]=m;
+const at=(c,i,a)=>{ if(i+a.length>c.length) return false;
+  for(let j=0;j<a.length;j++) if(c[i+j]!==a[j]) return false; return true; };
+
+function decode(text){
+  const c=[];
+  for(const ch of text){
+    const v=ch.codePointAt(0);
+    if(v>=0xF000&&v<=0xF0FF) c.push(v-0xF000);
+    else if(v===10) c.push("\n");
+    else if(v<=255) c.push(v);
+    else c.push(ch);
+  }
+  const res=[],gaps=new Set(); let i=0;
+  while(i<c.length){
+    if(typeof c[i]!=="number"){ res.push({t:"c",v:c[i]}); i++; continue; }
+    if(c[i]===32){ res.push({t:"c",v:" "}); i++; continue; }
+    let lig=null;
+    for(let L=Math.min(LIGMAX,c.length-i);L>=1;L--){
+      const m=LIG.get(c.slice(i,i+L).join(",")); if(m){ lig=m; i+=L; break; } }
+    if(lig){ res.push({t:"c",v:lig}); continue; }
+    let ra=false;
+    if(at(c,i,D.ra)){ ra=true; i+=D.ra.length; }
+    let key=null;
+    for(let L=Math.min(MAXLEN,c.length-i);L>=1;L--){
+      const m=REV.get(c.slice(i,i+L).join(",")); if(m){ key=m; i+=L; break; } }
+    if(!key){ if(ra) i-=D.ra.length; gaps.add(c[i]); res.push({t:"m",v:c[i]}); i++; continue; }
+    const vat=[]; let more=true;
+    while(more){ more=false;
+      for(const [cv,cons] of VAT){ if(at(c,i,cv)){ vat.push(cons); i+=cv.length; more=true; break; } } }
+    let mk=""; const m2=MARKCODE[String(c[i])];
+    if(m2){ mk=m2; i++; }
+    const s=(key.length<=2&&(ra||vat.length))
+      ? key[0]+(ra?VIR+RAC:"")+vat.map(v=>VIR+v).join("")+key.slice(1)
+      : key;
+    res.push({t:"c",v:s+mk});
+  }
+  return {res,gaps:[...gaps]};
+}
+
+/* ================= UI ================= */
+let fwd=true;
+const $=id=>document.getElementById(id);
+const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+
+const TXT={
+  fwd:{title:"Telugu \u2192 ANU",
+    sub:"Paste Unicode Telugu. Copy. Drop straight into Photoshop with any ANU font.",
+    labIn:"Unicode Telugu <b>in</b>", labOut:"ANU text <b>out</b>",
+    ph:"type or paste Telugu", foot:"then paste in Photoshop and pick an ANU font",
+    gap:"Not in the table yet",
+    steps:"<b>How to use</b><ol><li>Paste your Telugu on the left.</li><li>Hit <b>Copy result</b>.</li>"+
+      "<li>In Photoshop make a text layer, paste, pick any ANU font.</li>"+
+      "<li>Text shows up straight away \u2014 no Word round trip.</li></ol>"},
+  rev:{title:"ANU \u2192 Telugu",
+    sub:"Paste old ANU text. Get real Unicode Telugu that works on Mac, phone, anywhere.",
+    labIn:"ANU text <b>in</b>", labOut:"Unicode Telugu <b>out</b>",
+    ph:"Paste ANU text here.\n\nIt will look like roman gibberish or boxes. That is normal \u2014 paste it anyway.",
+    foot:"works with any normal Telugu font", gap:"Could not read these",
+    steps:"<b>How to use</b><ol><li>Open your old ANU document and copy the text.</li>"+
+      "<li>Paste it on the left. Gibberish or boxes are expected.</li>"+
+      "<li>Real Telugu appears on the right.</li>"+
+      "<li>Copy it. No ANU font needed anywhere after this.</li></ol>"}
+};
+
+function applyMode(){
+  const T=fwd?TXT.fwd:TXT.rev;
+  document.documentElement.style.setProperty("--hue", fwd?"#c8102e":"#1d4ed8");
+  $("title").textContent=T.title; $("subtitle").textContent=T.sub;
+  $("labIn").innerHTML=T.labIn; $("labOut").innerHTML=T.labOut;
+  $("input").placeholder=T.ph; $("footnote").textContent=T.foot;
+  $("gapTitle").textContent=T.gap; $("steps").innerHTML=T.steps;
+  $("input").className = fwd?"tel":"anu";
+  $("output").className = "out " + (fwd?"anu":"tel");
+  $("ocr").classList.toggle("hide",!fwd);
+  $("fontbar").style.display = fwd ? "" : "none";
+  if(fwd) applyFont(); else $("output").classList.remove("preview");
+  $("dirFwd").classList.toggle("on",fwd); $("dirRev").classList.toggle("on",!fwd);
+  render();
+}
+
+function render(){
+  const src=$("input").value;
+  $("inc").textContent=src.length;
+  let html="",n=0,gaps=[];
+  if(fwd){
+    const o=encode(src); gaps=o.gaps;
+    for(const x of o.r){
+      if(typeof x==="number"){ html+=esc(String.fromCharCode(0xF000+x)); n++; }
+      else if(x==="\n") html+="\n";
+      else html+='<span class="m">'+esc(x)+'</span>';
+    }
+  } else {
+    const o=decode(src); gaps=o.gaps;
+    for(const p of o.res){
+      if(p.t==="m") html+='<span class="m">?'+p.v+'</span>';
+      else { html+=esc(p.v); n+=p.v.length; }
+    }
+  }
+  $("output").innerHTML=html;
+  $("outc").textContent=n;
+  // Latin letters can never be represented in an ANU font, so they are a different
+  // kind of "gap" from a Telugu syllable we simply have not mapped yet.
+  const latin = fwd ? gaps.filter(x=>/^[A-Za-z]$/.test(x)) : [];
+  const other = fwd ? gaps.filter(x=>!/^[A-Za-z]$/.test(x)) : gaps;
+  $("gaps").hidden = !gaps.length;
+  $("gapA").hidden = !other.length;
+  $("gapB").hidden = !latin.length;
+  if(other.length) $("gl").innerHTML=other.map(x=>
+    fwd?"<span>"+esc(String(x))+"</span>":'<span class="code">code '+x+"</span>").join("");
+  if(latin.length) $("glB").innerHTML=latin.map(x=>"<span>"+esc(x)+"</span>").join("");
+}
+
+function plain(){
+  if(fwd) return encode($("input").value).r
+    .map(x=>typeof x==="number"?String.fromCharCode(0xF000+x):x).join("");
+  return decode($("input").value).res.filter(p=>p.t==="c").map(p=>p.v).join("");
+}
+async function doCopy(btn,label){
+  const t=plain(); if(!t.trim()){ alert("Nothing to copy yet."); return; }
+  try{ await navigator.clipboard.writeText(t); btn.textContent="Copied";
+    setTimeout(()=>btn.textContent=label,1600);
+  }catch{ alert("Copy blocked. Select the right pane and copy manually."); }
+}
+
+$("dirFwd").addEventListener("click",()=>{ if(fwd) return; fwd=true;  $("input").value=""; applyMode(); });
+$("dirRev").addEventListener("click",()=>{ if(!fwd) return; fwd=false; $("input").value=""; applyMode(); });
+$("input").addEventListener("input",render);
+$("copy").addEventListener("click",()=>doCopy($("copy"),"Copy"));
+$("copy2").addEventListener("click",()=>doCopy($("copy2"),"Copy result"));
+$("clear").addEventListener("click",()=>{ $("input").value=""; render(); $("input").focus(); });
+$("sample").addEventListener("click",()=>{
+  if(fwd) $("input").value="\u0C36\u0C4D\u0C30\u0C40 \u0C32\u0C15\u0C4D\u0C37\u0C4D\u0C2E\u0C40 \u0C35\u0C47\u0C02\u0C15\u0C1F\u0C47\u0C36\u0C4D\u0C35\u0C30\n\u0C2C\u0C02\u0C27\u0C41\u0C2E\u0C3F\u0C24\u0C4D\u0C30\u0C41\u0C32 \u0C38\u0C4C\u0C2D\u0C3E\u0C17\u0C4D\u0C2F\u0C35\u0C24\u0C3F\n\u0C2E\u0C41\u0C39\u0C42\u0C30\u0C4D\u0C24\u0C02 \u0C36\u0C41\u0C2D\u0C32\u0C47\u0C16 \u0C06\u0C39\u0C4D\u0C35\u0C3E\u0C28\u0C02";
+  else $("input").value=[108,32,92,191,236,140,136,32,121,251,43,191,163,102,241,88,248,199,115,193,
+    32,139,43,60,243,138,84,36,84,231,212,225,84,92].map(c=>String.fromCharCode(0xF000+c)).join("");
+  render(); $("input").focus();
+});
+$("stat").innerHTML="table: <b>"+Object.keys(D.base).length+"</b> syllables \u00b7 <b>"+
+  VAT.length+"</b> vattulu \u00b7 <b>"+Object.keys(D.lig).length+"</b> ligatures";
+
+/* ================= OCR ================= */
+const OCR_API="https://afterfx-api.vercel.app/api/ocr", OCR_TOKEN="afx-desc-9k2m7x";
+let ocrBusy=false, tick=null;
+
+function shrink(file){
+  return new Promise((ok,no)=>{
+    const img=new Image();
+    img.onload=()=>{
+      const MAX=1600; let w=img.width,h2=img.height;
+      if(Math.max(w,h2)>MAX){ const s=MAX/Math.max(w,h2); w=Math.round(w*s); h2=Math.round(h2*s); }
+      const c=document.createElement("canvas"); c.width=w; c.height=h2;
+      c.getContext("2d").drawImage(img,0,0,w,h2);
+      ok(c.toDataURL("image/jpeg",0.9));
+    };
+    img.onerror=()=>no(new Error("could not read that image"));
+    img.src=URL.createObjectURL(file);
+  });
+}
+
+function say(html){ $("ocrstat").innerHTML=html; }
+function startTimer(){
+  let s=0;
+  tick=setInterval(()=>{ s++;
+    say('<span class="spin"></span><span class="live">reading the card\u2026 '+s+'s</span>'
+        +'<br>this takes about 15\u201325 seconds');
+  },1000);
+  say('<span class="spin"></span><span class="live">reading the card\u2026 0s</span>'
+      +'<br>this takes about 15\u201325 seconds');
+}
+function stopTimer(){ if(tick){ clearInterval(tick); tick=null; } }
+
+async function runOCR(file){
+  if(!file||ocrBusy) return;
+  if(!fwd){ fwd=true; applyMode(); }          // OCR gives Telugu, so switch to Telugu -> ANU
+  ocrBusy=true;
+  try{
+    say('<span class="spin"></span>resizing\u2026');
+    const durl=await shrink(file);
+    const m=/^data:([^;]+);base64,(.*)$/s.exec(durl);
+    $("thumb").src=durl; $("thumbwrap").classList.add("on");
+    startTimer();
+    const r=await fetch(OCR_API,{method:"POST",
+      headers:{"Content-Type":"application/json","X-Afx-Token":OCR_TOKEN},
+      body:JSON.stringify({image:m[2],mimeType:m[1]})});
+    stopTimer();
+    const j=await r.json();
+    if(r.ok&&j.ok){
+      if(!j.text){ say('<span class="bad">no text found on that image</span>'); }
+      else{
+        $("input").value=j.text; render();
+        say((j.lines||0)+" lines read \u00b7 check the names and numbers<br>then copy the ANU on the right");
+      }
+    } else {
+      say('<span class="bad">'+(j.error||("HTTP "+r.status))+"</span>");
+    }
+  }catch(e){
+    stopTimer();
+    say('<span class="bad">'+e.message+"</span><br>network problem \u2014 text conversion still works offline");
+  }
+  ocrBusy=false;
+}
+
+$("drop").addEventListener("click",()=>$("file").click());
+$("file").addEventListener("change",e=>{ runOCR(e.target.files[0]); e.target.value=""; });
+["dragenter","dragover"].forEach(ev=>$("drop").addEventListener(ev,e=>{
+  e.preventDefault(); $("drop").classList.add("over"); }));
+["dragleave","drop"].forEach(ev=>$("drop").addEventListener(ev,e=>{
+  e.preventDefault(); $("drop").classList.remove("over"); }));
+$("drop").addEventListener("drop",e=>{ e.preventDefault(); runOCR(e.dataTransfer.files[0]); });
+window.addEventListener("paste",e=>{
+  for(const it of (e.clipboardData||{}).items||[])
+    if(it.type.startsWith("image/")){ e.preventDefault(); runOCR(it.getAsFile()); return; }
+});
+
+
+/* ============ ANU preview font ============ */
+const SEEN=["Vasantha","Kalaanjali","Dharani","Reshma"];
+
+// A symbol font carries glyphs at U+F0xx; a normal font has none there and falls back,
+// measuring identically to the generic fallback. That width gap is how we spot ANU fonts
+// among the couple of thousand installed on a working machine.
+const probe="\uF0BF\uF0A3\uF0B1\uF0C5\uF0EC";
+const ctx=document.createElement("canvas").getContext("2d");
+function isSymbolFont(name){
+  ctx.font="40px monospace"; const base=ctx.measureText(probe).width;
+  ctx.font='40px "'+name+'", monospace';
+  return ctx.measureText(probe).width !== base;
+}
+
+function fillFonts(names,keep){
+  const sel=$("fontname");
+  sel.innerHTML='<option value="">raw codes (no preview)</option>'
+    + names.map(n=>'<option value="'+n.replace(/"/g,"&quot;")+'">'+n+"</option>").join("");
+  if(keep && names.includes(keep)) sel.value=keep;
+}
+fillFonts(SEEN.filter(isSymbolFont).length ? SEEN.filter(isSymbolFont) : SEEN);
+
+function applyFont(){
+  const n=$("fontname").value;
+  const out=$("output");
+  if(!n){ out.classList.remove("preview"); $("fontwarn").textContent=""; return; }
+  document.documentElement.style.setProperty("--anu",'"'+n+'"');
+  out.classList.add("preview");
+  $("fontwarn").textContent = isSymbolFont(n) ? "" : "no ANU glyphs in this font";
+}
+$("fontname").addEventListener("change",applyFont);
+
+$("loadfonts").addEventListener("click",async()=>{
+  if(!window.queryLocalFonts){
+    $("fontwarn").textContent="this browser cannot list fonts";
+    return;
+  }
+  try{
+    const fonts=await window.queryLocalFonts();
+    const all=[...new Set(fonts.map(f=>f.family))];
+    const anu=all.filter(isSymbolFont).sort();      // 2000+ installed, only the ANU ones matter
+    if(!anu.length){
+      $("fontwarn").textContent="no ANU fonts found among "+all.length;
+      return;
+    }
+    fillFonts(anu,$("fontname").value);
+    if(!$("fontname").value){ $("fontname").value=anu.find(n=>SEEN.includes(n))||anu[0]; }
+    applyFont();
+    $("fontwarn").textContent=anu.length+" ANU fonts of "+all.length;
+  }catch{
+    $("fontwarn").textContent="permission denied";
+  }
+});
+
+/* ============ clear the photo ============ */
+$("xthumb").addEventListener("click",()=>{
+  stopTimer();
+  $("thumbwrap").classList.remove("on");
+  $("thumb").removeAttribute("src");
+  $("input").value=""; render();
+  say("reads Telugu off a photo");
+  $("input").focus();
+});
+
+applyMode();
+</script>
+</body></html>
