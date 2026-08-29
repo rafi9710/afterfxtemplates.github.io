@@ -36,11 +36,13 @@ main{padding:18px 20px 40px;max-width:1400px;margin:0 auto}
 display:flex;justify-content:space-between}
 .plabel b{color:var(--ink)}
 textarea,.out{border:0;padding:14px;min-height:290px;width:100%;background:var(--card);color:var(--ink)}
+textarea{max-height:62vh}
 textarea:focus{outline:none}
 textarea.tel,.out.tel{font-family:var(--tel);font-size:22px;line-height:1.9}
 textarea.anu,.out.anu{font:15px/1.8 var(--mono)}
 textarea{resize:vertical}
-.out{white-space:pre-wrap;word-break:break-word;-webkit-user-select:text;user-select:text;cursor:text}
+.out{white-space:pre-wrap;word-break:break-word;-webkit-user-select:text;user-select:text;cursor:text;
+max-height:62vh;overflow:auto}
 .out.anu{word-break:break-all}
 .out .m{background:#fef3c7;border-bottom:2px solid var(--miss);font-family:var(--mono);
 font-size:13px;padding:0 3px;border-radius:2px}
@@ -517,16 +519,17 @@ function resetWord(){
 
 // Replace the region the current word occupies, and remember its new length.
 // NOT named put() — the reverse index already owns that name.
-function writeWord(text){
+function writeWord(text,doRender){
   const ta=$("input");
   ta.setRangeText(text,anchor,anchor+lastLen,"end");
   lastLen=text.length;
-  render();
+  $("inc").textContent=ta.value.length;
+  if(doRender!==false) render();
 }
 
 // The raw English stays visible while typing, exactly like a normal IME.
 // Telugu only lands when a suggestion is taken.
-function paint(){ writeWord(pend); }
+function paint(){ writeWord(pend,false); }   // skip the convert until the word is settled
 
 /* ---- put the dropdown under the caret, via a mirror of the textarea ---- */
 function placeSugg(){
