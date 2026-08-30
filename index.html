@@ -131,6 +131,29 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:60px;display:flex;ali
 .navdd:hover .navdd-menu,.navdd.open .navdd-menu{display:block;}
 .navdd-menu .nl{display:block;padding:11px 14px;border-radius:5px;letter-spacing:1px;transition:background .18s,color .18s;}
 .navdd-menu .nl:hover{background:var(--gold-dim);color:var(--gold);}
+/* Telugu tool: a filled pill so it reads as an offer, not another menu item */
+.nl-tool{display:inline-flex;align-items:center;gap:7px;background:linear-gradient(135deg,var(--gold-l),var(--gold));
+color:#12100A!important;border-radius:7px;padding:6px 13px;font-weight:600;letter-spacing:1.2px;
+box-shadow:0 2px 12px rgba(201,168,76,.28);transition:transform .18s,box-shadow .18s;}
+.nl-tool:hover{transform:translateY(-1px);box-shadow:0 4px 18px rgba(201,168,76,.45);color:#12100A!important;}
+.nl-tool .tg{background:rgba(18,16,10,.82);color:var(--gold-l);font-size:9px;letter-spacing:1px;
+padding:2px 6px;border-radius:4px;font-weight:700;}
+/* announcement strip under the hero */
+.toolbar-strip{max-width:1180px;margin:0 auto 66px;padding:0 22px;}
+.toolbar-in{display:flex;align-items:center;gap:18px;flex-wrap:wrap;background:var(--bg2);
+border:1px solid var(--gb);border-left:3px solid var(--gold);border-radius:9px;padding:18px 24px;}
+.toolbar-in .eyebrow{font-size:10px;letter-spacing:2.4px;text-transform:uppercase;color:var(--gold);font-weight:600;}
+.toolbar-in h4{margin:5px 0 0;font-size:19px;color:var(--tx);font-weight:600;}
+.toolbar-in p{margin:5px 0 0;font-size:13.5px;color:var(--mt);max-width:62ch;line-height:1.65;}
+.toolbar-in .go{margin-left:auto;background:linear-gradient(135deg,var(--gold-l),var(--gold));
+color:#12100A;border-radius:7px;padding:13px 26px;font-size:13px;font-weight:600;letter-spacing:1.4px;
+text-transform:uppercase;white-space:nowrap;transition:transform .18s,box-shadow .18s;}
+.toolbar-in .go:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(201,168,76,.4);color:#12100A;}
+@media(max-width:760px){
+  .toolbar-in{padding:16px 18px;gap:12px}
+  .toolbar-in .go{margin-left:0;width:100%;text-align:center}
+  .toolbar-strip{margin-bottom:46px}
+}
 .cart-btn{display:flex;align-items:center;gap:8px;background:var(--gold);color:#000;border:none;padding:7px 16px;border-radius:3px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:background .2s;}
 .cart-btn:hover{background:var(--gold-l);}
 .cnum{background:#000;color:var(--gold);border-radius:50%;width:17px;height:17px;font-size:10px;display:flex;align-items:center;justify-content:center;font-weight:800;}
@@ -649,6 +672,7 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
     <a class="nl" href="#benefits">Why Us</a>
     <a class="nl" href="about.html">About</a>
     <a class="nl" href="#contact">Contact</a>
+    <a class="nl nl-tool" href="anu-converter.html">✦ Telugu Tool <span class="tg">FREE</span></a>
     <a class="nl" href="myorders.html" style="border:1px solid var(--gb);border-radius:7px;padding:5px 11px;color:var(--gold);">My Orders</a>
   </div>
   <div class="nav-actions">
@@ -676,6 +700,20 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
     <div class="hs"><div class="n">100+</div><div class="l">Templates</div></div>
     <div class="hs"><div class="n">Telugu</div><div class="l">+ English</div></div>
     <div class="hs"><div class="n">₹300</div><div class="l">Starting</div></div>
+  </div>
+</div>
+
+<!-- FREE TELUGU TOOL -->
+<div class="toolbar-strip">
+  <div class="toolbar-in">
+    <div>
+      <div class="eyebrow">✦ Free Tool ✦</div>
+      <h4>Telugu &harr; ANU Converter</h4>
+      <p>Paste Telugu and get ANU text you can drop straight into Photoshop or After Effects.
+      Type in English and get Telugu. Or drop a photo of an invitation card and it reads the
+      text for you. No sign-up, nothing to install.</p>
+    </div>
+    <a href="anu-converter.html" class="go">Open the tool</a>
   </div>
 </div>
 
