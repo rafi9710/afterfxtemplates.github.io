@@ -865,6 +865,10 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
     <div class="st" style="color:var(--tx)">Bundle Packages</div>
     <div class="ss">Horizontal & Vertical both included · Instant delivery to your email</div>
     <div class="pgrid" id="pgrid"></div>
+    <div style="text-align:center;margin-top:18px;font-size:13.5px;color:var(--tx2,#9a9aa8);line-height:1.7;">
+      Buying more than 20? The ₹150 per-template rate keeps running all the way to <b style="color:var(--gold)">30 templates</b>.<br>
+      Need more than 30? <a href="https://wa.me/918971738710?text=Hi%20AfterFX%20Templates!%20I%20want%20to%20order%20more%20than%2030%20templates%20(bulk%20deal).%20Please%20guide%20me%20on%20pricing.%20Thank%20you!" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(201,168,76,.35);">Message us on WhatsApp</a>
+    </div>
     <div style="text-align:center;margin-top:24px;">
       <a href="/bundle.html" style="display:inline-block;color:var(--gold);text-decoration:none;font-size:13.5px;font-weight:600;letter-spacing:.03em;border-bottom:1px solid rgba(201,168,76,.35);padding-bottom:3px;">
         Need a different quantity? Calculate your price &rarr;
@@ -1737,9 +1741,9 @@ function saveCart(){localStorage.setItem('afx_c',JSON.stringify(cart));}
 function updateCount(){document.getElementById('cnum').textContent=cart.reduce((s,c)=>s+c.qty,0);}
 
 /* ===== BULK PRICING ===== */
-const MAX_CART=20;                 // max templates a customer can self-checkout
+const MAX_CART=30;                 // max templates a customer can self-checkout
 const STD_PRICE=300;               // standard per-template price
-// per-unit rate by total standard-template quantity (5=₹1000, 10=₹1750, 20=₹3000)
+// per-unit rate by total standard-template quantity (5=₹1000, 10=₹1750, 20+=₹150 each)
 function tierRate(q){
   if(q>=20) return 150;
   if(q>=10) return 175;
@@ -1891,8 +1895,8 @@ function addCart(id,title,thumb,price,url){
 }
 
 function bigOrderNotice(){
-  showToast('Max 20 per order — contact us for bigger bundles');
-  const msg=`Hi AfterFX Templates! I want to order more than 20 templates (bulk deal). Please guide me on pricing. Thank you!`;
+  showToast('Max 30 per order — contact us for bigger bundles');
+  const msg=`Hi AfterFX Templates! I want to order more than 30 templates (bulk deal). Please guide me on pricing. Thank you!`;
   window.open(`https://wa.me/918971738710?text=${encodeURIComponent(msg)}`,'_blank');
 }
 
