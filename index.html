@@ -866,8 +866,7 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
     <div class="ss">Horizontal & Vertical both included · Instant delivery to your email</div>
     <div class="pgrid" id="pgrid"></div>
     <div style="text-align:center;margin-top:18px;font-size:13.5px;color:var(--tx2,#9a9aa8);line-height:1.7;">
-      Buying more than 20? The ₹150 per-template rate keeps running all the way to <b style="color:var(--gold)">30 templates</b>.<br>
-      Need more than 30? <a href="https://wa.me/918971738710?text=Hi%20AfterFX%20Templates!%20I%20want%20to%20order%20more%20than%2030%20templates%20(bulk%20deal).%20Please%20guide%20me%20on%20pricing.%20Thank%20you!" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(201,168,76,.35);">Message us on WhatsApp</a>
+      Need more than 30 templates? <a href="https://wa.me/918971738710?text=Hi%20AfterFX%20Templates!%20I%20want%20to%20order%20more%20than%2030%20templates%20(bulk%20deal).%20Please%20guide%20me%20on%20pricing.%20Thank%20you!" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(201,168,76,.35);">Message us on WhatsApp</a> for a custom bulk price.
     </div>
     <div style="text-align:center;margin-top:24px;">
       <a href="/bundle.html" style="display:inline-block;color:var(--gold);text-decoration:none;font-size:13.5px;font-weight:600;letter-spacing:.03em;border-bottom:1px solid rgba(201,168,76,.35);padding-bottom:3px;">
@@ -1237,7 +1236,8 @@ const PRICING = [
   {qty:1,price:300,off:'',best:false},
   {qty:5,price:1000,off:'33% OFF',best:false},
   {qty:10,price:1750,off:'42% OFF',best:false},
-  {qty:20,price:3000,off:'50% OFF 🔥',best:true},
+  {qty:20,price:3000,off:'50% OFF',best:false},
+  {qty:30,price:4500,off:'50% OFF 🔥',best:true},
 ];
 
 let videos=[], filter='all', orient='all', search='', cart=JSON.parse(localStorage.getItem('afx_c')||'[]'), tcAccepted=false;
@@ -2371,7 +2371,7 @@ function fireConfetti(){ afxConfetti(document.getElementById('okCfx')); }
    ========================================================================== */
 const BUNDLE_TIERS   = PRICING.filter(p => p.qty > 1);   // 5, 10, 20
 const BUNDLE_WINDOW  = 3;      // only nudge when this close (or closer) to the next tier
-const BUNDLE_EMOJI   = {5:'🎉', 10:'🔥', 20:'⭐'};
+const BUNDLE_EMOJI   = {5:'🎉', 10:'🔥', 20:'⭐', 30:'👑'};
 let bundleDismissed  = sessionStorage.getItem('afx_bundle_dismissed') || '';  // tier the user closed
 let bundleLastTier   = 0;      // highest tier already celebrated this session
 let bcTimer          = null;
