@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>English Names to Telugu for Invitation Cards | AfterFX Templates</title>
+<meta name="description" content="Paste the details your client sent in English and get them in Telugu for the card. Names are transliterated by sound, never translated, and you pick the right spelling for each one.">
+<link rel="canonical" href="https://afterfxtemplates.com/english-to-telugu.html">
+<meta property="og:title" content="English Names to Telugu for Invitation Cards">
+<meta property="og:description" content="Client details in English, Telugu for the card. Sound is kept, meaning is not translated, and every spelling is yours to choose.">
+<meta property="og:url" content="https://afterfxtemplates.com/english-to-telugu.html">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;500;600&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-EH9THNF49G"></script>
+<script>
+window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}
+gtag('js',new Date());gtag('config','G-EH9THNF49G');
+</script>
+<style>
+:root{
+  --ink:#191310; --paper:#f6f1e8; --card:#fffdf8; --rule:#e5dccb; --hair:#efe7d8;
+  --dim:#7d7263; --gold:#a8791d; --gold-lt:#d9b45a; --gold-pale:#f0e2bd;
+  --maroon:#8c1c2f; --done:#1c6349; --miss:#96660f;
+  --ui:'Archivo',system-ui,-apple-system,sans-serif;
+  --tel:'Noto Sans Telugu',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.6 var(--ui);padding:18px}
+.wrap{max-width:900px;margin:0 auto}
+
+h1{margin:0 0 3px;font:600 13px/1.3 var(--ui);letter-spacing:.16em;text-transform:uppercase}
+h1::before{content:"";display:inline-block;width:3px;height:13px;margin-right:9px;vertical-align:-1px;
+  background:linear-gradient(var(--gold-lt),var(--gold))}
+.sub{margin:0 0 16px;font-size:13px;color:var(--dim)}
+
+.card{background:var(--card);border:1px solid var(--rule);border-radius:2px;padding:14px 16px;margin-bottom:14px}
+label{display:block;font:12.5px var(--ui);color:var(--dim);margin-bottom:6px}
+textarea{width:100%;min-height:130px;padding:11px 12px;font:15px/1.7 var(--ui);color:var(--ink);
+  background:#fff;border:1px solid var(--rule);border-radius:2px;outline:none;resize:vertical}
+textarea:focus{border-color:var(--gold-lt)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:11px}
+button{font:500 13px var(--ui);padding:9px 14px;background:#fff;color:var(--ink);
+  border:1px solid var(--rule);border-radius:2px;cursor:pointer}
+button:hover{border-color:var(--gold-lt);background:#fffdf6}
+button.primary{background:var(--gold);color:#fff;border-color:var(--gold);font-weight:600}
+button.primary:hover{filter:brightness(1.07)}
+button:disabled{opacity:.5;cursor:default}
+.stat{font-size:12.5px;color:var(--dim);margin-left:auto}
+.stat b{color:var(--gold)}
+
+h2{margin:0 0 10px;font:600 12px var(--ui);letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+#outWrap{display:none}
+#outWrap.on{display:block}
+.line{margin:0 0 6px;line-height:2.6}
+.chip{display:inline-block;padding:3px 9px 4px;margin:0 3px 3px 0;background:#fff;
+  border:1px solid var(--rule);border-radius:2px;cursor:pointer;text-align:center;vertical-align:middle;
+  font-family:var(--tel);font-size:19px;line-height:1.35;color:var(--ink)}
+.chip:hover{border-color:var(--gold-lt)}
+.chip.sel{border-color:var(--gold);background:#fffdf3}
+.chip .en{display:block;font:400 10.5px var(--ui);color:var(--dim);letter-spacing:.03em}
+.chip.multi{border-bottom:2px solid var(--gold-lt)}
+.chip.keep{font-family:var(--ui);font-size:15px;color:var(--miss)}
+.chip.wait{opacity:.5}
+.chip.check{border-bottom:2px dashed var(--miss)}
+.chip.saved{border-color:var(--done);background:#f4fbf7}
+.chip.fail{border-color:#e0c3c3;color:var(--maroon)}
+.plain{font-family:var(--tel);font-size:19px}
+
+#pop{position:absolute;z-index:50;display:none;background:#fff;border:1px solid var(--rule);
+  border-radius:2px;box-shadow:0 6px 26px rgba(25,19,16,.14);padding:8px;min-width:190px;max-width:280px}
+#pop.on{display:block}
+#pop .ph{font:11.5px var(--ui);color:var(--dim);margin:0 2px 7px;letter-spacing:.05em}
+#pop .opt{display:block;width:100%;text-align:left;font-family:var(--tel);font-size:18px;
+  padding:6px 9px;margin-bottom:3px;background:#fff;border:1px solid transparent;border-radius:2px}
+#pop .opt:hover{background:var(--gold-pale);border-color:var(--gold-lt)}
+#pop .opt.on{border-color:var(--gold);background:#fffdf3}
+#pop .opt.eng{font-family:var(--ui);font-size:14px;color:var(--miss)}
+#pop .own{display:flex;gap:6px;margin-top:7px;border-top:1px solid var(--hair);padding-top:8px}
+#pop .own input{flex:1;min-width:0;padding:6px 8px;font-family:var(--tel);font-size:16px;
+  border:1px solid var(--rule);border-radius:2px;outline:none}
+#pop .own button{padding:6px 10px;font-size:12px}
+
+.result{white-space:pre-wrap;font-family:var(--tel);font-size:21px;line-height:1.9;color:var(--ink);
+  background:#fff;border:1px solid var(--rule);border-radius:2px;padding:12px 14px;min-height:60px}
+.note{font-size:12.5px;line-height:1.6;color:var(--dim);background:#fffdf3;
+  border-left:3px solid var(--gold-lt);padding:9px 12px;margin-top:12px}
+.note b{color:var(--ink)}
+.note.warn{border-left-color:var(--maroon);background:#fff4f4;color:var(--maroon)}
+.note.warn b{color:var(--maroon)}
+.dictbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:12.5px;color:var(--done);
+  background:#f4fbf7;border:1px solid #cfe6da;border-radius:2px;padding:8px 12px;margin-bottom:14px}
+.dictbar b{font-weight:600}
+.dictbar button{margin-left:auto;padding:5px 10px;font-size:12px}
+.brand{display:inline-block;margin-bottom:10px;font:600 11.5px var(--ui);letter-spacing:.16em;
+  text-transform:uppercase;color:var(--gold);text-decoration:none}
+.brand:hover{text-decoration:underline}
+.btnlink{font:500 13px var(--ui);color:var(--gold);text-decoration:none;padding:9px 4px}
+.btnlink:hover{text-decoration:underline}
+footer{margin:26px 0 10px;padding-top:16px;border-top:1px solid var(--rule);
+  font:12.5px/1.7 var(--ui);color:var(--dim)}
+footer div{margin-bottom:6px}
+footer b{color:var(--ink)}
+footer a{color:var(--gold)}
+@media(max-width:600px){body{padding:12px}.chip{font-size:18px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="brand" href="https://afterfxtemplates.com">AfterFX Templates</a>
+  <h1>English details &rarr; Telugu</h1>
+  <p class="sub">Sound stays the same, meaning is not translated. Every word can be changed.</p>
+
+  <div class="card">
+    <label for="src">Paste what the client sent</label>
+    <textarea id="src" spellcheck="false" placeholder="Venue: Sri Satya Sai Kalyana mandapam&#10;Dupakuntla Nagendra Rao&#10;Nulu Srimannarayana"></textarea>
+    <div class="row">
+      <button class="primary" id="go">Convert to Telugu</button>
+      <button id="clr">Clear</button>
+      <span class="stat" id="stat"></span>
+    </div>
+  </div>
+
+  <div class="note warn" id="netwarn" hidden></div>
+
+  <div class="dictbar" id="dictbar" hidden>
+    <span><b id="dictn">0</b> spellings remembered &mdash; they are reused automatically next time</span>
+    <button id="dictclear">Forget all</button>
+  </div>
+
+  <div id="outWrap">
+    <div class="card">
+      <h2>Pick the right spelling</h2>
+      <div id="out"></div>
+      <div class="note"><b>An amber dashed underline</b> means the two readings disagreed &mdash; check those first.
+        <b>Green</b> means you already chose that spelling before and it was reused.
+        <b>A gold underline</b> means Google offered other spellings &mdash; tap that word to see them.
+        Names are where this matters: Meghana can be &#3118;&#3143;&#3328;&#3149;&#3128;&#3122; or &#3118;&#3143;&#3328;&#3149;&#3128;&#3122;&#3134;, and only the family knows which.</div>
+    </div>
+
+    <div class="card">
+      <h2>Final text</h2>
+      <div class="result" id="res"></div>
+      <div class="row">
+        <button class="primary" id="copy">Copy Telugu</button>
+        <a class="btnlink" href="/anu-converter.html">Now convert it to ANU &rarr;</a>
+        <span class="stat" id="cstat"></span>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div><b>Nothing is stored on this site.</b> Words are sent to Google's transliteration service to be read;
+      the spellings you choose are kept in this browser only.</div>
+    <div><b>Sound, not meaning.</b> "lane" becomes &#3122;&#3143;&#3112;&#3149;, not &#3125;&#3136;&#3110;&#3135;. Names are never translated.</div>
+    <div>Also here: <a href="/anu-converter.html">Telugu &harr; ANU converter</a> &middot;
+      <a href="/anu-font-problem.html">Telugu shows box-box in Photoshop?</a></div>
+    <div>&copy; 2026 <b>AfterFX Templates</b> &middot; <a href="https://afterfxtemplates.com">afterfxtemplates.com</a></div>
+  </footer>
+</div>
+
+<div id="pop"></div>
+
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+
+  /* cs=0 matters: with cs=1 Google "corrects" toward real Telugu words, so a bare
+     "to" comes back as \u0c24\u0c4b (meaning "with") instead of the sound \u0c1f\u0c41. */
+  var API = "https://inputtools.google.com/request?itc=te-t-i0-und&cp=0&cs=0&ie=utf-8&oe=utf-8&num=";
+  var DICT = "afxTeluguWords";
+
+  var toks = [], opts = {}, dict = {}, auto = {}, alts = {};
+  try { dict = JSON.parse(localStorage.getItem(DICT) || "{}") || {}; } catch (e) { dict = {}; }
+  function saveDict() { try { localStorage.setItem(DICT, JSON.stringify(dict)); } catch (e) {} }
+  var key = function (w) { return w.toLowerCase(); };
+  var fired = {};
+  function track(name, params) {
+    try { if (window.gtag) gtag("event", name, params || {}); } catch (e) {}
+  }
+  function trackOnce(name, params) {
+    if (fired[name]) return;
+    fired[name] = 1;
+    track(name, params);
+  }
+
+  function call(text, num) {
+    return fetch(API + num + "&text=" + encodeURIComponent(text)).then(function (r) {
+      return r.json();
+    }).then(function (j) {
+      if (j && j[0] === "SUCCESS" && j[1] && j[1][0] && Array.isArray(j[1][0][1])) return j[1][0][1];
+      return [];
+    });
+  }
+
+  /* A whole line goes in one request. Context keeps it phonetic: asked on its own,
+     "to" comes back as a real word; inside a sentence it does not. */
+  function lookupLine(words) {
+    return call(words.join(" "), 1).then(function (list) {
+      if (!list.length) return null;
+      var parts = String(list[0]).trim().split(/\s+/);
+      return parts.length === words.length ? parts : null;
+    });
+  }
+  function lookupWord(w) {
+    var k = key(w);
+    if (opts[k]) return Promise.resolve(opts[k]);
+    return call(w, 6).then(function (list) {
+      list = (list || []).filter(function (x) { return x && x !== w; });
+      opts[k] = list;
+      return list;
+    });
+  }
+
+  function tokenize(s) {
+    var out = [], re = /[A-Za-z][A-Za-z']*/g, last = 0, m;
+    while ((m = re.exec(s))) {
+      if (m.index > last) out.push({ t: "x", raw: s.slice(last, m.index) });
+      out.push({ t: "w", raw: m[0], line: null, pick: m[0], state: "wait" });
+      last = m.index + m[0].length;
+    }
+    if (last < s.length) out.push({ t: "x", raw: s.slice(last) });
+    return out;
+  }
+
+  /* One English word must read the same everywhere in the card, so the choice is
+     stored per word, not per position. Saved choices outlive the page. */
+  function choose(word, val, remember) {
+    var k = key(word);
+    if (remember) { dict[k] = val; saveDict(); }
+    toks.forEach(function (t) { if (t.t === "w" && key(t.raw) === k) t.pick = val; });
+  }
+  /* Each line is a separate request, so the same name can come back two ways
+     ("Nulu" once per line). Settle it ONCE per word — the reading that occurs most
+     across the card wins — instead of letting each line keep its own answer. */
+  function computeAuto() {
+    var tally = {};
+    alts = {};
+    toks.forEach(function (t) {
+      if (t.t !== "w" || !t.line) return;
+      var k = key(t.raw);
+      tally[k] = tally[k] || {};
+      tally[k][t.line] = (tally[k][t.line] || 0) + 1;
+      alts[k] = alts[k] || [];
+      if (alts[k].indexOf(t.line) < 0) alts[k].push(t.line);
+    });
+    auto = {};
+    Object.keys(tally).forEach(function (k) {
+      var win = null, n = -1;
+      Object.keys(tally[k]).forEach(function (v) { if (tally[k][v] > n) { n = tally[k][v]; win = v; } });
+      auto[k] = win;
+    });
+  }
+  function best(t) {
+    var k = key(t.raw);
+    if (dict[k]) return dict[k];
+    if (auto[k]) return auto[k];
+    if (opts[k] && opts[k].length) return opts[k][0];
+    return t.raw;
+  }
+  function refresh() {
+    computeAuto();
+    toks.forEach(function (t) { if (t.t === "w") t.pick = best(t); });
+  }
+
+  /* ---------- rendering ---------- */
+  function render() {
+    var box = $("out");
+    box.innerHTML = "";
+    var line = document.createElement("div");
+    line.className = "line";
+    box.appendChild(line);
+
+    toks.forEach(function (tk, i) {
+      if (tk.t === "x") {
+        tk.raw.split("\n").forEach(function (p, n) {
+          if (n) { line = document.createElement("div"); line.className = "line"; box.appendChild(line); }
+          if (p) {
+            var sp = document.createElement("span");
+            sp.className = "plain";
+            sp.textContent = p;
+            line.appendChild(sp);
+          }
+        });
+        return;
+      }
+      var k = key(tk.raw), o = opts[k] || [];
+      var disagree = !dict[k] && o.length &&
+        ((auto[k] && auto[k] !== o[0]) || (alts[k] && alts[k].length > 1));
+
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "chip" +
+        (tk.state === "wait" ? " wait" : "") +
+        (tk.state === "fail" ? " fail" : "") +
+        (tk.pick === tk.raw ? " keep" : "") +
+        (dict[k] ? " saved" : (disagree ? " check" : (o.length > 1 ? " multi" : "")));
+      b.appendChild(document.createTextNode(tk.pick));
+      var en = document.createElement("span");
+      en.className = "en";
+      en.textContent = tk.raw;
+      b.appendChild(en);
+      b.addEventListener("click", function (ev) { openPop(ev, i, b); });
+      line.appendChild(b);
+      line.appendChild(document.createTextNode(" "));
+    });
+
+    $("res").textContent = toks.map(function (t) { return t.t === "w" ? t.pick : t.raw; }).join("");
+    var words = toks.filter(function (t) { return t.t === "w"; });
+    var done = words.filter(function (t) { return t.pick !== t.raw; }).length;
+    var chk = words.filter(function (t) {
+      var k = key(t.raw), o = opts[k] || [];
+      return !dict[k] && o.length &&
+        ((auto[k] && auto[k] !== o[0]) || (alts[k] && alts[k].length > 1));
+    }).length;
+    $("stat").innerHTML = "<b>" + done + "</b> of " + words.length + " in Telugu" +
+      (chk ? " \u00b7 <b>" + chk + "</b> to check" : "");
+    var n = Object.keys(dict).length;
+    $("dictbar").hidden = !n;
+    $("dictn").textContent = n;
+  }
+
+  /* ---------- the picker ---------- */
+  function openPop(ev, i, chip) {
+    ev.stopPropagation();
+    var tk = toks[i], pop = $("pop"), k = key(tk.raw);
+    pop.innerHTML = "";
+    pop.dataset.i = String(i);
+
+    var h = document.createElement("div");
+    h.className = "ph";
+    h.textContent = tk.raw + (dict[k] ? " \u00b7 saved" : "");
+    pop.appendChild(h);
+
+    var seen = {}, choices = [];
+    [dict[k], auto[k]].concat(alts[k] || []).concat(opts[k] || []).forEach(function (c) {
+      if (c && !seen[c]) { seen[c] = 1; choices.push(c); }
+    });
+
+    if (!opts[k]) {
+      var wait = document.createElement("div");
+      wait.className = "ph";
+      wait.textContent = "looking for other spellings\u2026";
+      pop.appendChild(wait);
+      lookupWord(tk.raw).then(function () {
+        if (pop.classList.contains("on") && pop.dataset.i === String(i)) openPop(ev, i, chip);
+      }).catch(function () {});
+    }
+
+    choices.forEach(function (c) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "opt" + (c === tk.pick ? " on" : "");
+      b.textContent = c;
+      b.addEventListener("click", function () {
+        track("e2t_pick", { source: "list" });
+        choose(tk.raw, c, true); closePop(); render();
+      });
+      pop.appendChild(b);
+    });
+
+    var keep = document.createElement("button");
+    keep.type = "button";
+    keep.className = "opt eng" + (tk.pick === tk.raw ? " on" : "");
+    keep.textContent = "keep \u201c" + tk.raw + "\u201d in English";
+    keep.addEventListener("click", function () { choose(tk.raw, tk.raw, true); closePop(); render(); });
+    pop.appendChild(keep);
+
+    var own = document.createElement("div");
+    own.className = "own";
+    var inp = document.createElement("input");
+    inp.placeholder = "type your own";
+    inp.value = tk.pick === tk.raw ? "" : tk.pick;
+    var set = document.createElement("button");
+    set.type = "button";
+    set.textContent = "Use";
+    function useOwn() {
+      var v = inp.value.trim();
+      if (v) { track("e2t_pick", { source: "typed" }); choose(tk.raw, v, true); }
+      closePop(); render();
+    }
+    set.addEventListener("click", useOwn);
+    inp.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); useOwn(); } });
+    own.appendChild(inp); own.appendChild(set);
+    pop.appendChild(own);
+
+    var r = chip.getBoundingClientRect();
+    pop.classList.add("on");
+    pop.style.top = (r.bottom + window.scrollY + 6) + "px";
+    var left = Math.min(r.left + window.scrollX,
+      window.scrollX + document.documentElement.clientWidth - pop.offsetWidth - 12);
+    pop.style.left = Math.max(8, left) + "px";
+    setTimeout(function () { inp.focus(); }, 0);
+  }
+  function closePop() { $("pop").classList.remove("on"); }
+  document.addEventListener("click", closePop);
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closePop(); });
+  $("pop").addEventListener("click", function (e) { e.stopPropagation(); });
+
+  /* ---------- run ---------- */
+  function run() {
+    var src = $("src").value;
+    if (!src.trim()) return;
+    toks = tokenize(src);
+    trackOnce("e2t_convert", { words: toks.filter(function (t) { return t.t === "w"; }).length });
+    $("outWrap").classList.add("on");
+    $("netwarn").hidden = true;
+    refresh(); render();
+
+    var lines = [], cur = [];
+    toks.forEach(function (tk) {
+      if (tk.t === "w") { cur.push(tk); return; }
+      if (tk.raw.indexOf("\n") > -1) { if (cur.length) lines.push(cur); cur = []; }
+    });
+    if (cur.length) lines.push(cur);
+
+    var words = toks.filter(function (t) { return t.t === "w"; });
+    if (!words.length) return;
+
+    var uniq = [], seen = {};
+    words.forEach(function (t) { var k = key(t.raw); if (!seen[k]) { seen[k] = 1; uniq.push(t.raw); } });
+
+    $("go").disabled = true;
+    var li = 0, lineFail = 0;
+
+    function nextLine() {
+      if (li >= lines.length) return wordPass();
+      var group = lines[li++], raws = group.map(function (t) { return t.raw; });
+      lookupLine(raws).then(function (parts) {
+        if (parts) group.forEach(function (t, i) { t.line = parts[i]; t.state = "ok"; });
+        else lineFail++;
+      }).catch(function () {
+        lineFail++;
+      }).then(function () { refresh(); render(); nextLine(); });
+    }
+
+    /* Then each distinct word on its own. Two purposes: it fills the picker so tapping
+       is instant, and where the two answers disagree the word is flagged to check. */
+    function wordPass() {
+      var at = 0, live = 0, LIMIT = 4, fails = 0;
+      function step() {
+        if (at >= uniq.length) {
+          if (!live) {
+            $("go").disabled = false;
+            refresh(); render();
+            if (lineFail === lines.length && fails === uniq.length) {
+              $("netwarn").hidden = false;
+              $("netwarn").innerHTML = "<b>Nothing came back from Google, so every word is still English.</b> " +
+                "Almost always this means the page cannot reach the internet from where it is open \u2014 " +
+                "a preview panel inside another app blocks outside calls. Download this file and open it " +
+                "in Chrome directly, or put it on your site. You can still tap any word and type the Telugu yourself.";
+            }
+          }
+          return;
+        }
+        var w = uniq[at++];
+        live++;
+        lookupWord(w).then(function (list) { if (!list.length) fails++; })
+          .catch(function () { fails++; opts[key(w)] = []; })
+          .then(function () { live--; refresh(); render(); step(); });
+      }
+      for (var i = 0; i < LIMIT; i++) step();
+    }
+    nextLine();
+  }
+
+  $("go").addEventListener("click", run);
+  $("clr").addEventListener("click", function () {
+    $("src").value = ""; toks = [];
+    $("outWrap").classList.remove("on"); $("stat").textContent = "";
+  });
+  $("copy").addEventListener("click", function () {
+    var t = $("res").textContent;
+    if (navigator.clipboard) navigator.clipboard.writeText(t).catch(function () {});
+    track("e2t_copy", { chars: t.length });
+    $("cstat").textContent = "copied \u00b7 " + t.length + " characters";
+    setTimeout(function () { $("cstat").textContent = ""; }, 1800);
+  });
+  $("dictclear").addEventListener("click", function () {
+    if (!confirm("Forget every saved spelling?")) return;
+    dict = {}; saveDict(); refresh(); render();
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
