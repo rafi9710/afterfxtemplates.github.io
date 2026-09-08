@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Sales — AfterFX Templates</title>
+<link rel="icon" href="/logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#C9A84C; --gold-dim:#8c7433; --gb:rgba(201,168,76,.28);
+  --bg:#080810; --bg2:#0f0f1a; --bg3:#15152400;
+  --tx:#e9e6de; --mut:#9c978c; --red:#d8695f; --grn:#5fa87a;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:'DM Sans',system-ui,sans-serif;
+     -webkit-font-smoothing:antialiased}
+a{color:var(--gold)}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 18px 80px}
+
+h1{font-family:Cinzel,serif;font-weight:600;font-size:26px;letter-spacing:.5px;margin:0}
+h2{font-family:Cinzel,serif;font-weight:500;font-size:17px;letter-spacing:.4px;
+   margin:38px 0 14px;color:var(--gold)}
+.sub{color:var(--mut);font-size:13px;margin:6px 0 0}
+
+/* ---- gate ---- */
+#gate{max-width:340px;margin:16vh auto;text-align:center}
+#gate p{color:var(--mut);font-size:13.5px;line-height:1.6}
+input[type=password],input[type=text]{
+  width:100%;padding:12px 14px;background:var(--bg2);color:var(--tx);
+  border:1px solid var(--gb);border-radius:9px;font:inherit;font-size:15px;margin-top:14px}
+input:focus{outline:2px solid var(--gold);outline-offset:1px}
+button{font:inherit;cursor:pointer}
+.btn{width:100%;margin-top:12px;padding:12px 16px;border:0;border-radius:9px;
+     background:var(--gold);color:#12100a;font-weight:700;font-size:15px}
+.btn:hover{filter:brightness(1.08)}
+.err{color:var(--red);font-size:13.5px;margin-top:12px;min-height:20px}
+
+/* ---- head row ---- */
+.hd{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.tog{display:flex;align-items:center;gap:8px;color:var(--mut);font-size:13px}
+.tog input{width:16px;height:16px;accent-color:var(--gold)}
+.rf{background:none;border:1px solid var(--gb);color:var(--gold);
+    border-radius:8px;padding:7px 13px;font-size:13px}
+
+/* ---- kpi ---- */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:22px}
+.kpi{background:var(--bg2);border:1px solid var(--gb);border-radius:12px;padding:16px 16px 14px}
+.kpi .v{font-family:Cinzel,serif;font-size:25px;color:var(--gold);line-height:1.15}
+.kpi .l{font-size:12.5px;color:var(--mut);margin-top:6px}
+.kpi .n{font-size:11.5px;color:#6f6b62;margin-top:3px}
+
+/* ---- chart ---- */
+.chart{background:var(--bg2);border:1px solid var(--gb);border-radius:12px;padding:20px 16px 12px}
+.bars{display:flex;align-items:flex-end;gap:8px;height:190px}
+.bcol{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%}
+.bar{width:100%;background:linear-gradient(180deg,var(--gold),var(--gold-dim));
+     border-radius:5px 5px 0 0;min-height:3px;position:relative}
+.bar:hover{filter:brightness(1.15)}
+.bamt{font-size:11px;color:var(--mut);margin-bottom:5px;white-space:nowrap}
+.blab{font-size:11px;color:var(--mut);margin-top:8px;white-space:nowrap}
+
+/* ---- tables ---- */
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-weight:500;font-size:12px;color:var(--mut);
+   padding:0 10px 9px;border-bottom:1px solid var(--gb)}
+td{padding:10px;border-bottom:1px solid rgba(255,255,255,.05);vertical-align:middle}
+tr:hover td{background:rgba(201,168,76,.04)}
+.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.thumb{width:74px;height:42px;object-fit:cover;border-radius:5px;background:var(--bg2);display:block}
+.ttl{font-size:13.5px;line-height:1.35}
+.cat{font-size:11.5px;color:var(--mut);margin-top:2px}
+.rank{color:var(--gold);font-family:Cinzel,serif;font-size:14px;width:28px}
+
+/* ---- never sold ---- */
+.ns{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:10px}
+.nsi{display:flex;gap:10px;align-items:center;background:var(--bg2);
+     border:1px solid rgba(255,255,255,.06);border-radius:9px;padding:8px}
+.nsi img{width:56px;height:32px;object-fit:cover;border-radius:4px;flex:0 0 auto}
+.nsi div{min-width:0}
+.nsi b{display:block;font-weight:500;font-size:12.5px;line-height:1.3;
+       overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nsi span{font-size:11px;color:var(--mut)}
+
+/* ---- notes ---- */
+.note{background:var(--bg2);border:1px solid var(--gb);border-left:3px solid var(--gold);
+      border-radius:9px;padding:16px 18px;font-size:13px;color:var(--mut);line-height:1.75}
+.note b{color:var(--tx);font-weight:500}
+.empty{color:var(--mut);font-size:13.5px;padding:14px 0}
+
+@media(max-width:760px){
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .bamt{display:none}
+  h1{font-size:22px}
+  .thumb{width:58px;height:33px}
+  .hidem{display:none}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<!-- ======== LOGIN ======== -->
+<div id="gate">
+  <h1>Sales</h1>
+  <p style="margin-top:10px">Private dashboard. Enter your dashboard key to continue.</p>
+  <input id="key" type="password" placeholder="Dashboard key" autocomplete="off">
+  <button class="btn" id="go">Open dashboard</button>
+  <div class="err" id="gerr"></div>
+</div>
+
+<!-- ======== DASHBOARD ======== -->
+<div class="wrap" id="dash" hidden>
+
+  <div class="hd">
+    <div>
+      <h1>Sales</h1>
+      <p class="sub" id="sub"></p>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <label class="tog"><input type="checkbox" id="allChk"> Include my test orders</label>
+      <button class="rf" id="refresh">Refresh</button>
+    </div>
+  </div>
+
+  <div class="kpis" id="kpis"></div>
+
+  <h2>Sale by month</h2>
+  <div class="chart"><div class="bars" id="bars"></div></div>
+
+  <h2>Best sellers</h2>
+  <div id="topWrap"></div>
+
+  <h2>Earning by category</h2>
+  <div id="catWrap"></div>
+
+  <h2>Never sold <span id="nsCount" style="color:var(--mut);font-size:13px"></span></h2>
+  <div class="ns" id="nsWrap"></div>
+
+  <h2>Missing delivery rows</h2>
+  <div id="unkWrap"></div>
+
+  <h2>How to read this</h2>
+  <div class="note" id="notes"></div>
+</div>
+
+<script>
+/* ⚠️ Yahan wahi /exec URL daalo jo myorders.html me hai */
+var API = 'var API = 'https://script.google.com/macros/s/AKfycbwOJWWTGgLlF5uL60qNU3qe7jZVXxkKnFtDbTYQxIT6sS-xwLq1hWmPD-5zKppSlKL-HA/exec';
+
+var $  = function(id){ return document.getElementById(id); };
+var inr = function(n){ return '\u20B9' + Number(n||0).toLocaleString('en-IN'); };
+var esc = function(s){ return String(s||'').replace(/[<>&"]/g, function(c){
+  return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]; }); };
+
+var KEY = '';
+var DATA = null;
+
+/* ---------- login ---------- */
+$('go').onclick = function(){ tryOpen($('key').value.trim()); };
+$('key').addEventListener('keydown', function(e){ if(e.key==='Enter') $('go').click(); });
+
+var saved = localStorage.getItem('afx_sk');
+if (saved) tryOpen(saved, true);
+
+function tryOpen(k, quiet){
+  if(!k) return;
+  KEY = k;
+  $('gerr').textContent = quiet ? '' : 'Loading\u2026';
+  load(function(err){
+    if(err){
+      localStorage.removeItem('afx_sk');
+      $('gerr').textContent = err === 'bad_key' ? 'Wrong key.' : 'Could not load: ' + err;
+      return;
+    }
+    localStorage.setItem('afx_sk', k);
+    $('gate').hidden = true;
+    $('dash').hidden = false;
+  });
+}
+
+$('refresh').onclick  = function(){ load(); };
+$('allChk').onchange  = function(){ load(); };
+
+/* ---------- fetch ---------- */
+function load(cb){
+  var url = API + '?action=stats&key=' + encodeURIComponent(KEY) +
+            ($('allChk') && $('allChk').checked ? '&all=1' : '') +
+            '&_=' + Date.now();
+
+  $('refresh').textContent = 'Loading\u2026';
+
+  fetch(url)
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      $('refresh').textContent = 'Refresh';
+      if(!d || !d.ok){ if(cb) cb(d && d.error || 'error'); return; }
+      DATA = d;
+      render(d);
+      if(cb) cb(null);
+    })
+    .catch(function(e){
+      $('refresh').textContent = 'Refresh';
+      if(cb) cb('network');
+      else alert('Could not load data. Check your connection.');
+    });
+}
+
+/* ---------- render ---------- */
+function render(d){
+
+  $('sub').textContent = d.from + ' \u2013 ' + d.to +
+    '  \u00b7  updated ' + d.generated +
+    (d.includeAll ? '  \u00b7  test orders included'
+                  : '  \u00b7  ' + d.excludedOrders + ' test orders hidden');
+
+  /* KPIs */
+  $('kpis').innerHTML = [
+    kpi(inr(d.totalSale),      'Total sale',      d.totalQty + ' templates delivered'),
+    kpi(d.totalOrders,         'Orders',          'avg ' + inr(d.avgOrder) + ' per order'),
+    kpi(d.uniqueCustomers,     'Customers',       d.repeatCustomers + ' came back again'),
+    kpi(d.soldTemplates,       'Templates sold',  d.neverSold.length + ' never sold')
+  ].join('');
+
+  /* month chart */
+  var max = 0;
+  d.months.forEach(function(m){ if(m.sale > max) max = m.sale; });
+  $('bars').innerHTML = d.months.map(function(m){
+    var h = max ? Math.max(3, Math.round(m.sale / max * 145)) : 3;
+    var parts = m.m.split('-');
+    var lab = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+parts[1]-1]
+              + ' ' + parts[0].slice(2);
+    return '<div class="bcol">' +
+             '<div class="bamt">' + Math.round(m.sale/1000) + 'k</div>' +
+             '<div class="bar" style="height:' + h + 'px" title="' +
+                inr(m.sale) + ' \u00b7 ' + m.orders + ' orders"></div>' +
+             '<div class="blab">' + lab + '</div>' +
+           '</div>';
+  }).join('') || '<div class="empty">No dated orders yet.</div>';
+
+  /* best sellers */
+  $('topWrap').innerHTML = d.top.length ? (
+    '<table><thead><tr>' +
+      '<th></th><th></th><th>Template</th>' +
+      '<th class="num">Sold</th><th class="num hidem">Earned (approx)</th>' +
+    '</tr></thead><tbody>' +
+    d.top.map(function(t,i){
+      return '<tr>' +
+        '<td class="rank">' + (i+1) + '</td>' +
+        '<td style="width:84px">' + img(t.thumb, 'thumb') + '</td>' +
+        '<td><div class="ttl">' + esc(t.title) + '</div>' +
+            '<div class="cat">' + esc(t.cat) + '</div></td>' +
+        '<td class="num" style="color:var(--gold);font-weight:700">' + t.units + '</td>' +
+        '<td class="num hidem">' + inr(t.rev) + '</td>' +
+      '</tr>';
+    }).join('') + '</tbody></table>'
+  ) : '<div class="empty">No template ids found in the orders yet.</div>';
+
+  /* categories */
+  $('catWrap').innerHTML =
+    '<table><thead><tr><th>Category</th><th class="num">Sold</th>' +
+    '<th class="num">Earned (approx)</th><th class="num hidem">Share</th></tr></thead><tbody>' +
+    d.cats.map(function(c){
+      var share = d.totalSale ? Math.round(c.rev / d.totalSale * 100) : 0;
+      return '<tr><td>' + esc(c.cat) + '</td>' +
+             '<td class="num">' + c.units + '</td>' +
+             '<td class="num">' + inr(c.rev) + '</td>' +
+             '<td class="num hidem">' + share + '%</td></tr>';
+    }).join('') + '</tbody></table>';
+
+  /* never sold */
+  $('nsCount').textContent = '(' + d.neverSold.length + ')';
+  $('nsWrap').innerHTML = d.neverSold.length ? d.neverSold.map(function(n){
+    return '<div class="nsi">' + img(n.thumb, '') +
+           '<div><b>' + esc(n.title) + '</b><span>' + esc(n.cat) + '</span></div></div>';
+  }).join('') : '<div class="empty">Every template has sold at least once.</div>';
+
+  /* unknown ids */
+  $('unkWrap').innerHTML = d.unknownIds.length ? (
+    '<table><thead><tr><th>Template ID</th><th class="num">Times ordered</th></tr></thead><tbody>' +
+    d.unknownIds.map(function(u){
+      return '<tr><td style="color:var(--red)">' + esc(u.id) + '</td>' +
+             '<td class="num">' + u.times + '</td></tr>';
+    }).join('') + '</tbody></table>' +
+    '<p class="sub" style="margin-top:10px">These were bought but have no row in the ' +
+    'Delivery Lookup sheet, so those buyers got the holding email instead of their files. ' +
+    'Add the missing rows.</p>'
+  ) : '<div class="empty">Every ordered template has a delivery row. Nothing to fix.</div>';
+
+  /* notes */
+  $('notes').innerHTML =
+    '<b>Never sold</b> means never sold <b>since 24 June 2026</b>. Orders before that date ' +
+    'do not store template ids, so those sales are invisible here \u2014 ' +
+    d.coverage.withoutIds + ' of ' + (d.coverage.withIds + d.coverage.withoutIds) +
+    ' orders fall in that gap. Check a template\u2019s age before deciding it is dead.<br><br>' +
+    '<b>Earned (approx)</b> splits each order total equally across its templates. ' +
+    'Bundle discounts and the \u20B9499 premium templates make the real split slightly different, ' +
+    'so use it for comparison, not for accounting. <b>Total sale</b> and <b>Orders</b> are exact.<br><br>' +
+    '<b>Sold</b> counts are exact \u2014 counted from real orders, not from the ' +
+    '\u201cTimes Sold\u201d column in the sheet.';
+}
+
+function kpi(v,l,n){
+  return '<div class="kpi"><div class="v">' + v + '</div>' +
+         '<div class="l">' + l + '</div><div class="n">' + n + '</div></div>';
+}
+function img(src, cls){
+  if(!src) return '<div class="' + cls + '" style="width:74px;height:42px;background:var(--bg2);' +
+                  'border-radius:5px"></div>';
+  return '<img class="' + cls + '" src="' + esc(src) + '" alt="" loading="lazy" ' +
+         'onerror="this.style.visibility=\'hidden\'">';
+}
+</script>
+</body>
+</html>
