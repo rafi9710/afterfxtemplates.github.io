@@ -3504,5 +3504,155 @@ window.addEventListener('load',function(){
 });
 </script>
 
+<!-- ============ BUNDLE OFFER POPUP ============ -->
+<div id="afxOfferPop" class="afxop" hidden>
+  <div class="afxop-card" role="dialog" aria-modal="true" aria-label="Bundle offer">
+    <button class="afxop-x" type="button" aria-label="Close">&times;</button>
+
+    <div class="afxop-left">
+      <div class="afxop-brand">AFTERFX TEMPLATES</div>
+      <div class="afxop-h">Buy more.<br>Pay less.</div>
+      <div class="afxop-big">UP TO<br><span>50% OFF</span></div>
+      <div class="afxop-note">Bundle pricing on every template</div>
+    </div>
+
+    <div class="afxop-right">
+      <div class="afxop-kicker">BUNDLE PRICING</div>
+
+      <div class="afxop-row">
+        <div><b>5 templates</b><span>Save 33%</span></div>
+        <div class="afxop-price"><s>&#8377;300</s> &#8377;200<i>each</i></div>
+      </div>
+      <div class="afxop-row">
+        <div><b>10 templates</b><span>Save 42%</span></div>
+        <div class="afxop-price"><s>&#8377;300</s> &#8377;175<i>each</i></div>
+      </div>
+      <div class="afxop-row">
+        <div><b>20 templates</b><span>Save 50%</span></div>
+        <div class="afxop-price"><s>&#8377;300</s> &#8377;150<i>each</i></div>
+      </div>
+
+      <a class="afxop-cta" href="bundle.html">See bundle offers</a>
+      <div class="afxop-fine">
+        Add templates to your cart and the bundle price applies automatically.<br>
+        Need more than 30? <a href="https://wa.me/918971738710" target="_blank" rel="noopener">Message us on WhatsApp</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.afxop{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;
+  padding:18px;background:rgba(0,0,0,.72);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+  opacity:0;transition:opacity .28s ease}
+.afxop[hidden]{display:none}
+.afxop.show{opacity:1}
+.afxop-card{position:relative;display:flex;width:100%;max-width:860px;background:#0d0d0d;
+  border-radius:16px;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.6);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+  transform:translateY(16px) scale(.98);transition:transform .28s cubic-bezier(.2,.8,.3,1);
+  max-height:92vh;overflow-y:auto}
+.afxop.show .afxop-card{transform:none}
+.afxop-x{position:absolute;top:10px;right:12px;z-index:2;width:34px;height:34px;border:0;cursor:pointer;
+  border-radius:50%;background:rgba(0,0,0,.35);color:#fff;font-size:24px;line-height:1;
+  display:flex;align-items:center;justify-content:center;transition:background .15s}
+.afxop-x:hover{background:rgba(0,0,0,.6)}
+
+.afxop-left{flex:0 0 42%;padding:34px 28px;color:#1d1503;
+  background:linear-gradient(150deg,#b8860b 0%,#e3c165 50%,#c8992f 100%)}
+.afxop-brand{font-size:10.5px;font-weight:800;letter-spacing:2px;opacity:.72}
+.afxop-h{font-size:30px;font-weight:800;line-height:1.15;margin-top:14px}
+.afxop-big{margin-top:24px;font-size:13px;font-weight:800;letter-spacing:1.6px;line-height:1.35}
+.afxop-big span{display:block;font-size:40px;letter-spacing:0;line-height:1.05;margin-top:2px}
+.afxop-note{margin-top:20px;font-size:12.5px;font-weight:600;opacity:.8}
+
+.afxop-right{flex:1;padding:32px 28px;min-width:0}
+.afxop-kicker{font-size:10.5px;font-weight:800;letter-spacing:2px;color:#c8992f}
+.afxop-row{display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:13px 0;border-bottom:1px solid #1f1f1f}
+.afxop-row:first-of-type{margin-top:14px}
+.afxop-row b{display:block;font-size:15px;color:#ededed;font-weight:600}
+.afxop-row span{display:block;font-size:11.5px;color:#57c97a;margin-top:3px}
+.afxop-price{font-size:19px;font-weight:700;color:#e3c165;white-space:nowrap}
+.afxop-price s{font-size:13px;color:#6f6f6f;font-weight:400;margin-right:4px}
+.afxop-price i{display:block;font-size:10.5px;color:#7d7d7d;font-style:normal;
+  font-weight:400;text-align:right;margin-top:2px}
+
+.afxop-cta{display:block;margin-top:22px;padding:15px;border-radius:10px;text-align:center;
+  background:linear-gradient(90deg,#b8860b,#e3c165);color:#1d1503;font-size:15.5px;
+  font-weight:800;text-decoration:none;transition:filter .15s,transform .15s}
+.afxop-cta:hover{filter:brightness(1.07);transform:translateY(-1px)}
+.afxop-fine{margin-top:14px;font-size:11.5px;color:#7d7d7d;line-height:1.7;text-align:center}
+.afxop-fine a{color:#c8992f;text-decoration:none}
+
+/* light theme (his site's toggle) */
+:root[data-theme="light"] .afxop-card{background:#fffdf7}
+:root[data-theme="light"] .afxop-kicker{color:#a07c1f}
+:root[data-theme="light"] .afxop-row{border-bottom-color:#eadfc9}
+:root[data-theme="light"] .afxop-row b{color:#2a2418}
+:root[data-theme="light"] .afxop-price{color:#8a6a1e}
+:root[data-theme="light"] .afxop-price s{color:#a9a191}
+:root[data-theme="light"] .afxop-price i,
+:root[data-theme="light"] .afxop-fine{color:#8d8677}
+
+@media(max-width:760px){
+  .afxop{padding:12px}
+  .afxop-card{flex-direction:column;max-width:420px}
+  .afxop-left{flex:none;padding:26px 22px 22px}
+  .afxop-h{font-size:25px}
+  .afxop-big{margin-top:16px}
+  .afxop-big span{font-size:34px}
+  .afxop-note{margin-top:14px}
+  .afxop-right{padding:22px}
+}
+</style>
+
+<script>
+(function () {
+  var POP   = document.getElementById('afxOfferPop');
+  var KEY   = 'afx_offer_seen';
+  var DAYS  = 3;      // itne din baad dobara dikhega
+  var DELAY = 4000;   // page khulne ke kitne ms baad (4000 = 4 second)
+
+  // bundle page par khud popup mat dikhao
+  if (/bundle\.html/i.test(location.pathname)) return;
+
+  try {
+    var last = +localStorage.getItem(KEY) || 0;
+    if (Date.now() - last < DAYS * 864e5) return;
+  } catch (e) {}
+
+  function open() {
+    POP.hidden = false;
+    requestAnimationFrame(function () { POP.classList.add('show'); });
+    document.body.style.overflow = 'hidden';
+    try { localStorage.setItem(KEY, Date.now()); } catch (e) {}
+  }
+  function close() {
+    POP.classList.remove('show');
+    document.body.style.overflow = '';
+    setTimeout(function () { POP.hidden = true; }, 300);
+  }
+
+  // push-permission bar popup ke peeche na aaye - popup band hone tak ruko
+  if (typeof window.pushShowBar === 'function') {
+    var _pushShow = window.pushShowBar;
+    window.pushShowBar = function () {
+      if (POP && !POP.hidden) { setTimeout(window.pushShowBar, 5000); return; }
+      _pushShow();
+    };
+  }
+
+  setTimeout(open, DELAY);
+
+  POP.querySelector('.afxop-x').addEventListener('click', close);
+  POP.addEventListener('click', function (e) { if (e.target === POP) close(); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !POP.hidden) close();
+  });
+})();
+</script>
+<!-- ============ END BUNDLE OFFER POPUP ============ -->
+
 </body>
 </html>
