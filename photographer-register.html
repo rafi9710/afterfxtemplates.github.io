@@ -117,9 +117,10 @@ button[disabled]{opacity:.6;cursor:wait}
         <div class="err">Pick at least one event.</div>
       </div>
 
-      <div class="f">
-        <label class="l" for="link">Instagram or portfolio link <small>(optional)</small></label>
+      <div class="f" id="g-link">
+        <label class="l" for="link">Instagram or portfolio link <small>(so customers can see your work)</small></label>
         <input type="text" id="link" name="link" maxlength="150" autocapitalize="none" placeholder="@yourstudio or https://...">
+        <div class="err">Please add your Instagram handle or portfolio link. Customers choose photographers by seeing their work.</div>
       </div>
 
       <div class="hp" aria-hidden="true"><label>Website <input type="text" id="website" name="website" tabindex="-1" autocomplete="off"></label></div>
@@ -132,7 +133,7 @@ button[disabled]{opacity:.6;cursor:wait}
       <button type="submit" id="btn">Register for free</button>
       <div class="msg" id="msg"></div>
     </form>
-    <p class="fine">We review every listing before it goes live.</p>
+    <p class="fine">We check your work link before your listing goes live.</p>
   </div>
 
   <div class="done" id="done">
@@ -181,6 +182,10 @@ function titleCase(s){
   return String(s||'').trim().replace(/\s+/g,' ').toLowerCase().replace(/(^|[\s\-.])([a-z])/g,function(m,a,b){return a+b.toUpperCase()});
 }
 function setBad(id,bad){$(id).classList.toggle('bad',!!bad);return !bad}
+function linkOk(s){
+  s=String(s||'').trim();
+  return /^@?[A-Za-z0-9._]{2,30}$/.test(s)||/^https?:\/\/[^\s]+$/i.test(s)||/^(www\.)?[A-Za-z0-9.-]+\.[A-Za-z]{2,}(\/[^\s]*)?$/.test(s);
+}
 
 function validate(){
   var ok=true;
@@ -190,6 +195,7 @@ function validate(){
   ok=setBad('g-district',!$('district').value)&&ok;
   ok=setBad('g-town',$('town').value.trim().length<2)&&ok;
   ok=setBad('g-events',!document.querySelector('#events input:checked'))&&ok;
+  ok=setBad('g-link',!linkOk($('link').value))&&ok;
   ok=setBad('g-consent',!$('consent').checked)&&ok;
   return ok;
 }
@@ -239,7 +245,7 @@ $('f').addEventListener('submit',function(ev){
     .then(function(){btn.disabled=false;btn.textContent='Register for free'});
 });
 
-['name','phone','town'].forEach(function(id){
+['name','phone','town','link'].forEach(function(id){
   $(id).addEventListener('input',function(){this.closest('.f').classList.remove('bad')});
 });
 ['state','district'].forEach(function(id){
