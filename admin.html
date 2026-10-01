@@ -276,9 +276,9 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
       </div>
 
       <div class="field" id="ytField" style="display:none;">
-        <label>YouTube Video URL <span style="color:#d9534f">*</span></label>
-        <input type="text" id="fYtUrl" placeholder="https://www.youtube.com/watch?v=...">
-        <div class="hint">Required — paste a real YouTube link (watch?v= / youtu.be/ / shorts/)</div>
+        <label>YouTube Video URL — or Live Invite link <span style="color:#d9534f">*</span></label>
+        <input type="text" id="fYtUrl" placeholder="https://www.youtube.com/watch?v=...  or  https://invites.afterfxtemplates.com/...">
+        <div class="hint">Required — a YouTube link (watch?v= / youtu.be/ / shorts/), OR for website invitations the live link https://invites.afterfxtemplates.com/&lt;name&gt;/ (the card then opens the live invite instead of a video)</div>
       </div>
 
       <div class="field">
@@ -441,6 +441,9 @@ function detectCat(t){
 }
 
 /* ===== BULK IMPORT ===== */
+// live website invitations (Invite Studio) — the card opens the live link instead of a YouTube video
+function isLiveUrl(u){return /^https:\/\/invites\.afterfxtemplates\.com\/[A-Za-z0-9._~\/-]+/i.test(String(u||'').trim());}
+function liveIdOf(u){const s=String(u).trim().replace(/[?#].*$/,'').split('/').filter(Boolean).pop()||'';return 'live_'+(s.toLowerCase().replace(/[^a-z0-9_-]/g,'').slice(0,40)||Date.now());}
 function ytId(url){
   const m=url.match(/(?:v=|youtu\.be\/|shorts\/|embed\/)([A-Za-z0-9_-]{11})/);
   return m?m[1]:null;
@@ -1189,7 +1192,7 @@ function saveTemplate(){
   if(isExtra){
     const ytUrlChk=document.getElementById('fYtUrl').value.trim();
     if(!ytUrlChk){showToast('YouTube Video URL is required','err');return;}
-    if(!ytId(ytUrlChk)){showToast('Enter a valid YouTube link (watch?v= / youtu.be/ / shorts/)','err');return;}
+    if(!ytId(ytUrlChk) && !isLiveUrl(ytUrlChk)){showToast('Enter a YouTube link or a live invite link (https://invites.afterfxtemplates.com/...)','err');return;}
     const priceRaw=document.getElementById('fPrice').value.trim();
     const priceNum=parseInt(priceRaw);
     if(!priceRaw||isNaN(priceNum)||priceNum<=0){showToast('Price is required (must be greater than 0)','err');return;}
@@ -1219,7 +1222,7 @@ function saveTemplate(){
       // Use the YouTube video ID as the template ID (clean + matches the master sheet).
       // Falls back to custom_<time> only if no valid video ID is found.
       const vid=(typeof ytId==='function')?ytId(ytUrl):'';
-      const newId=vid||('custom_'+Date.now());
+      const newId=vid||(isLiveUrl(ytUrl)?liveIdOf(ytUrl):('custom_'+Date.now()));
       // prevent a duplicate ID already in the catalog
       const dup=extras.some(e=>e.id===newId)||(allVideos&&allVideos.some(v=>v.id===newId));
       if(dup){showToast('This video is already in your templates (ID '+newId+')','err');return;}
