@@ -46,7 +46,13 @@ h1 span{color:var(--gold)}
 .studio{color:var(--gold);font-size:14px;margin-top:2px}
 .place{color:var(--mut);font-size:13.5px;margin-top:6px}
 .evs{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 14px}
-.evs span{font-size:12px;padding:4px 10px;border:1px solid var(--gb);border-radius:999px;background:var(--gold-dim);color:var(--gold)}
+.evs span,.evs button{font:inherit;font-size:12px;padding:4px 10px;border:1px solid var(--gb);border-radius:999px;background:var(--gold-dim);color:var(--gold)}
+.evs span.all{background:var(--gold);color:#1a1405;font-weight:700}
+.evs span.hit{border-color:var(--gold);font-weight:700}
+.evs button{background:transparent;border-style:dashed;color:var(--mut);cursor:pointer}
+.evs .xtra{display:none}
+.evs.open .xtra{display:inline-block}
+.evs.open button{display:none}
 .acts{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:auto}
 .acts a{display:flex;align-items:center;justify-content:center;gap:6px;padding:11px 6px;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;text-align:center}
 .a-call{background:var(--gold);color:#1a1405}
@@ -124,15 +130,31 @@ function card(p){
   var link=/^https?:\/\//i.test(p.link||'')?p.link:'';
   var place=[p.town,p.district,p.state].filter(Boolean).map(esc).join(', ');
   return '<div class="card">'+
-    '<h3>'+esc(p.name)+' <span class="ver">&#10003; Verified</span></h3>'+
+    '<h3>'+esc(nameCase(p.name))+' <span class="ver">&#10003; Verified</span></h3>'+
     (p.studio?'<div class="studio">'+esc(p.studio)+'</div>':'')+
     '<div class="place">&#128205; '+place+'</div>'+
-    '<div class="evs">'+(p.events||[]).map(function(e){return '<span>'+esc(e)+'</span>'}).join('')+'</div>'+
+    evChips(p.events||[])+
     '<div class="acts">'+
       '<a class="a-call" href="tel:+91'+phone+'" data-k="call" data-p="'+phone+'">&#128222; Call</a>'+
       '<a class="a-wa" href="https://wa.me/91'+phone+'?text='+waText+'" target="_blank" rel="noopener" data-k="whatsapp" data-p="'+phone+'">WhatsApp</a>'+
       (link?'<a class="a-work" href="'+esc(link)+'" target="_blank" rel="noopener nofollow" data-k="work" data-p="'+phone+'">See work</a>':'')+
     '</div></div>';
+}
+
+// short names so chips stay small
+var SHORT = {'Baby Shower / Seemantham':'Seemantham','Naming Ceremony / Cradle':'Naming / Cradle','Corporate / Other':'Other events'};
+var SHOW = 3;
+function nameCase(s){return String(s||'').replace(/(^|\s)([a-z])/g,function(m,a,b){return a+b.toUpperCase()})}
+
+function evChips(list){
+  if(list.length>=EVENTS.length-1) return '<div class="evs"><span class="all">&#10003; All events</span></div>';
+  var ev=$('ev').value;
+  if(ev&&list.indexOf(ev)>0) list=[ev].concat(list.filter(function(x){return x!==ev}));
+  var h=list.map(function(e,i){
+    return '<span class="'+(i>=SHOW?'xtra':'')+(e===ev?' hit':'')+'">'+esc(SHORT[e]||e)+'</span>';
+  }).join('');
+  if(list.length>SHOW) h+='<button type="button" class="more">+'+(list.length-SHOW)+' more</button>';
+  return '<div class="evs">'+h+'</div>';
 }
 
 function grid(list){return '<div class="grid">'+list.map(card).join('')+'</div>'}
@@ -196,6 +218,8 @@ function fillPlaces(){
 }
 
 document.addEventListener('click',function(e){
+  var m=e.target.closest&&e.target.closest('.evs .more');
+  if(m){m.parentNode.classList.add('open');return}
   var a=e.target.closest&&e.target.closest('a[data-k]');
   if(a)track(a.getAttribute('data-k'),a.getAttribute('data-p'));
 });
