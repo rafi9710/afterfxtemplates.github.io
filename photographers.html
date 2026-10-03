@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Find Photographers in Andhra Pradesh &amp; Telangana | AfterFX Templates</title>
+<meta name="description" content="Find verified wedding and event photographers in your town in Andhra Pradesh and Telangana. Call or WhatsApp them directly.">
+<!-- LAUNCH DAY (50 photographers): change the next line to  index,follow  and add this page to the site menu -->
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#C9A84C;--gold-dim:rgba(201,168,76,.14);--gb:rgba(201,168,76,.35);--bg:#080810;--bg2:#12121e;--bg3:#1a1a2a;--tx:#f1eee6;--mut:#9a9aaa;--ok:#3fb27f;--wa:#1f9d55}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;line-height:1.5;min-height:100vh}
+a{color:var(--gold)}
+.wrap{max-width:760px;margin:0 auto;padding:20px 16px 60px}
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.top img{height:38px;width:auto;border-radius:6px}
+.top a{font-size:13px;text-decoration:none;color:var(--mut)}
+h1{font-family:'Cinzel',serif;font-size:26px;line-height:1.25;margin-bottom:8px}
+h1 span{color:var(--gold)}
+.sub{color:var(--mut);font-size:15px;margin-bottom:20px}
+
+.search{background:var(--bg2);border:1px solid var(--gb);border-radius:16px;padding:16px;margin-bottom:18px;position:sticky;top:8px;z-index:5}
+.sbox{position:relative}
+.sbox input{width:100%;background:var(--bg3);color:var(--tx);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:14px 44px 14px 14px;font:inherit;font-size:16px;outline:none}
+.sbox input:focus{border-color:var(--gold)}
+.sbox button{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:0;color:var(--mut);font-size:20px;width:36px;height:36px;cursor:pointer;display:none}
+.sbox.has button{display:block}
+.filters{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.filters select{flex:1;min-width:140px;background:var(--bg3);color:var(--tx);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 32px 10px 12px;font:inherit;font-size:14px;outline:none;appearance:none;-webkit-appearance:none;
+  background-image:linear-gradient(45deg,transparent 50%,var(--gold) 50%),linear-gradient(135deg,var(--gold) 50%,transparent 50%);background-position:calc(100% - 16px) 50%,calc(100% - 11px) 50%;background-size:5px 5px;background-repeat:no-repeat}
+.filters select:focus{border-color:var(--gold)}
+
+.status{font-size:14px;color:var(--mut);margin:4px 2px 12px}
+.status b{color:var(--tx)}
+.group{font-family:'Cinzel',serif;font-size:15px;color:var(--gold);margin:22px 2px 10px}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:620px){.grid{grid-template-columns:1fr}}
+.card{background:var(--bg2);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px;display:flex;flex-direction:column}
+.card h3{font-size:17px;line-height:1.3;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ver{font-size:11px;font-weight:700;color:#06140d;background:var(--ok);border-radius:999px;padding:2px 8px;white-space:nowrap}
+.studio{color:var(--gold);font-size:14px;margin-top:2px}
+.place{color:var(--mut);font-size:13.5px;margin-top:6px}
+.evs{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 14px}
+.evs span{font-size:12px;padding:4px 10px;border:1px solid var(--gb);border-radius:999px;background:var(--gold-dim);color:var(--gold)}
+.acts{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:auto}
+.acts a{display:flex;align-items:center;justify-content:center;gap:6px;padding:11px 6px;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;text-align:center}
+.a-call{background:var(--gold);color:#1a1405}
+.a-wa{background:var(--wa);color:#fff}
+.a-work{background:var(--bg3);color:var(--tx);border:1px solid rgba(255,255,255,.15)}
+
+.empty,.loading{text-align:center;background:var(--bg2);border:1px dashed var(--gb);border-radius:16px;padding:28px 18px;color:var(--mut);font-size:15px}
+.empty b{color:var(--tx)}
+.spin{width:28px;height:28px;border:3px solid var(--gold-dim);border-top-color:var(--gold);border-radius:50%;animation:s 0.8s linear infinite;margin:0 auto 10px}
+@keyframes s{to{transform:rotate(360deg)}}
+
+.join{margin-top:28px;background:linear-gradient(135deg,rgba(201,168,76,.18),rgba(201,168,76,.04));border:1px solid var(--gb);border-radius:16px;padding:20px;text-align:center}
+.join h2{font-family:'Cinzel',serif;font-size:19px;margin-bottom:6px}
+.join p{color:var(--mut);font-size:14px;margin-bottom:12px}
+.join a{display:inline-block;padding:12px 20px;border-radius:12px;background:var(--gold);color:#1a1405;text-decoration:none;font-weight:700}
+.fine{font-size:12.5px;color:var(--mut);margin-top:16px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a href="/"><img src="logo.png" alt="AfterFX Templates"></a>
+    <a href="/">afterfxtemplates.com</a>
+  </div>
+
+  <h1>Find a photographer <span>in your town</span></h1>
+  <p class="sub">Verified photographers across Andhra Pradesh and Telangana. Call or WhatsApp them directly — no middleman, no fees.</p>
+
+  <div class="search">
+    <div class="sbox" id="sbox">
+      <input type="search" id="q" list="places" placeholder="Type your town, village or district" autocomplete="off" enterkeyhint="search">
+      <datalist id="places"></datalist>
+      <button type="button" id="clr" aria-label="Clear">&times;</button>
+    </div>
+    <div class="filters">
+      <select id="st" aria-label="State"><option value="">Both states</option><option>Andhra Pradesh</option><option>Telangana</option></select>
+      <select id="ev" aria-label="Event"><option value="">All events</option></select>
+    </div>
+  </div>
+
+  <div class="status" id="status"></div>
+  <div id="out"><div class="loading"><div class="spin"></div>Loading photographers...</div></div>
+
+  <div class="join">
+    <h2>Are you a photographer?</h2>
+    <p>Get listed for free and let customers in your town find you.</p>
+    <a href="photographer-register.html">Register for free</a>
+  </div>
+  <p class="fine">Every listed photographer's work is checked by AfterFX Templates before they appear here.</p>
+</div>
+
+<script>
+var API = 'https://script.google.com/macros/s/AKfycbwOJWWTGgLlF5uL60qNU3qe7jZVXxkKnFtDbTYQxIT6sS-xwLq1hWmPD-5zKppSlKL-HA/exec';
+var EVENTS = ['Wedding','Pre-wedding','Engagement','Half Saree','Baby Shower / Seemantham','Naming Ceremony / Cradle','Birthday','Housewarming','Muslim Wedding','Corporate / Other'];
+var ALL = [];
+
+function $(id){return document.getElementById(id)}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function norm(s){return String(s||'').toLowerCase().replace(/[^a-z0-9]/g,'')}
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
+
+$('ev').innerHTML='<option value="">All events</option>'+EVENTS.map(function(e){return '<option>'+esc(e)+'</option>'}).join('');
+
+// count Call / WhatsApp / Work taps in the sheet (columns K, L, M)
+function track(kind,phone){
+  try{
+    fetch(API+'?'+new URLSearchParams({action:'pg_register',click:kind,phone:phone}).toString(),{mode:'no-cors',keepalive:true});
+  }catch(e){}
+  if(window.gtag)try{gtag('event','photographer_'+kind)}catch(e){}
+}
+
+function card(p){
+  var phone=String(p.phone||'').replace(/\D/g,'');
+  var waText=encodeURIComponent('Hi '+(p.name||'')+', I found you on AfterFX Templates. I am looking for a photographer for an event. Are you available?');
+  var link=/^https?:\/\//i.test(p.link||'')?p.link:'';
+  var place=[p.town,p.district,p.state].filter(Boolean).map(esc).join(', ');
+  return '<div class="card">'+
+    '<h3>'+esc(p.name)+' <span class="ver">&#10003; Verified</span></h3>'+
+    (p.studio?'<div class="studio">'+esc(p.studio)+'</div>':'')+
+    '<div class="place">&#128205; '+place+'</div>'+
+    '<div class="evs">'+(p.events||[]).map(function(e){return '<span>'+esc(e)+'</span>'}).join('')+'</div>'+
+    '<div class="acts">'+
+      '<a class="a-call" href="tel:+91'+phone+'" data-k="call" data-p="'+phone+'">&#128222; Call</a>'+
+      '<a class="a-wa" href="https://wa.me/91'+phone+'?text='+waText+'" target="_blank" rel="noopener" data-k="whatsapp" data-p="'+phone+'">WhatsApp</a>'+
+      (link?'<a class="a-work" href="'+esc(link)+'" target="_blank" rel="noopener nofollow" data-k="work" data-p="'+phone+'">See work</a>':'')+
+    '</div></div>';
+}
+
+function grid(list){return '<div class="grid">'+list.map(card).join('')+'</div>'}
+
+function render(){
+  var q=norm($('q').value), st=$('st').value, ev=$('ev').value;
+  $('sbox').classList.toggle('has',!!$('q').value);
+
+  var pool=ALL.filter(function(p){
+    if(st&&p.state!==st)return false;
+    if(ev&&(p.events||[]).indexOf(ev)<0)return false;
+    return true;
+  });
+
+  var out=$('out'), status=$('status');
+
+  if(!ALL.length){
+    status.textContent='';
+    out.innerHTML='<div class="empty">Photographers are being verified right now. Please check back soon.</div>';
+    return;
+  }
+
+  if(!q){
+    status.innerHTML='<b>'+pool.length+'</b> verified photographer'+(pool.length===1?'':'s')+(st?' in '+esc(st):'');
+    out.innerHTML=pool.length?grid(pool):'<div class="empty">No photographers match these filters yet.</div>';
+    return;
+  }
+
+  // 1) town match  2) same district as the matched town / typed district  3) nothing nearby
+  var town=pool.filter(function(p){var t=norm(p.town);return t&&(t.indexOf(q)>=0||(q.length>=4&&q.indexOf(t)>=0))});
+  var dists={};
+  town.forEach(function(p){dists[p.district]=1});
+  ALL.forEach(function(p){var d=norm(p.district);if(d&&(d.indexOf(q)>=0||(q.length>=4&&q.indexOf(d)>=0)))dists[p.district]=1});
+  var near=pool.filter(function(p){return dists[p.district]&&town.indexOf(p)<0});
+
+  var h='', label=esc($('q').value.trim());
+  if(town.length){
+    h+='<div class="group">In '+label+'</div>'+grid(town);
+  }
+  if(near.length){
+    var dn=Object.keys(dists).map(esc).join(', ');
+    h+='<div class="group">'+(town.length?'Nearby':'In')+' — '+dn+' district</div>'+grid(near);
+  }
+  if(!town.length&&!near.length){
+    h='<div class="empty">No photographers listed in <b>'+label+'</b> yet.<br><br>Try your district name, or clear the search to see everyone.</div>';
+    status.innerHTML='';
+  }else{
+    var n=town.length+near.length;
+    status.innerHTML='<b>'+n+'</b> photographer'+(n===1?'':'s')+' found';
+  }
+  out.innerHTML=h;
+}
+
+function fillPlaces(){
+  var seen={},opts=[];
+  ALL.forEach(function(p){
+    [p.town,p.district].forEach(function(x){if(x&&!seen[x]){seen[x]=1;opts.push(x)}});
+  });
+  opts.sort();
+  $('places').innerHTML=opts.map(function(x){return '<option value="'+esc(x)+'">'}).join('');
+}
+
+document.addEventListener('click',function(e){
+  var a=e.target.closest&&e.target.closest('a[data-k]');
+  if(a)track(a.getAttribute('data-k'),a.getAttribute('data-p'));
+});
+
+var t;
+$('q').addEventListener('input',function(){clearTimeout(t);t=setTimeout(render,150)});
+$('clr').addEventListener('click',function(){$('q').value='';render();$('q').focus()});
+$('st').addEventListener('change',render);
+$('ev').addEventListener('change',render);
+
+// ?town=Tenali in the link opens the page already searched
+(function(){
+  var u=new URLSearchParams(location.search);
+  if(u.get('town'))$('q').value=u.get('town');
+})();
+
+fetch(API+'?action=pg_list')
+  .then(function(r){return r.json()})
+  .then(function(d){
+    ALL=shuffle((d&&d.items)||[]);
+    fillPlaces();
+    render();
+  })
+  .catch(function(){
+    $('status').textContent='';
+    $('out').innerHTML='<div class="empty">Could not load photographers. Please check your internet and refresh.</div>';
+  });
+</script>
+</body>
+</html>
