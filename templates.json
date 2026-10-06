@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "exportedAt": "2026-10-05T08:17:40.078Z",
+  "exportedAt": "2026-10-06T09:56:32.165Z",
   "categories": [
     {
       "id": "wedding",
@@ -96,6 +96,8 @@
       "price": 300,
       "url": "https://invites.afterfxtemplates.com/test2/",
       "orient": "v",
+      "customizeOnly": true,
+      "trending": true,
       "addedAt": "2026-10-02",
       "desc": "Celebrate your auspicious union with a grand temple gopuram scrolling wedding invitation website video, beautifully designed for a traditional Indian celebration. Rich architectural details, divine temple motifs, and elegant golden text come together to create a sacred and majestic visual experience that honors your heritage. This classic wedding invitation video sets a deeply reverent and joyful tone for your family and friends as they prepare to witness your special day.\n\nOur expert team handles all the customization for you to deliver a fully personalized, ready-to-share video featuring your specific names, dates, and venue details. Once your finished video is delivered, you can effortlessly share your wedding invitation video on WhatsApp status, Instagram Stories, and Reels to reach all your loved ones in an instant."
     },
