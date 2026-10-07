@@ -1821,8 +1821,10 @@ function toggleSave(id,btn){
     wishlist.splice(idx,1);
     if(btn){btn.classList.remove('saved');btn.textContent='☆';btn.title='Add to wishlist';}
     showToast('Removed from wishlist');
+    if(!wishlist.length && typeof afxPushTagClear==='function') afxPushTagClear();
   }else{
     wishlist.push(id);
+    if(typeof afxWishStamp==='function') afxWishStamp(id);
     if(btn){btn.classList.add('saved');btn.textContent='★';btn.title='Remove from wishlist';}
     showToast('★ Saved to wishlist');
   }
@@ -1832,6 +1834,7 @@ function toggleSave(id,btn){
 }
 function removeWish(id){
   wishlist=wishlist.filter(w=>w!==id);
+  if(!wishlist.length && typeof afxPushTagClear==='function') afxPushTagClear();
   saveWishlist();updateWishCount();renderWishlist();renderGrid();
 }
 function renderWishlist(){
@@ -2199,6 +2202,7 @@ async function verifyPayment(r, o){
       cart=[];tcAccepted=false;saveCart();updateCount();closeCart();renderGrid();
       showToast('✓ Payment successful! Check your email shortly.');
       showPaySuccess(o, r.razorpay_payment_id);
+      try{ if(typeof afxPushTagBought==='function') afxPushTagBought(); }catch(e){}
     }else{
       showToast('Payment could not be verified. Contact support with your Order ID.');
       resetChkBtn();
@@ -3626,6 +3630,7 @@ window.addEventListener('load',function(){
   } catch (e) {}
 
   function open() {
+    if (document.querySelector('.wo')) return;   // wishlist bundle nudge is already showing
     POP.hidden = false;
     requestAnimationFrame(function () { POP.classList.add('show'); });
     document.body.style.overflow = 'hidden';
@@ -3657,5 +3662,147 @@ window.addEventListener('load',function(){
 </script>
 <!-- ============ END BUNDLE OFFER POPUP ============ -->
 
+<script>
+/* ==========================================================================
+   WISHLIST BUNDLE NUDGE (added 2026-10-07)
+   A customer saved a template (☆) and left without buying. When they come
+   back at least WOFFER_DELAY later, that template flies out of the grid into a
+   card that offers the site's EXISTING bulk rate: 5 templates = ₹200 each.
+   No single template ever gets cheaper, so nobody gains by waiting, and the
+   server (create-order.js) already charges the 5+ rate, so nothing changes there.
+   Shown once per template. Keys: afx_wish_t {id:savedAt}, afx_woffer_seen [ids].
+   ========================================================================== */
+var WOFFER_DELAY = 24*3600*1000;      // how long after saving before the nudge may appear
+var WOFFER_SIZE  = 5;                 // bundle size that unlocks tierRate() = ₹200
+function wGet(k,d){ try{ var v=JSON.parse(localStorage.getItem(k)); return v==null?d:v; }catch(e){ return d; } }
+function wSet(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+function afxWishStamp(id){ var t=wGet('afx_wish_t',{}); t[id]=Date.now(); wSet('afx_wish_t',t); afxPushTagWish(id); }
+/* ---- push-notification tags (OneSignal). Only 2 tags so they stay small:
+   wish_cat = category of the latest saved template, wish_at = when it was saved (unix seconds).
+   Removed after a purchase, so buyers never get a "you left something" push. ---- */
+function afxOS(fn){ try{ window.OneSignalDeferred=window.OneSignalDeferred||[]; OneSignalDeferred.push(function(OS){ try{ fn(OS); }catch(e){} }); }catch(e){} }
+function afxPushTagWish(id){
+  var v=(typeof videos!=='undefined'&&videos)?videos.find(function(x){return String(x.id)===String(id);}):null;
+  if(!v || v.customizeOnly) return;
+  afxOS(function(OS){ OS.User.addTags({ wish_cat:String(v.cat||'other'), wish_at:String(Math.floor(Date.now()/1000)) }); });
+}
+function afxPushTagClear(){ afxOS(function(OS){ OS.User.removeTags(['wish_cat','wish_at']); }); }
+function afxPushTagBought(){ afxPushTagClear(); }
+(function(){
+  /* wishlist items saved before this feature existed get "now" as their saved time */
+  var t=wGet('afx_wish_t',{}), changed=false;
+  (window.wishlist||[]).forEach(function(id){ if(!t[id]){ t[id]=Date.now(); changed=true; } });
+  if(changed) wSet('afx_wish_t',t);
+})();
+function wStd(v){ return v && !v.customizeOnly && v.price===STD_PRICE; }
+function wPickCandidate(){
+  if(typeof videos==='undefined' || !videos.length) return null;
+  if(cartQty() >= WOFFER_SIZE) return null;                       // bundle rate already applies
+  var seen=wGet('afx_woffer_seen',[]), t=wGet('afx_wish_t',{}), now=Date.now();
+  for(var i=wishlist.length-1;i>=0;i--){
+    var id=wishlist[i], v=videos.find(function(x){return String(x.id)===String(id);});
+    if(!wStd(v)) continue;
+    if(seen.indexOf(id)>=0) continue;
+    if(cart.find(function(c){return c.id===id;})) continue;
+    if(!t[id] || now - t[id] < WOFFER_DELAY) continue;
+    return v;
+  }
+  return null;
+}
+function wSuggest(v, n){
+  var inCart=function(id){ return cart.some(function(c){return c.id===id;}); };
+  var ok=function(x){ return wStd(x) && x.id!==v.id && !inCart(x.id); };
+  var picks=[];
+  var add=function(x){ if(picks.length<n && ok(x) && picks.indexOf(x)<0) picks.push(x); };
+  wishlist.forEach(function(id){ var x=videos.find(function(y){return y.id===id;}); if(x && x.cat===v.cat) add(x); });
+  videos.filter(function(x){return x.cat===v.cat;}).forEach(add);           // same category, catalogue order
+  wishlist.forEach(function(id){ add(videos.find(function(y){return y.id===id;})); });
+  videos.forEach(add);                                                      // fill up from anything
+  return picks;
+}
+function wEsc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+function wCss(){
+  if(document.getElementById('wofferCss')) return;
+  var st=document.createElement('style'); st.id='wofferCss';
+  st.textContent='.wo-scrim{position:fixed;inset:0;background:rgba(4,4,10,.7);backdrop-filter:blur(3px);z-index:3000;opacity:0;transition:opacity .35s}'
+  +'.wo-scrim.on{opacity:1}'
+  +'.wo{position:fixed;left:50%;top:50%;width:min(370px,calc(100vw - 32px));max-height:calc(100vh - 32px);overflow:auto;transform:translate(-50%,-50%);z-index:3001;background:var(--bg2);color:var(--tx);border:1px solid var(--gbh);border-radius:12px;box-shadow:0 30px 80px rgba(0,0,0,.5);visibility:hidden}'
+  +'.wo.ready{visibility:visible}.wo .wo-img{aspect-ratio:16/9;background:var(--bg4)}.wo .wo-img img{width:100%;height:100%;object-fit:cover;display:block}'
+  +'.wo .wo-x{position:absolute;right:10px;top:10px;width:38px;height:38px;border-radius:50%;border:2px solid #fff;background:#C9A84C;color:#17120a;font-size:18px;font-weight:700;line-height:1;cursor:pointer;z-index:2;box-shadow:0 4px 14px rgba(0,0,0,.45)}.wo .wo-x:hover{background:#E8C96A}'
+  +'.wo .wo-in{padding:15px 17px 17px;display:grid;gap:10px}.wo .wo-in>*{opacity:0;transform:translateY(8px);transition:opacity .35s,transform .35s}.wo.rev .wo-in>*{opacity:1;transform:none}'
+  +'.wo .wo-eb{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}'
+  +'.wo h3{margin:0;font-family:Cinzel,Georgia,serif;font-size:19px;line-height:1.25}.wo .wo-t{font-size:13px;color:var(--mt)}.wo .wo-t b{color:var(--tx)}'
+  +'.wo .wo-mini{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.wo .wo-mini img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:4px;border:1px solid var(--gb);display:block}'
+  +'.wo .wo-row{display:flex;align-items:center;justify-content:space-between;gap:10px}.wo .wo-pr{font-family:Cinzel,Georgia,serif;font-size:27px;color:var(--gold);line-height:1}.wo .wo-pr s{font-size:15px;color:var(--mt);margin-right:8px;font-family:inherit}'
+  +'.wo .wo-sv{text-align:right;font-size:12px;color:var(--mt);line-height:1.3}.wo .wo-sv b{color:var(--green);font-size:18px}'
+  +'.wo .wo-acts{display:flex;gap:10px}.wo .wo-acts button{flex:1;font:inherit;font-weight:600;border-radius:6px;padding:11px 10px;cursor:pointer;border:1px solid var(--gbh);background:transparent;color:var(--gold)}'
+  +'.wo .wo-acts .wo-main{background:var(--gold);color:#17120a;border-color:var(--gold)}'
+  +'.wo .wo-note{font-size:11.5px;color:var(--mt);line-height:1.4}'
+  +'.wo-fly{position:fixed;z-index:3002;border-radius:6px;overflow:hidden;pointer-events:none;box-shadow:0 18px 50px rgba(0,0,0,.45)}.wo-fly img{width:100%;height:100%;object-fit:cover;display:block}'
+  +'@media (prefers-reduced-motion:reduce){.wo-scrim,.wo .wo-in>*{transition:none}}';
+  document.head.appendChild(st);
+}
+function wofferOpen(v){
+  wCss();
+  var extras=wSuggest(v, WOFFER_SIZE - 1 - cartQty());
+  if(extras.length < WOFFER_SIZE - 1 - cartQty()) return;            // not enough templates to make a bundle
+  var seen=wGet('afx_woffer_seen',[]); seen.push(v.id); wSet('afx_woffer_seen',seen);   // once per template
+  var have=cartQty(), total=WOFFER_SIZE*tierRate(WOFFER_SIZE), full=WOFFER_SIZE*STD_PRICE;
+  var lead = have ? ('Add <b>'+wEsc(v.title)+'</b> and '+extras.length+' more to the '+have+' already in your cart, and every template drops to ₹'+tierRate(WOFFER_SIZE)+'.')
+                  : ('Add 4 more templates with <b>'+wEsc(v.title)+'</b> and every template drops to ₹'+tierRate(WOFFER_SIZE)+'.');
+  var scrim=document.createElement('div'); scrim.className='wo-scrim';
+  var box=document.createElement('div'); box.className='wo'; box.setAttribute('role','dialog'); box.setAttribute('aria-modal','true'); box.setAttribute('aria-label','Bundle offer');
+  box.innerHTML='<button class="wo-x" type="button" aria-label="Close">✕</button>'
+   +'<div class="wo-img"><img alt="" src="'+wEsc(v.thumb)+'"></div>'
+   +'<div class="wo-in"><div class="wo-eb">Saved in your wishlist</div><h3>Make it a bundle of '+WOFFER_SIZE+'</h3>'
+   +'<div class="wo-t">'+lead+'</div>'
+   +'<div class="wo-mini">'+extras.map(function(x){return '<img alt="'+wEsc(x.title)+'" title="'+wEsc(x.title)+'" src="'+wEsc(x.thumb)+'">';}).join('')+'</div>'
+   +'<div class="wo-row"><div class="wo-pr"><s>₹'+full.toLocaleString('en-IN')+'</s>₹'+total.toLocaleString('en-IN')+'</div><div class="wo-sv">You save<br><b>₹'+(full-total).toLocaleString('en-IN')+'</b></div></div>'
+   +'<div class="wo-acts"><button type="button" class="wo-main">Add these '+WOFFER_SIZE+' · ₹'+total.toLocaleString('en-IN')+'</button><button type="button" class="wo-one">I\'ll pick my own</button></div>'
+   +'<div class="wo-note">"I\'ll pick my own" adds this template now. Add '+(WOFFER_SIZE-1-have)+' more of your choice and the ₹'+tierRate(WOFFER_SIZE)+' rate applies automatically.</div></div>';
+  document.body.appendChild(scrim); document.body.appendChild(box);
+  requestAnimationFrame(function(){ scrim.classList.add('on'); });
+  var close=function(){ scrim.remove(); box.remove(); document.removeEventListener('keydown',esc); };
+  var esc=function(e){ if(e.key==='Escape') close(); };
+  document.addEventListener('keydown',esc);
+  scrim.onclick=close; box.querySelector('.wo-x').onclick=close;
+  box.querySelector('.wo-one').onclick=function(){ addCart(v.id,v.title,v.thumb,v.price,v.url); close();
+    try{ if(typeof showToast==='function') showToast('Added ✓ Pick '+(WOFFER_SIZE-cartQty())+' more for ₹'+tierRate(WOFFER_SIZE)+' each'); var g=document.getElementById('vgrid'); if(g) g.scrollIntoView({behavior:'smooth',block:'start'}); }catch(e){} };
+  box.querySelector('.wo-main').onclick=function(){
+    [v].concat(extras).forEach(function(x){ addCart(x.id,x.title,x.thumb,x.price,x.url); });
+    close();
+    try{ if(typeof openCart==='function') openCart(); }catch(e){}
+    wConfetti();
+  };
+  /* fly the saved card's picture from the grid into the offer card */
+  var reduce=window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var btn=document.getElementById('ab'+v.id), card=btn && btn.closest('.vc'), from=card && card.querySelector('.vt') && card.querySelector('.vt').getBoundingClientRect();
+  var to=box.querySelector('.wo-img').getBoundingClientRect();
+  var visible=from && from.bottom>0 && from.top<innerHeight;
+  var reveal=function(){ box.classList.add('ready'); requestAnimationFrame(function(){ box.classList.add('rev'); }); };
+  if(reduce || !box.animate){ reveal(); return; }
+  if(!visible) from={left:to.left+to.width*.3, top:innerHeight, width:to.width*.4, height:to.height*.4};
+  var fly=document.createElement('div'); fly.className='wo-fly';
+  fly.style.cssText='left:'+to.left+'px;top:'+to.top+'px;width:'+to.width+'px;height:'+to.height+'px';
+  fly.innerHTML='<img alt="" src="'+wEsc(v.thumb)+'">'; document.body.appendChild(fly);
+  var dx=from.left-to.left, dy=from.top-to.top, sx=from.width/to.width, sy=from.height/to.height;
+  var an=fly.animate([
+    {transform:'translate('+dx+'px,'+dy+'px) scale('+sx+','+sy+')'},
+    {transform:'translate('+(dx*.35)+'px,'+(dy*.35-40)+'px) scale('+((sx+1)/2)+','+((sy+1)/2)+') rotate(-2deg)',offset:.55},
+    {transform:'none',borderRadius:'12px 12px 0 0'}],{duration:900,easing:'cubic-bezier(.22,.8,.2,1)',fill:'forwards'});
+  an.onfinish=function(){ fly.remove(); reveal(); };
+}
+function wConfetti(){
+  var go=function(){ try{ window.confetti({particleCount:140,spread:75,origin:{y:.6},colors:['#C9A84C','#E8C96A','#3DBD72','#ffffff']}); }catch(e){} };
+  if(window.confetti) return go();
+  var sc=document.createElement('script'); sc.src='https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js'; sc.onload=go; document.head.appendChild(sc);
+}
+/* wait for the catalogue to load, let the visitor settle for a few seconds, then check once */
+(function wWait(n){
+  if(typeof videos!=='undefined' && videos.length){
+    setTimeout(function(){ var v=wPickCandidate(); if(v) wofferOpen(v); }, 2500);
+  } else if(n<40) setTimeout(function(){ wWait(n+1); }, 500);
+})(0);
+</script>
 </body>
 </html>
