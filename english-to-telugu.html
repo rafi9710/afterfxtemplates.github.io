@@ -486,5 +486,16 @@ footer a{color:var(--gold)}
   render();
 })();
 </script>
+<script>/* AfterFX HQ usage counter: counts opens / use / copy, no personal data */
+(function(){var T='eng2tel',H='https://afx-hq.afterfxtemplates.workers.dev/hit';
+function s(e,u){try{var q=H+'?t='+T+'&e='+e+(u?'&u=1':'');if(navigator.sendBeacon){navigator.sendBeacon(q)}else{fetch(q,{method:'POST',mode:'no-cors',keepalive:true})}}catch(x){}}
+var k='afx_hit_'+T+'_'+new Date().toISOString().slice(0,10),first=false;try{first=!localStorage.getItem(k);localStorage.setItem(k,'1')}catch(x){}
+s('open',first);
+var used=false,copied=false;
+function use(){if(!used){used=true;s('use')}}
+document.addEventListener('input',function(ev){if(ev.target&&/TEXTAREA|INPUT/.test(ev.target.tagName)&&ev.target.type!=='checkbox')use()},true);
+document.addEventListener('click',function(ev){var b=ev.target&&ev.target.closest&&ev.target.closest('#go,#copy');if(!b)return;
+if(/copy|Dl/i.test(b.id)){if(!copied){copied=true;s('copy')}}else use()},true);
+})();</script>
 </body>
 </html>
