@@ -189,6 +189,9 @@ text-transform:uppercase;white-space:nowrap;transition:transform .18s,box-shadow
 .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px;}
 .tab{border:1px solid var(--gb);background:transparent;color:var(--mt);padding:7px 18px;border-radius:3px;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;transition:all .2s;}
 .tab:hover,.tab.on{border-color:var(--gold);color:var(--gold);background:var(--gold-dim);}
+.tabsep{width:1px;align-self:stretch;background:var(--gb);margin:0 6px;}
+@media(max-width:700px){.tabsep{flex-basis:100%;width:auto;height:0;margin:0;background:none;}}
+.vlang{display:inline-block;margin:2px 0 6px;font-size:10px;letter-spacing:1px;text-transform:uppercase;font-weight:700;color:var(--gold);border:1px solid var(--gb);border-radius:2px;padding:2px 8px;}
 
 /* SEARCH — combined long bar (category + search) */
 .megasearch{display:flex;align-items:stretch;max-width:720px;margin-bottom:22px;background:var(--bg2);border:1px solid var(--gb);border-radius:9px;transition:border-color .2s;}
@@ -1040,7 +1043,7 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
     <a href="terms.html">Terms</a>
     <a href="privacy.html">Privacy</a>
   </div>
-  <p style="margin-top:18px;font-size:11px;color:var(--mt2);">© 2025 AfterFX Templates · All Rights Reserved</p>
+  <p style="margin-top:18px;font-size:11px;color:var(--mt2);">© 2026 AfterFX Templates · All Rights Reserved</p>
 </footer>
 
 <!-- CART OVERLAY -->
@@ -1188,6 +1191,18 @@ const ORIENTS = [
 function vOrient(v){ return (v.orient==='v'||v.orient==='both') ? v.orient : 'h'; }
 function matchOrient(v){ if(orient==='all') return true; const o=vOrient(v); return o===orient || o==='both'; }
 
+/* LANGUAGE (2026-10-09): optional per-template field set in admin — 'te' | 'en' | 'both'.
+   Blank = not set: no badge, and the template only shows under "All languages". */
+const LANGS = [
+  {id:'all',  label:'All languages'},
+  {id:'te',   label:'Telugu'},
+  {id:'en',   label:'English'},
+  {id:'both', label:'Telugu + English'},
+];
+const LANG_LABEL = {te:'Telugu', en:'English', both:'Telugu + English'};
+function vLang(v){ return LANG_LABEL[v && v.lang] ? v.lang : ''; }
+function matchLang(v){ if(lang==='all') return true; const l=vLang(v); return l===lang || (lang!=='both' && l==='both'); }
+
 const SORTS = [
   {id:'featured', label:'Featured'},
   {id:'newest',   label:'Newest first'},
@@ -1240,7 +1255,7 @@ const PRICING = [
   {qty:30,price:4500,off:'50% OFF 🔥',best:true},
 ];
 
-let videos=[], filter='all', orient='all', search='', cart=JSON.parse(localStorage.getItem('afx_c')||'[]'), tcAccepted=false;
+let videos=[], filter='all', orient='all', lang='all', search='', cart=JSON.parse(localStorage.getItem('afx_c')||'[]'), tcAccepted=false;
 /* ===== NEW: recently viewed + search suggestions/history state ===== */
 let recentlyViewed=JSON.parse(localStorage.getItem('afx_recent')||'[]');
 let searchHistory=JSON.parse(localStorage.getItem('afx_search_history')||'[]');
@@ -1401,9 +1416,20 @@ function renderTabs(){
 }
 
 function renderOrientTabs(){
-  document.getElementById('orienttabs').innerHTML=ORIENTS.map(o=>
+  let h=ORIENTS.map(o=>
     `<button class="tab ${o.id===orient?'on':''}" onclick="setOrient('${o.id}')">${o.label}</button>`
   ).join('');
+  // language tabs appear only once at least one template has a language set in admin
+  if(videos.some(v=>vLang(v))){
+    h+='<span class="tabsep" aria-hidden="true"></span>'+LANGS.map(o=>
+      `<button class="tab ${o.id===lang?'on':''}" onclick="setLang('${o.id}')">${o.label}</button>`
+    ).join('');
+  }
+  document.getElementById('orienttabs').innerHTML=h;
+}
+function setLang(l){
+  lang=l; curPage=1;
+  renderOrientTabs(); renderGrid(); syncURL();
 }
 
 function setOrient(o){
@@ -1416,6 +1442,7 @@ function syncURL(){
   const p=new URLSearchParams();
   if(filter && filter!=='all') p.set('cat',filter);
   if(orient && orient!=='all') p.set('orient',orient);
+  if(lang && lang!=='all') p.set('lang',lang);
   const qs=p.toString();
   if(history.replaceState) history.replaceState({},'',location.pathname+(qs?('?'+qs):''));
 }
@@ -1423,6 +1450,7 @@ function readFilterParams(){
   const sp=new URLSearchParams(location.search);
   const o=sp.get('orient'); const c=sp.get('cat');
   if(o==='h'||o==='v') orient=o;
+  const lg=sp.get('lang'); if(LANG_LABEL[lg]) lang=lg;
   if(c && videos.some(v=>v.cat===c)) filter=c;
 }
 
@@ -1628,6 +1656,7 @@ function buildCardHTML(v, idPrefix){
       </div>
       <div class="vbody">
         <div class="vtitle">${v.title}</div>
+        ${vLang(v)?`<div class="vlang">${LANG_LABEL[vLang(v)]}</div>`:''}
         <div class="vmeta">${co
           ? `<span class="vprice" style="font-size:13px;">Customize Only</span><span style="font-size:10px;color:var(--mt)">Personalized Service</span>`
           : `<span class="vprice">₹${v.price}</span><span style="font-size:10px;color:var(--mt)">Editable project file</span>`}</div>
@@ -1690,7 +1719,7 @@ function renderGrid(){
     list = applySort((q
       ? videos.filter(v=>v.title.toLowerCase().includes(q))
       : (filter==='all'?videos:videos.filter(v=>v.cat===filter))
-    ).filter(matchOrient));
+    ).filter(matchOrient).filter(matchLang));
   }
   if(!list.length){
     if(focusId){
@@ -3335,6 +3364,7 @@ function openTpl(id){
         <div class="tm-attr"><span class="k">Delivered as</span><span class="v">Final HD video (MP4)</span></div>
         <div class="tm-attr"><span class="k">You need</span><span class="v">Nothing — we make it</span></div>
         <div class="tm-attr"><span class="k">Resolution</span><span class="v">${tmResolution(v)}</span></div>
+        ${vLang(v)?`<div class="tm-attr"><span class="k">Language</span><span class="v">${LANG_LABEL[vLang(v)]}</span></div>`:''}
         <div class="tm-attr"><span class="k">Languages</span><span class="v">${v.languages||'Telugu, English & more'}</span></div>
         ${v.turnaround?`<div class="tm-attr"><span class="k">Turnaround</span><span class="v">${v.turnaround}</span></div>`:''}
       </div>
@@ -3365,6 +3395,7 @@ function openTpl(id){
         <div class="tm-attr"><span class="k">Software</span><span class="v">${v.aeVersion||AE_VERSION_DEFAULT}</span></div>
         <div class="tm-attr"><span class="k">Plugins</span><span class="v">${v.plugins||PLUGINS_DEFAULT}</span></div>
         <div class="tm-attr"><span class="k">Resolution</span><span class="v">${tmResolution(v)}</span></div>
+        ${vLang(v)?`<div class="tm-attr"><span class="k">Language</span><span class="v">${LANG_LABEL[vLang(v)]}</span></div>`:''}
         <div class="tm-attr"><span class="k">Editable text</span><span class="v">Yes</span></div>
         ${v.duration?`<div class="tm-attr"><span class="k">Duration</span><span class="v">${v.duration}</span></div>`:''}
         ${v.fileSize?`<div class="tm-attr"><span class="k">File size</span><span class="v">${v.fileSize}</span></div>`:''}

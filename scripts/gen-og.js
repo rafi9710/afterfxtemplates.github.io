@@ -68,6 +68,8 @@ const isService = t => !!t.customizeOnly;
 
 const ORIENT = { v: 'Vertical (9:16)', h: 'Horizontal (16:9)', both: 'Horizontal &amp; Vertical' };
 const orientOf = t => ORIENT[t.orient] || 'Horizontal &amp; Vertical';
+const LANGS = { te: 'Telugu', en: 'English', both: 'Telugu + English' };
+const langOf = t => LANGS[t.lang] || 'Telugu + English';
 const priceOf  = t => t.price || 300;
 const waLink   = txt => `https://wa.me/${WA}?text=${encodeURIComponent(txt)}`;
 
@@ -252,7 +254,7 @@ for (const c of cats) {
     const img = esc(imageFor(t));
     const url = `${BASE}/t/${t.id}/`;
     const own = String(t.desc || '').trim();
-    const lede = own || `${t.title} — an editable After Effects invitation video template for ${label.toLowerCase()} celebrations. Telugu and English text support, ${orientOf(t).toLowerCase()} output, with every font, audio file, PNG asset and PSD included.`;
+    const lede = own || `${t.title} — an editable After Effects invitation video template for ${label.toLowerCase()} celebrations. ${LANGS[t.lang] ? LANGS[t.lang] + ' text' : 'Telugu and English text support'}, ${orientOf(t).toLowerCase()} output, with every font, audio file, PNG asset and PSD included.`;
     const metaDesc = esc(lede.length > 155 ? lede.slice(0, 150).replace(/\s\S*$/, '') + '…' : lede);
 
     const service = isService(t);
@@ -317,7 +319,7 @@ for (const c of cats) {
 <p class="crumb"><a href="${BASE}/">Templates</a> › <a href="${BASE}/c/${c}/">${esc(label)}</a> › ${title}</p>
 <h1>${title}</h1>
 <p class="lede">${esc(lede)}</p>
-<ul class="meta"><li>Category <b>${esc(label)}</b></li><li>Format <b>${orientOf(t)}</b></li>${service ? `<li>Made to order <b>Price on request</b></li>` : `<li>Price <b>₹${price}</b></li>`}<li>Languages <b>Telugu + English</b></li></ul>
+<ul class="meta"><li>Category <b>${esc(label)}</b></li><li>Format <b>${orientOf(t)}</b></li>${service ? `<li>Made to order <b>Price on request</b></li>` : `<li>Price <b>₹${price}</b></li>`}<li>Language <b>${langOf(t)}</b></li></ul>
 ${playerHtml}
 <div class="cta">${service
   ? `<a class="btn solid" href="${esc(waLink(`Hi AfterFX Templates! I want this video made for me: ${t.title} (${url})`))}">Enquire on WhatsApp</a>`
