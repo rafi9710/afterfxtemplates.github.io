@@ -2729,6 +2729,22 @@ function exitFocus(){
   curPage=1; renderGrid();
   const el=document.getElementById('templates'); if(el)el.scrollIntoView({behavior:'smooth'});
 }
+/* ===== CART RESTORE LINK (added 2026-10-11) =====
+   The cart-reminder email links to /?cart=id1,id2 . Refill those templates
+   (skipping unknown / customize-only / already-in-cart ids) and open the cart. */
+function applyCartLink(){
+  const raw=new URLSearchParams(location.search).get('cart');
+  if(!raw) return;
+  raw.split(',').map(function(s){return s.trim();}).filter(Boolean).slice(0,MAX_CART).forEach(function(id){
+    const v=videos.find(function(x){return String(x.id)===id;});
+    if(!v || v.customizeOnly || cart.find(function(c){return c.id===v.id;}) || cartQty()>=MAX_CART) return;
+    cart.push({id:v.id,title:v.title,thumb:v.thumb,price:(v.price!=null?v.price:STD_PRICE),url:v.url,qty:1});
+  });
+  saveCart(); updateCount(); bundleUpdate();
+  const sp=new URLSearchParams(location.search); sp.delete('cart');   // keep utm_* for GA4
+  if(history.replaceState) history.replaceState({},'',location.pathname+(sp.toString()?('?'+sp):''));
+  if(cart.length) setTimeout(openCart,500);
+}
 function applyDeepLink(){
   const tp=new URLSearchParams(location.search).get('t');
   if(!tp)return;
@@ -3135,7 +3151,7 @@ renderPricing();updateCount();updateWishCount();
   videos=await fetchVideos();
   window.videos = videos;   // expose the live catalog to the Live Stats module
   afxRepriceCart();         // kill stale prices in a cart saved before a price change
-  if(videos.length){readFilterParams();renderSortMenu();renderOrientTabs();renderTabs();renderGrid();applyDeepLink();renderRecentlyViewed();}
+  if(videos.length){readFilterParams();renderSortMenu();renderOrientTabs();renderTabs();applyCartLink();renderGrid();applyDeepLink();renderRecentlyViewed();}
   else{
     document.getElementById('vgrid').innerHTML=`<div style="color:var(--mt);text-align:center;padding:48px;grid-column:1/-1;font-size:14px;"><div style="font-size:34px;margin-bottom:12px">📦</div><div style="margin-bottom:14px">Templates coming soon!</div><a href="https://youtube.com/@afterfxtemplates" target="_blank" class="bg" style="display:inline-flex">▶ Watch on YouTube</a></div>`;
     document.getElementById('tabs').innerHTML='';
