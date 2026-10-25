@@ -2099,7 +2099,7 @@ async function checkout(){
   }
   const fix=emailTypoFix(email);
   if(fix){
-    if(confirm('Did you mean  "'+fix+'" ?\n\nYou typed:  "'+email+'"\nWrong email = aapko template nahi milega.\n\nOK = use "'+fix+'"   |   Cancel = keep "'+email+'"')){
+    if(confirm('Did you mean  "'+fix+'" ?\n\nYou typed:  "'+email+'"\nWrong email = you will NOT receive your template.\n\nOK = use "'+fix+'"   |   Cancel = keep "'+email+'"')){
       email=fix;
       const f=document.getElementById('custEmail'); if(f) f.value=fix;
     }
