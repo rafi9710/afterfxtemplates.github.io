@@ -556,7 +556,7 @@ async function fetchVideos(){
           defaultCat:t.cat,
           defaultOrient:t.orient||'h',
           defaultPrice:(t.price!=null?t.price:300),
-          addedAt:t.addedAt,
+          addedAt:t.addedAt, no:t.no,
           readyPrice:t.readyPrice, duration:t.duration, fileSize:t.fileSize,
           aeVersion:t.aeVersion, plugins:t.plugins, desc:t.desc, lang:t.lang,
           isExtra:false
@@ -817,6 +817,7 @@ function getMergedList(){
       price:c.price!=null?c.price:(v.defaultPrice!=null?v.defaultPrice:300),
       url:v.url,
       addedAt:v.addedAt,
+      no:v.no,
       customizeOnly:co.includes(v.id),
       trending:tr.includes(v.id),
       isCustomized:!!custom[v.id],
@@ -852,7 +853,32 @@ function getMergedList(){
   const fresh = Object.keys(byId).map(id=>byId[id]);
   fresh.sort((a,b)=>(Date.parse(b.addedAt||0)||0)-(Date.parse(a.addedAt||0)||0));
 
-  return [...fresh, ...ordered];
+  return assignNos([...fresh, ...ordered]);
+}
+
+/* TEMPLATE NUMBERS (2026-10-27) — every template gets a permanent "No." that
+   customers can search on the site and quote on WhatsApp ("145 chahiye").
+   A number is NEVER changed or reused: published numbers in templates.json win,
+   numbers given here before the next export are kept in afx_nos, and anything
+   new gets (highest number ever) + 1. First run numbers the catalog oldest = 1. */
+function getNos(){ try{ return JSON.parse(localStorage.getItem('afx_nos')||'{}'); }catch(e){ return {}; } }
+function assignNos(list){
+  const map=getNos(); let changed=false;
+  list.forEach(t=>{ const n=parseInt(t.no,10); if(n>0 && map[t.id]!==n){ map[t.id]=n; changed=true; } });
+  let max=0; Object.keys(map).forEach(k=>{ if(map[k]>max) max=map[k]; });
+  const need=list.map((t,i)=>({t,i})).filter(x=>!map[x.t.id]);
+  if(need.length){
+    // oldest first: by addedAt, and for equal/missing dates the one lower in the list is older
+    need.sort((a,b)=>{
+      const da=Date.parse(a.t.addedAt||0)||0, db=Date.parse(b.t.addedAt||0)||0;
+      return da!==db ? da-db : b.i-a.i;
+    });
+    need.forEach(x=>{ map[x.t.id]=++max; });
+    changed=true;
+  }
+  if(changed) afxSet('afx_nos',map);
+  list.forEach(t=>{ t.no=map[t.id]; });
+  return list;
 }
 
 /* REORDER — move a template to top or bottom of display order */
@@ -894,6 +920,7 @@ function exportForWebsite(){
       if(t.customizeOnly) o.customizeOnly=true;
       if(t.trending) o.trending=true;
       if(t.addedAt) o.addedAt=t.addedAt;
+      if(t.no) o.no=t.no;
       ['readyPrice','duration','fileSize','aeVersion','plugins','desc','lang'].forEach(k=>{ if(t[k]) o[k]=t[k]; });
       return o;
     });
@@ -915,7 +942,9 @@ function renderList(){
   else if(currentTab==='hidden') list=list.filter(t=>hidden.includes(t.id));
   else if(currentTab==='extras') list=list.filter(t=>t.isExtra);
 
-  if(search) list=list.filter(t=>t.title.toLowerCase().includes(search)||t.cat.toLowerCase().includes(search));
+  const sNo=(search.match(/^(?:#|no\.?\s*)?(\d{1,4})$/)||[])[1];
+  if(sNo) list=list.filter(t=>String(t.no)===sNo||t.title.toLowerCase().includes(search));
+  else if(search) list=list.filter(t=>t.title.toLowerCase().includes(search)||t.cat.toLowerCase().includes(search));
 
   const el=document.getElementById('tplList');
   if(!list.length){
@@ -949,7 +978,7 @@ function renderList(){
         ${badges.join('')}
       </div>
       <div class="tpl-body">
-        <div class="tpl-title">${t.title}</div>
+        <div class="tpl-title">${t.no?`<span style="color:var(--gold);font-weight:700;margin-right:6px;">#${t.no}</span>`:''}${t.title}</div>
         <div class="tpl-meta">
           <span class="tpl-cat">${t.cat}</span>
           <span class="tpl-cat" style="background:transparent;border:1px solid var(--gold);">${t.orient==='v'?'↕ V':t.orient==='both'?'↔↕ Both':'↔ H'}</span>${t.lang?`<span class="tpl-cat" style="background:transparent;border:1px solid var(--gold);">${t.lang==='te'?'TE':t.lang==='en'?'EN':'TE+EN'}</span>`:''}

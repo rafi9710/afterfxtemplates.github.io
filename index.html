@@ -289,6 +289,7 @@ text-transform:uppercase;white-space:nowrap;transition:transform .18s,box-shadow
 @keyframes trendpulse{0%{box-shadow:0 0 0 0 rgba(201,168,76,.5);}70%{box-shadow:0 0 0 6px rgba(201,168,76,0);}100%{box-shadow:0 0 0 0 rgba(201,168,76,0);}}
 .vbody{padding:14px 16px;}
 .vtitle{font-size:13px;font-weight:600;color:var(--tx);line-height:1.4;margin-bottom:6px;}
+.vno{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--gold);border:1px solid var(--gb);border-radius:2px;padding:1px 6px;margin-right:6px;vertical-align:1px;}
 .vmeta{font-size:11px;color:var(--mt);display:flex;align-items:center;justify-content:space-between;}
 .vprice{font-family:'Cinzel',serif;font-size:16px;font-weight:700;color:var(--gold);}
 .vacts{display:flex;gap:8px;margin-top:12px;}
@@ -785,7 +786,7 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
     <div class="ms-divider"></div>
     <div class="ms-searchwrap">
       <svg class="si" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/></svg>
-      <input type="text" id="searchbox" class="ms-searchbox" placeholder="Search templates… e.g. wedding, barasala" oninput="onSearch(this.value)" autocomplete="off">
+      <input type="text" id="searchbox" class="ms-searchbox" placeholder="Search templates… e.g. wedding, barasala or No. 145" oninput="onSearch(this.value)" autocomplete="off">
       <button class="searchclear" id="searchclear" onclick="clearSearch()" aria-label="Clear search">&times;</button>
       <div class="searchsug" id="searchsug"></div>
     </div>
@@ -1465,6 +1466,24 @@ function setFilter(f){
   renderTabs(); renderGrid(); syncURL();
 }
 
+/* TEMPLATE No. + YOUTUBE LINK SEARCH (2026-10-27)
+   "145", "#145", "No. 145" -> that exact template; a pasted YouTube / Shorts link
+   or bare video id -> that template. Returns [template] or null (normal search). */
+function tplNoOf(q){ const m=String(q).trim().match(/^(?:template\s*)?(?:#|no\.?\s*)?\s*(\d{1,4})$/i); return m?m[1]:null; }
+function tplYtIdOf(q){
+  q=String(q).trim();
+  const m=q.match(/(?:[?&]v=|youtu\.be\/|shorts\/|embed\/|live\/|\/t\/)([A-Za-z0-9_-]{11})/);
+  if(m) return m[1];
+  return /^[A-Za-z0-9_-]{11}$/.test(q) && /[A-Z_-]|\d/.test(q) && /[a-z]/i.test(q) ? q : null;
+}
+function tplDirectMatch(q){
+  const n=tplNoOf(q);
+  if(n){ const v=videos.find(x=>String(x.no)===n); return v?[v]:null; }
+  const id=tplYtIdOf(q);
+  if(id){ const v=videos.find(x=>String(x.id)===id || String(x.url||'').indexOf(id)>-1); return v?[v]:null; }
+  return null;
+}
+
 function onSearch(val){
   search=val; curPage=1;
   document.getElementById('searchclear').style.display = val ? 'block' : 'none';
@@ -1501,8 +1520,11 @@ function _updateSuggestions(val){
   sugIndex=-1;
   if(!q){ renderHistoryPanel(); return; }
   const starts=[], contains=[];
+  const dm=tplDirectMatch(val);
+  if(dm) starts.push(dm[0]);
   for(let i=0;i<videos.length;i++){
     const v=videos[i], t=v.title.toLowerCase();
+    if(dm && v===dm[0]) continue;
     if(t.startsWith(q)) starts.push(v);
     else if(t.includes(q)) contains.push(v);
     if(starts.length+contains.length>=40) break; // cap scan for perf
@@ -1517,7 +1539,7 @@ function _updateSuggestions(val){
     return '<div class="searchsug-item" data-i="'+i+'" onmousedown="chooseSuggestion('+i+')">'
       +'<img src="'+v.thumb+'" alt="" loading="lazy">'
       +'<div class="ssi-txt"><div class="ssi-title">'+highlightMatch(v.title,val.trim())+'</div>'
-      +'<div class="ssi-cat">'+v.cat.charAt(0).toUpperCase()+v.cat.slice(1)+'</div></div></div>';
+      +'<div class="ssi-cat">'+(v.no?'No. '+v.no+' · ':'')+v.cat.charAt(0).toUpperCase()+v.cat.slice(1)+'</div></div></div>';
   }).join('');
   box.classList.add('open');
 }
@@ -1655,7 +1677,7 @@ function buildCardHTML(v, idPrefix){
         </div>
       </div>
       <div class="vbody">
-        <div class="vtitle">${v.title}</div>
+        <div class="vtitle">${v.no?`<span class="vno">No. ${v.no}</span>`:''}${v.title}</div>
         ${vLang(v)?`<div class="vlang">${LANG_LABEL[vLang(v)]}</div>`:''}
         <div class="vmeta">${co
           ? `<span class="vprice" style="font-size:13px;">Customize Only</span><span style="font-size:10px;color:var(--mt)">Personalized Service</span>`
@@ -1716,7 +1738,8 @@ function renderGrid(){
   }else{
     el.classList.remove('focusgrid');
     q=search.trim().toLowerCase();
-    list = applySort((q
+    const direct=q?tplDirectMatch(search.trim()):null; // raw text: video ids are case-sensitive
+    list = direct ? direct : applySort((q
       ? videos.filter(v=>v.title.toLowerCase().includes(q))
       : (filter==='all'?videos:videos.filter(v=>v.cat===filter))
     ).filter(matchOrient).filter(matchLang));
@@ -1823,6 +1846,8 @@ function afxRepriceCart(){
 }
 
 function customizeWA(title,url){
+  const tv=videos.find(x=>x.url===url);
+  if(tv && tv.no) title='Template No. '+tv.no+' - '+title;
   const msg=`Hi AfterFX Templates! I would like to customize this template:\n\n${title}\n${url}\n\nPlease guide me with the details and pricing. Thank you!`;
   window.open(`https://wa.me/918971738710?text=${encodeURIComponent(msg)}`,'_blank');
 }
@@ -3376,6 +3401,7 @@ function openTpl(id){
       </div>
       <div class="tm-attrs">
         <div class="tm-attrs-t">Details</div>
+        ${v.no?`<div class="tm-attr"><span class="k">Template No.</span><span class="v">${v.no}</span></div>`:''}
         <div class="tm-attr"><span class="k">Category</span><span class="v">${cat}</span></div>
         <div class="tm-attr"><span class="k">Delivered as</span><span class="v">Final HD video (MP4)</span></div>
         <div class="tm-attr"><span class="k">You need</span><span class="v">Nothing — we make it</span></div>
@@ -3407,6 +3433,7 @@ function openTpl(id){
 
       <div class="tm-attrs">
         <div class="tm-attrs-t">Template Details</div>
+        ${v.no?`<div class="tm-attr"><span class="k">Template No.</span><span class="v">${v.no}</span></div>`:''}
         <div class="tm-attr"><span class="k">Category</span><span class="v">${cat}</span></div>
         <div class="tm-attr"><span class="k">Software</span><span class="v">${v.aeVersion||AE_VERSION_DEFAULT}</span></div>
         <div class="tm-attr"><span class="k">Plugins</span><span class="v">${v.plugins||PLUGINS_DEFAULT}</span></div>
