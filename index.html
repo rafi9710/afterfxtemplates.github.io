@@ -206,6 +206,17 @@ text-transform:uppercase;white-space:nowrap;transition:transform .18s,box-shadow
 .ms-searchbox{width:100%;background:transparent;border:none;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:14px;padding:0 40px 0 42px;height:48px;outline:none;}
 .ms-searchbox::placeholder{color:var(--mt);}
 @media(max-width:560px){.megasearch{max-width:100%;}.ms-catbtn{padding:0 11px;font-size:12px;}.ms-catpre{display:none;}.ms-searchbox{font-size:13px;padding-left:38px;}.ms-searchwrap .si{left:12px;}}
+/* HERO SEARCH (2026-10-29) — big highlighted search, link / Template No. first */
+.megasearch.ms-hero{max-width:900px;margin:0 0 10px;border:1.5px solid var(--gold);box-shadow:0 0 0 4px rgba(201,168,76,.12),0 10px 34px rgba(201,168,76,.14);animation:msGlow 2.4s ease-in-out 3;}
+.megasearch.ms-hero .ms-catbtn,.megasearch.ms-hero .ms-searchbox{height:60px;}
+.megasearch.ms-hero .ms-searchbox{font-size:16px;padding-left:48px;}
+.megasearch.ms-hero .si{width:20px;height:20px;fill:var(--gold);left:16px;}
+.megasearch.ms-hero .ms-searchbox::placeholder{color:var(--gold);opacity:.75;}
+.ms-hint{max-width:900px;font-size:12.5px;color:var(--mt);margin:0 0 30px;line-height:1.6;}
+.ms-hint b{color:var(--gold);}
+@keyframes msGlow{0%,100%{box-shadow:0 0 0 4px rgba(201,168,76,.12),0 10px 34px rgba(201,168,76,.14);}50%{box-shadow:0 0 0 7px rgba(201,168,76,.25),0 10px 40px rgba(201,168,76,.28);}}
+@media(prefers-reduced-motion:reduce){.megasearch.ms-hero{animation:none;}}
+@media(max-width:560px){.megasearch.ms-hero .ms-catbtn,.megasearch.ms-hero .ms-searchbox{height:54px;}.megasearch.ms-hero .ms-searchbox{font-size:14px;padding-left:40px;}.megasearch.ms-hero .si{left:12px;width:17px;height:17px;}}
 .sortbar{display:flex;justify-content:flex-end;margin:-6px 0 22px;}
 .sortdd{position:relative;}
 .catdd{display:inline-block;margin:8px 0 4px;}
@@ -707,66 +718,32 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
   </div>
 </div>
 
-<!-- FREE TELUGU TOOL -->
-<div class="toolbar-strip">
-  <div class="toolbar-in">
-    <div>
-      <div class="eyebrow">✦ Free Tool ✦</div>
-      <h4>Telugu &harr; ANU Converter</h4>
-      <p>Paste Telugu and get ANU text you can drop straight into Photoshop or After Effects.
-      Type in English and get Telugu. Or drop a photo of an invitation card and it reads the
-      text for you. No sign-up, nothing to install.</p>
-      <p style="margin-top:9px;font-size:12.5px;">
-        <a href="anu-font-problem.html" style="color:var(--gold);">Why does Telugu show box box in Photoshop? &rarr;</a>
-      </p>
-    </div>
-    <a href="anu-converter.html" class="go">Open the tool</a>
-  </div>
-</div>
-
-<div class="dv">✦ Template Collection ✦</div>
-
 <!-- TEMPLATES -->
 <section class="sec" id="templates">
-  <div style="margin-bottom:44px">
+  <div style="margin-bottom:22px">
     <div class="sl">After Effects Project Files</div>
     <div class="st">Browse Our Templates</div>
-    <div class="ss">Click any template to watch demo · Buy the project file to order</div>
+    <div class="ss">Find your template in seconds — paste the YouTube link or type the Template No.</div>
   </div>
   <div id="focusbar" style="display:none;margin-bottom:24px;">
     <button class="backall" onclick="exitFocus()">← View all templates</button>
     <div style="color:var(--mt);font-size:13px;margin-top:10px;">You're viewing a single template shared with you.</div>
   </div>
-  <div class="savebar">
-    <div class="savebar-head">
-      <span class="savebar-ic">💡</span>
-      <span class="savebar-ttl">1 template <b>₹300</b> — the more you buy, the cheaper it gets!</span>
+  <div class="megasearch ms-hero">
+    <div class="sortdd catdd" id="catdd">
+      <button class="ms-catbtn" id="catbtn" onclick="toggleCat(event)"><span class="ms-catpre">Category:</span> <b id="catlabel">All Templates</b><svg class="sortcaret" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg></button>
+      <div class="sortmenu" id="catmenu"></div>
     </div>
-    <div class="savebar-tiers">
-      <span class="savetier"><b>5</b> → ₹200 each <span class="off">33% off</span></span>
-      <span class="savetier"><b>10</b> → ₹175 each <span class="off">42% off</span></span>
-      <span class="savetier best"><b>20</b> → ₹150 each <span class="off">50% off</span> 🔥</span>
-    </div>
-    <div class="savebar-note">Horizontal &amp; Vertical both included · Instant delivery to your email · <a href="#pricing" style="color:var(--gold);text-decoration:none;font-weight:600;">See bundle packages →</a></div>
-  </div>
-  <div class="howbar">
-    <div class="howopt">
-      <div class="howic">📁</div>
-      <div>
-        <div class="howt">Project File — ₹300</div>
-        <div class="howd">Editable After Effects file — you add your own name &amp; details. Best if you (or your editor) use After Effects.</div>
-      </div>
-    </div>
-    <div class="howdiv"></div>
-    <div class="howopt">
-      <div class="howic">🎬</div>
-      <div>
-        <div class="howt">Ready-Made Video — Custom Quote</div>
-        <div class="howd">Don't use After Effects? We add your details &amp; deliver a finished video. <a href="https://wa.me/918971738710?text=Hi%20AfterFX%20Templates!%20I%20want%20a%20ready-made%20personalized%20video.%20Please%20share%20the%20details%20and%20pricing." target="_blank">Message us on WhatsApp →</a></div>
-      </div>
+    <div class="ms-divider"></div>
+    <div class="ms-searchwrap">
+      <svg class="si" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/></svg>
+      <input type="text" id="searchbox" class="ms-searchbox" placeholder="Paste YouTube link or type Template No. (e.g. 145)" oninput="onSearch(this.value)" autocomplete="off">
+      <button class="searchclear" id="searchclear" onclick="clearSearch()" aria-label="Clear search">&times;</button>
+      <div class="searchsug" id="searchsug"></div>
     </div>
   </div>
-  <div class="hb-link">First time buying? <button onclick="openHowBuy()">Watch how it works →</button></div>
+  <script>try{if(innerWidth<560)document.getElementById('searchbox').placeholder='Paste link or No.';}catch(e){}</script>
+  <div class="ms-hint">🔎 Saw a video on YouTube? <b>Paste its link here</b> and that exact template opens. Or type the Template No. or a name like wedding, barasala.</div>
   <div id="recentSection" style="display:none;margin-bottom:34px;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
       <div>
@@ -778,19 +755,6 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
     <div class="vgrid" id="rvgrid"></div>
   </div>
   <div class="tabs" id="tabs"></div>
-  <div class="megasearch">
-    <div class="sortdd catdd" id="catdd">
-      <button class="ms-catbtn" id="catbtn" onclick="toggleCat(event)"><span class="ms-catpre">Category:</span> <b id="catlabel">All Templates</b><svg class="sortcaret" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg></button>
-      <div class="sortmenu" id="catmenu"></div>
-    </div>
-    <div class="ms-divider"></div>
-    <div class="ms-searchwrap">
-      <svg class="si" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/></svg>
-      <input type="text" id="searchbox" class="ms-searchbox" placeholder="Search templates… e.g. wedding, barasala or No. 145" oninput="onSearch(this.value)" autocomplete="off">
-      <button class="searchclear" id="searchclear" onclick="clearSearch()" aria-label="Clear search">&times;</button>
-      <div class="searchsug" id="searchsug"></div>
-    </div>
-  </div>
   <div class="tabs" id="orienttabs"></div>
   <div class="sortbar">
     <button class="bshare" id="catshare" onclick="shareCategory()" style="margin-right:auto;display:none;">&#8599; Share this category</button>
