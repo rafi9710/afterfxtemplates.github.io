@@ -159,7 +159,7 @@ const pvObs = new IntersectionObserver(es => es.forEach(e => { if (!e.isIntersec
 function loadPv(el){
   const d = D.designs[+el.dataset.pv]; if (!d || !d.url) { el.textContent = 'No demo link yet'; return; }
   const f = document.createElement('iframe'); f.setAttribute('allow', "autoplay 'none'"); f.tabIndex = -1;
-  f.src = d.url + (d.url.includes('?') ? '&' : '?') + 'demo&autoplay';
+  f.src = d.url + (d.url.includes('?') ? '&' : '?') + 'demo&autoplay&mute';
   el.textContent = ''; el.appendChild(f);
 }
 function addDesign(){ D.designs.push({ name: 'New design', sub: '', faith: 'hindu', badge: 'New', url: '', feats: [] }); save(); render(); scrollTo(0, document.body.scrollHeight); }
