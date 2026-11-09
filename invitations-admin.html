@@ -31,6 +31,13 @@ button:hover{border-color:var(--gold)}
 @media(max-width:640px){.row,.row3{grid-template-columns:1fr}}
 .card{background:var(--bg2);border:1px solid var(--gb);border-radius:14px;padding:16px;margin-bottom:12px}
 .card.off{opacity:.55}
+.cbody{display:grid;grid-template-columns:170px 1fr;gap:18px;align-items:start;margin-top:10px}
+@media(max-width:640px){.cbody{grid-template-columns:1fr}}
+.pv{width:170px;margin:0 auto}
+.pv .ph{position:relative;width:170px;height:340px;border-radius:24px;background:#111;padding:6px;box-shadow:0 0 0 1px #2a2a36}
+.pv .sc{position:relative;width:100%;height:100%;border-radius:19px;overflow:hidden;background:#1b1b26;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--mut);font-size:12px;padding:10px}
+.pv iframe{position:absolute;top:0;left:0;width:375px;height:750px;border:0;transform:scale(.4213);transform-origin:0 0;pointer-events:none}
+.pv a{display:block;text-align:center;font-size:12.5px;color:var(--gold);margin-top:6px;text-decoration:none}
 .ch{display:flex;align-items:center;gap:8px;justify-content:space-between;flex-wrap:wrap}
 .ch b{font-family:'Cinzel',serif;font-size:17px}
 .ch .acts{display:flex;gap:6px;flex-wrap:wrap}
@@ -107,6 +114,7 @@ function render(){
   <div class="card${d.hidden ? ' off' : ''}" data-i="${i}">
     <div class="ch"><div><b>${esc(d.name || 'New design')}</b>${d.url ? '<span class="pill ok">demo live</span>' : '<span class="pill">no demo yet</span>'}${d.hidden ? '<span class="pill">hidden</span>' : ''}</div>
       <div class="acts"><button data-a="up">↑</button><button data-a="down">↓</button><button data-a="hide">${d.hidden ? '👁 Show' : '🚫 Hide'}</button><button data-a="del" class="red">✕ Delete</button></div></div>
+    <div class="cbody"><div class="pv"><div class="ph"><div class="sc" data-pv="${i}">${d.url ? 'Loading preview…' : 'No demo link yet'}</div></div>${d.url ? `<a href="${esc(d.url)}" target="_blank" rel="noopener">↗ Open full invite</a>` : ''}</div><div>
     <div class="row3">
       <div><label>Design name</label><input data-f="name" value="${esc(d.name)}"></div>
       <div><label>Price on card (₹, empty = plan price)</label><input data-f="price" type="number" min="0" step="50" value="${esc(d.price ?? '')}"></div>
@@ -119,7 +127,9 @@ function render(){
     <label>Demo link (a DEMO invite with sample names — never a real client's invite)</label><input data-f="url" placeholder="https://invites.afterfxtemplates.com/your-demo/" value="${esc(d.url)}">
     <label style="display:flex;gap:8px;align-items:center;font-size:13px;color:var(--tx)"><input type="checkbox" data-c="watch" style="width:auto"${d.watch ? ' checked' : ''}> Watch-only preview (tick this when the link is a REAL client's invite — visitors only see it auto-scroll and cannot tap RSVP or buttons)</label>
     <label>Features (comma separated, 3-4 short ones)</label><input data-f="feats" value="${esc((d.feats || []).join(', '))}">
+    </div></div>
   </div>`).join('');
+  document.querySelectorAll('[data-pv]').forEach(el => pvObs.observe(el));
   document.querySelectorAll('.card').forEach(c => {
     const i = +c.dataset.i, d = D.designs[i];
     c.querySelectorAll('[data-f]').forEach(inp => inp.oninput = () => {
@@ -128,6 +138,7 @@ function render(){
       else if (f === 'price') { if (v === '') delete d.price; else d.price = +v; }
       else d[f] = f === 'url' ? v.trim() : v;
       save();
+      if (f === 'url') { clearTimeout(c._pt); c._pt = setTimeout(() => { const el = c.querySelector('[data-pv]'); el.innerHTML = ''; if (d.url && /^https:\/\//.test(d.url)) loadPv(el); else el.textContent = 'No demo link yet'; }, 900); }
       if (f === 'name' || f === 'url') { const h = c.querySelector('.ch > div'); h.innerHTML = `<b>${esc(d.name || 'New design')}</b>${d.url ? '<span class="pill ok">demo live</span>' : '<span class="pill">no demo yet</span>'}${d.hidden ? '<span class="pill">hidden</span>' : ''}`; }
     });
     c.querySelectorAll('[data-c]').forEach(cb => cb.onchange = () => { if (cb.checked) d[cb.dataset.c] = true; else delete d[cb.dataset.c]; save(); });
@@ -140,6 +151,14 @@ function render(){
       save(); render();
     });
   });
+}
+/* small silent phone preview of each design's demo link, loaded when it scrolls into view */
+const pvObs = new IntersectionObserver(es => es.forEach(e => { if (!e.isIntersecting) return; pvObs.unobserve(e.target); loadPv(e.target); }), { rootMargin: '300px' });
+function loadPv(el){
+  const d = D.designs[+el.dataset.pv]; if (!d || !d.url) { el.textContent = 'No demo link yet'; return; }
+  const f = document.createElement('iframe'); f.setAttribute('allow', "autoplay 'none'"); f.tabIndex = -1;
+  f.src = d.url + (d.url.includes('?') ? '&' : '?') + 'demo&autoplay';
+  el.textContent = ''; el.appendChild(f);
 }
 function addDesign(){ D.designs.push({ name: 'New design', sub: '', faith: 'hindu', badge: 'New', url: '', feats: [] }); save(); render(); scrollTo(0, document.body.scrollHeight); }
 function exportJson(){
