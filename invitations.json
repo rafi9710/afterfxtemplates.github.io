@@ -1,0 +1,118 @@
+{
+ "basePrice": 1500,
+ "rsvpPrice": 2000,
+ "designs": [
+  {
+   "name": "Editorial Chapters",
+   "sub": "Magazine-style photo story",
+   "faith": "hindu",
+   "badge": "New",
+   "url": "https://invites.afterfxtemplates.com/chapters/",
+   "price": 1500,
+   "feats": [
+    "Per-event chapters",
+    "Dress code",
+    "Photo gallery",
+    "Countdown"
+   ]
+  },
+  {
+   "name": "Nikah Floral",
+   "sub": "Your card, as a website",
+   "faith": "muslim",
+   "badge": "New",
+   "url": "",
+   "price": 1500,
+   "feats": [
+    "Cover opens like doors",
+    "Bismillah",
+    "Urdu card",
+    "Hijri date"
+   ]
+  },
+  {
+   "name": "Temple Gopuram",
+   "sub": "South Indian temple story",
+   "faith": "hindu",
+   "badge": "Bestseller",
+   "url": "https://invites.afterfxtemplates.com/temple-demo/",
+   "price": 1500,
+   "feats": [
+    "Temple doors open",
+    "Rising gopuram",
+    "Meet the couple",
+    "RSVP"
+   ]
+  },
+  {
+   "name": "Royal Mandir",
+   "sub": "North Indian palace & temple",
+   "faith": "hindu",
+   "badge": "",
+   "url": "https://invites.afterfxtemplates.com/test/",
+   "price": 1500,
+   "feats": [
+    "Curtain opening",
+    "Peacock events",
+    "Timeline",
+    "Polaroid gallery"
+   ]
+  },
+  {
+   "name": "Chettinad",
+   "sub": "Heritage mansion & courtyard",
+   "faith": "hindu",
+   "badge": "",
+   "url": "",
+   "price": 1500,
+   "feats": [
+    "Mansion entry",
+    "Living scenes",
+    "Venue map",
+    "Countdown"
+   ]
+  },
+  {
+   "name": "Wax Seal",
+   "sub": "Elegant green envelope",
+   "faith": "all",
+   "badge": "",
+   "url": "",
+   "price": 1500,
+   "feats": [
+    "Seal opening",
+    "Scratch to reveal",
+    "Per-event RSVP",
+    "Rings finale"
+   ]
+  },
+  {
+   "name": "Editorial · Muslim",
+   "sub": "Mehendi · Manjha · Nikah · Walima",
+   "faith": "muslim",
+   "badge": "",
+   "url": "",
+   "price": 1500,
+   "feats": [
+    "Bismillah",
+    "Per-event chapters",
+    "Gallery",
+    "Countdown"
+   ]
+  },
+  {
+   "name": "Editorial · Christian",
+   "sub": "Betrothal · Holy Matrimony · Reception",
+   "faith": "christian",
+   "badge": "",
+   "url": "",
+   "price": 1500,
+   "feats": [
+    "Bible verse",
+    "Per-event chapters",
+    "Gallery",
+    "Countdown"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Web Invitations — Admin</title>
+<link rel="icon" href="logo.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root{--gold:#C9A84C;--bg:#080810;--bg2:#10101b;--bg3:#171726;--tx:#ECE8DF;--mut:#9C98A8;--gb:rgba(201,168,76,.3);--red:#e05555;--wa:#25D366}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',system-ui,sans-serif;font-size:15px;padding-bottom:110px}
+h1{font-family:'Cinzel',serif;font-size:22px}
+.wrap{max-width:980px;margin:0 auto;padding:20px}
+.hint{color:var(--mut);font-size:13.5px;line-height:1.6}
+input,select,textarea{width:100%;font:inherit;font-size:14px;color:var(--tx);background:#0b0b14;border:1px solid var(--gb);border-radius:9px;padding:9px 11px}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold)}
+label{display:block;font-size:12px;color:var(--mut);margin:10px 0 4px;letter-spacing:.03em}
+button{font:inherit;cursor:pointer;border-radius:9px;border:1px solid var(--gb);background:var(--bg3);color:var(--tx);padding:9px 14px;font-weight:600}
+button:hover{border-color:var(--gold)}
+.gold{background:var(--gold);color:#14100a;border-color:var(--gold)}
+.red{color:var(--red)}
+#gate{max-width:360px;margin:16vh auto;text-align:center;background:var(--bg2);border:1px solid var(--gb);border-radius:16px;padding:28px}
+#gate input{margin:16px 0 10px;text-align:center}
+#app{display:none}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.box{background:var(--bg2);border:1px solid var(--gb);border-radius:14px;padding:16px;margin-bottom:14px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row3{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px}
+@media(max-width:640px){.row,.row3{grid-template-columns:1fr}}
+.card{background:var(--bg2);border:1px solid var(--gb);border-radius:14px;padding:16px;margin-bottom:12px}
+.card.off{opacity:.55}
+.ch{display:flex;align-items:center;gap:8px;justify-content:space-between;flex-wrap:wrap}
+.ch b{font-family:'Cinzel',serif;font-size:17px}
+.ch .acts{display:flex;gap:6px;flex-wrap:wrap}
+.ch .acts button{padding:6px 10px;font-size:13px}
+.pill{font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid var(--gb);color:var(--mut);margin-left:6px}
+.pill.ok{color:var(--wa);border-color:var(--wa)}
+.bar{position:fixed;left:0;right:0;bottom:0;background:rgba(8,8,16,.95);border-top:1px solid var(--gb);padding:12px 20px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;z-index:5}
+.bar .msg{width:100%;text-align:center;font-size:13px;color:var(--mut)}
+#toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);background:var(--gold);color:#14100a;padding:10px 18px;border-radius:30px;font-weight:700;display:none;z-index:9}
+</style>
+</head>
+<body>
+<div id="gate"><h1>Web Invitations</h1><p class="hint" style="margin-top:6px">Admin — enter password</p>
+  <input type="password" id="pw" placeholder="Password" onkeydown="if(event.key==='Enter')login()"><button class="gold" onclick="login()" style="width:100%">Login</button>
+  <p class="red" id="pwErr" style="display:none;margin-top:10px">Wrong password</p></div>
+
+<div id="app"><div class="wrap">
+  <div class="top"><h1>Web Invitations — Admin</h1><a href="invitations.html" target="_blank"><button>👁 Open live page</button></a></div>
+  <p class="hint" style="margin-bottom:14px">Change prices, demo links and designs here → <b>⬇ Export</b> → upload <b>invitations.json</b> to GitHub (main) → live in ~2 min. Your edits are kept in this browser until you export.</p>
+
+  <div class="box">
+    <div class="row">
+      <div><label>Plan price — without RSVP (₹)</label><input type="number" id="basePrice" min="0" step="50"></div>
+      <div><label>Plan price — with RSVP (₹)</label><input type="number" id="rsvpPrice" min="0" step="50"></div>
+    </div>
+    <p class="hint" style="margin-top:8px">A design with its own price below shows that price on its card; empty = the plan price above.</p>
+  </div>
+
+  <div id="list"></div>
+  <button onclick="addDesign()" style="width:100%;padding:13px">＋ Add design</button>
+</div></div>
+
+<div class="bar" id="bar" style="display:none">
+  <button onclick="loadLive()">↻ Load live file</button>
+  <button class="gold" onclick="exportJson()">⬇ Export invitations.json</button>
+  <div class="msg" id="msg"></div>
+</div>
+<div id="toast"></div>
+
+<script>
+const PW = 'rafi9710', KEY = 'afx_invites_admin';
+const FAITHS = [['all', 'All faiths'], ['hindu', 'Hindu'], ['muslim', 'Muslim'], ['christian', 'Christian']];
+let D = null;
+const $ = s => document.querySelector(s);
+const esc = v => String(v ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const toast = t => { const e = $('#toast'); e.textContent = t; e.style.display = 'block'; clearTimeout(e._t); e._t = setTimeout(() => e.style.display = 'none', 2200); };
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(D)); } catch (e) {} $('#msg').textContent = 'Unsaved to website — remember to Export + upload'; };
+
+function login(){
+  if ($('#pw').value !== PW){ $('#pwErr').style.display = 'block'; return; }
+  try { sessionStorage.setItem(KEY + '_ok', '1'); } catch (e) {}
+  start();
+}
+async function start(){
+  $('#gate').style.display = 'none'; $('#app').style.display = 'block'; $('#bar').style.display = 'flex';
+  let local = null; try { local = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
+  if (local && Array.isArray(local.designs)){ D = local; $('#msg').textContent = 'Showing your unsaved edits from this browser'; render(); }
+  else await loadLive(true);
+}
+async function loadLive(silent){
+  if (!silent && !confirmBox('Load the live invitations.json? Unsaved edits in this browser will be replaced.')) return;
+  try { const r = await fetch('invitations.json?v=' + Date.now(), { cache: 'no-store' }); D = await r.json(); }
+  catch (e) { D = { basePrice: 1500, rsvpPrice: 2000, designs: [] }; toast('Could not load live file'); }
+  try { localStorage.removeItem(KEY); } catch (e) {}
+  $('#msg').textContent = 'Loaded the live file'; render();
+}
+function confirmBox(t){ return window.confirm ? confirm(t) : true; }
+
+function render(){
+  $('#basePrice').value = D.basePrice ?? ''; $('#rsvpPrice').value = D.rsvpPrice ?? '';
+  $('#basePrice').oninput = e => { D.basePrice = +e.target.value || 0; save(); };
+  $('#rsvpPrice').oninput = e => { D.rsvpPrice = +e.target.value || 0; save(); };
+  $('#list').innerHTML = D.designs.map((d, i) => `
+  <div class="card${d.hidden ? ' off' : ''}" data-i="${i}">
+    <div class="ch"><div><b>${esc(d.name || 'New design')}</b>${d.url ? '<span class="pill ok">demo live</span>' : '<span class="pill">no demo yet</span>'}${d.hidden ? '<span class="pill">hidden</span>' : ''}</div>
+      <div class="acts"><button data-a="up">↑</button><button data-a="down">↓</button><button data-a="hide">${d.hidden ? '👁 Show' : '🚫 Hide'}</button><button data-a="del" class="red">✕ Delete</button></div></div>
+    <div class="row3">
+      <div><label>Design name</label><input data-f="name" value="${esc(d.name)}"></div>
+      <div><label>Price on card (₹, empty = plan price)</label><input data-f="price" type="number" min="0" step="50" value="${esc(d.price ?? '')}"></div>
+      <div><label>Badge (New / Bestseller / empty)</label><input data-f="badge" value="${esc(d.badge)}"></div>
+    </div>
+    <div class="row">
+      <div><label>Short line under the name</label><input data-f="sub" value="${esc(d.sub)}"></div>
+      <div><label>Filter</label><select data-f="faith">${FAITHS.map(([v, t]) => `<option value="${v}"${d.faith === v ? ' selected' : ''}>${t}</option>`).join('')}</select></div>
+    </div>
+    <label>Demo link (a DEMO invite with sample names — never a real client's invite)</label><input data-f="url" placeholder="https://invites.afterfxtemplates.com/your-demo/" value="${esc(d.url)}">
+    <label>Features (comma separated, 3-4 short ones)</label><input data-f="feats" value="${esc((d.feats || []).join(', '))}">
+  </div>`).join('');
+  document.querySelectorAll('.card').forEach(c => {
+    const i = +c.dataset.i, d = D.designs[i];
+    c.querySelectorAll('[data-f]').forEach(inp => inp.oninput = () => {
+      const f = inp.dataset.f, v = inp.value;
+      if (f === 'feats') d.feats = v.split(',').map(x => x.trim()).filter(Boolean);
+      else if (f === 'price') { if (v === '') delete d.price; else d.price = +v; }
+      else d[f] = f === 'url' ? v.trim() : v;
+      save();
+      if (f === 'name' || f === 'url') { const h = c.querySelector('.ch > div'); h.innerHTML = `<b>${esc(d.name || 'New design')}</b>${d.url ? '<span class="pill ok">demo live</span>' : '<span class="pill">no demo yet</span>'}${d.hidden ? '<span class="pill">hidden</span>' : ''}`; }
+    });
+    c.querySelectorAll('[data-a]').forEach(b => b.onclick = () => {
+      const a = b.dataset.a, L = D.designs;
+      if (a === 'up' && i > 0) [L[i - 1], L[i]] = [L[i], L[i - 1]];
+      if (a === 'down' && i < L.length - 1) [L[i + 1], L[i]] = [L[i], L[i + 1]];
+      if (a === 'hide') d.hidden = !d.hidden;
+      if (a === 'del' && confirmBox(`Delete "${d.name}"?`)) L.splice(i, 1);
+      save(); render();
+    });
+  });
+}
+function addDesign(){ D.designs.push({ name: 'New design', sub: '', faith: 'hindu', badge: 'New', url: '', feats: [] }); save(); render(); scrollTo(0, document.body.scrollHeight); }
+function exportJson(){
+  const bad = D.designs.filter(d => d.url && !/^https:\/\//.test(d.url)); if (bad.length){ toast('Fix demo link: ' + bad[0].name); return; }
+  const out = { basePrice: D.basePrice, rsvpPrice: D.rsvpPrice, designs: D.designs.map(d => { const o = { name: d.name, sub: d.sub || '', faith: d.faith || 'all', badge: d.badge || '', url: d.url || '', feats: d.feats || [] };
+    if (d.price) o.price = d.price; if (d.hidden) o.hidden = true; return o; }) };
+  const blob = new Blob([JSON.stringify(out, null, 1)], { type: 'application/json' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'invitations.json'; a.click(); URL.revokeObjectURL(a.href);
+  $('#msg').textContent = 'Downloaded — now upload invitations.json to GitHub (Commit directly to main)'; toast('invitations.json downloaded');
+}
+try { if (sessionStorage.getItem(KEY + '_ok')) start(); } catch (e) {}
+</script>
+</body>
+</html>

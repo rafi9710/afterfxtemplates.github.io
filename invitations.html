@@ -157,12 +157,12 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:30px 0 50px;bor
   <div class="sh"><h2>Simple <span class="gold">pricing</span></h2><p>One-time price. No per-guest charge, share with as many people as you like.</p></div>
   <div class="plans">
     <div class="plan">
-      <h3>Invitation Website</h3><div class="amt">₹1,500</div>
+      <h3>Invitation Website</h3><div class="amt" id="amtA">₹1,500</div>
       <ul><li>Any design from above</li><li>Your names, events, venue &amp; photos</li><li>Google Maps + countdown + music</li><li>One link, opens on any phone</li><li>Delivered in 2 days</li></ul>
       <a class="cta wa" id="planA" target="_blank" rel="noopener">Order on WhatsApp</a>
     </div>
     <div class="plan best"><span class="pop">Most popular</span>
-      <h3>With RSVP</h3><div class="amt">₹2,000</div>
+      <h3>With RSVP</h3><div class="amt" id="amtB">₹2,000</div>
       <ul><li>Everything in Invitation Website</li><li>Guests tap Attending / Not Attending</li><li>Live guest list &amp; exact headcount</li><li>Private family link to see responses</li><li>No need to call every guest</li></ul>
       <a class="cta wa" id="planB" target="_blank" rel="noopener">Order on WhatsApp</a>
     </div>
@@ -187,28 +187,24 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:30px 0 50px;bor
   <div class="bar"><a class="btn wa" id="pvWa" target="_blank" rel="noopener">💬 I want this design</a><a class="btn" id="pvNew" target="_blank" rel="noopener">↗ Open full screen</a></div></div></div>
 
 <script>
-/* ===== EDIT HERE: one line per design. url = public DEMO invite (sample names only, never a real client). Empty url = "Demo coming soon". ===== */
-const DESIGNS = [
-  { name: 'Editorial Chapters', sub: 'Magazine-style photo story', faith: 'hindu', badge: 'New', url: 'https://invites.afterfxtemplates.com/chapters/', feats: ['Per-event chapters', 'Dress code', 'Photo gallery', 'Countdown'] },
-  { name: 'Nikah Floral', sub: 'Your card, as a website', faith: 'muslim', badge: 'New', url: '', feats: ['Cover opens like doors', 'Bismillah', 'Urdu card', 'Hijri date'] },
-  { name: 'Temple Gopuram', sub: 'South Indian temple story', faith: 'hindu', badge: 'Bestseller', url: 'https://invites.afterfxtemplates.com/temple-demo/', feats: ['Temple doors open', 'Rising gopuram', 'Meet the couple', 'RSVP'] },
-  { name: 'Royal Mandir', sub: 'North Indian palace & temple', faith: 'hindu', badge: '', url: 'https://invites.afterfxtemplates.com/test/', feats: ['Curtain opening', 'Peacock events', 'Timeline', 'Polaroid gallery'] },
-  { name: 'Chettinad', sub: 'Heritage mansion & courtyard', faith: 'hindu', badge: '', url: '', feats: ['Mansion entry', 'Living scenes', 'Venue map', 'Countdown'] },
-  { name: 'Wax Seal', sub: 'Elegant green envelope', faith: 'all', badge: '', url: '', feats: ['Seal opening', 'Scratch to reveal', 'Per-event RSVP', 'Rings finale'] },
-  { name: 'Editorial · Muslim', sub: 'Mehendi · Manjha · Nikah · Walima', faith: 'muslim', badge: '', url: '', feats: ['Bismillah', 'Per-event chapters', 'Gallery', 'Countdown'] },
-  { name: 'Editorial · Christian', sub: 'Betrothal · Holy Matrimony · Reception', faith: 'christian', badge: '', url: '', feats: ['Bible verse', 'Per-event chapters', 'Gallery', 'Countdown'] }
-];
+/* Designs and prices come from invitations.json — edit them in invitations-admin.html, export, upload. */
+const FALLBACK = {"basePrice": 1500, "rsvpPrice": 2000, "designs": [{"name": "Editorial Chapters", "sub": "Magazine-style photo story", "faith": "hindu", "badge": "New", "url": "https://invites.afterfxtemplates.com/chapters/", "price": 1500, "feats": ["Per-event chapters", "Dress code", "Photo gallery", "Countdown"]}, {"name": "Nikah Floral", "sub": "Your card, as a website", "faith": "muslim", "badge": "New", "url": "", "price": 1500, "feats": ["Cover opens like doors", "Bismillah", "Urdu card", "Hijri date"]}, {"name": "Temple Gopuram", "sub": "South Indian temple story", "faith": "hindu", "badge": "Bestseller", "url": "https://invites.afterfxtemplates.com/temple-demo/", "price": 1500, "feats": ["Temple doors open", "Rising gopuram", "Meet the couple", "RSVP"]}, {"name": "Royal Mandir", "sub": "North Indian palace & temple", "faith": "hindu", "badge": "", "url": "https://invites.afterfxtemplates.com/test/", "price": 1500, "feats": ["Curtain opening", "Peacock events", "Timeline", "Polaroid gallery"]}, {"name": "Chettinad", "sub": "Heritage mansion & courtyard", "faith": "hindu", "badge": "", "url": "", "price": 1500, "feats": ["Mansion entry", "Living scenes", "Venue map", "Countdown"]}, {"name": "Wax Seal", "sub": "Elegant green envelope", "faith": "all", "badge": "", "url": "", "price": 1500, "feats": ["Seal opening", "Scratch to reveal", "Per-event RSVP", "Rings finale"]}, {"name": "Editorial · Muslim", "sub": "Mehendi · Manjha · Nikah · Walima", "faith": "muslim", "badge": "", "url": "", "price": 1500, "feats": ["Bismillah", "Per-event chapters", "Gallery", "Countdown"]}, {"name": "Editorial · Christian", "sub": "Betrothal · Holy Matrimony · Reception", "faith": "christian", "badge": "", "url": "", "price": 1500, "feats": ["Bible verse", "Per-event chapters", "Gallery", "Countdown"]}]};
+let DESIGNS = FALLBACK.designs, PRICE = { base: FALLBACK.basePrice, rsvp: FALLBACK.rsvpPrice };
 const WA = '918971738710';
-/* ======================================================================== */
 const wa = t => `https://wa.me/${WA}?text=${encodeURIComponent(t)}`;
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const demo = u => u + (u.includes('?') ? '&' : '?') + 'demo';
+const inr = n => '₹' + Number(n || 0).toLocaleString('en-IN');
 document.getElementById('yr').textContent = new Date().getFullYear();
-document.getElementById('planA').href = wa('Hi, I want a scrolling wedding invitation website (₹1,500 plan).');
-document.getElementById('planB').href = wa('Hi, I want a scrolling wedding invitation website with RSVP (₹2,000 plan).');
+function setPlans(){
+  document.getElementById('amtA').textContent = inr(PRICE.base); document.getElementById('amtB').textContent = inr(PRICE.rsvp);
+  document.getElementById('planA').href = wa(`Hi, I want a scrolling wedding invitation website (${inr(PRICE.base)} plan).`);
+  document.getElementById('planB').href = wa(`Hi, I want a scrolling wedding invitation website with RSVP (${inr(PRICE.rsvp)} plan).`);
+}
 document.getElementById('finalWa').href = wa('Hi, please send me the demo links for your scrolling wedding invitations.');
 
 const grid = document.getElementById('grid');
+function render(){
 grid.innerHTML = DESIGNS.map((d, i) => `
   <div class="card" data-faith="${d.faith}">
     <div class="phone">${d.badge ? `<span class="badge">${esc(d.badge)}</span>` : ''}<div class="screen" data-i="${i}">
@@ -216,7 +212,7 @@ grid.innerHTML = DESIGNS.map((d, i) => `
     </div></div>
     <h3>${esc(d.name)}</h3><p class="sub">${esc(d.sub)}</p>
     <div class="feat">${d.feats.map(f => `<span>${esc(f)}</span>`).join('')}</div>
-    <p class="price">from <b>₹1,500</b></p>
+    <p class="price">from <b>${inr(d.price || PRICE.base)}</b></p>
     <div class="btns">
       <button class="btn" data-open="${i}" ${d.url ? '' : 'disabled'}>▶ Live demo</button>
       <a class="btn wa" target="_blank" rel="noopener" href="${wa(`Hi, I want the "${d.name}" scrolling wedding invitation.`)}">💬 I want this</a>
@@ -224,7 +220,7 @@ grid.innerHTML = DESIGNS.map((d, i) => `
   </div>`).join('');
 
 /* load each small phone demo only when it scrolls into view (keeps the page light) */
-const io = new IntersectionObserver(es => es.forEach(e => {
+var io = new IntersectionObserver(es => es.forEach(e => {
   if (!e.isIntersecting) return; io.unobserve(e.target);
   const d = DESIGNS[+e.target.dataset.i]; if (!d.url) return;
   const f = document.createElement('iframe'); f.loading = 'lazy'; f.title = d.name; f.src = demo(d.url); f.setAttribute('tabindex', '-1');
@@ -232,6 +228,15 @@ const io = new IntersectionObserver(es => es.forEach(e => {
   e.target.prepend(f);
 }), { rootMargin: '200px' });
 document.querySelectorAll('.screen').forEach(s => io.observe(s));
+}
+
+setPlans(); render();
+fetch('invitations.json?v=' + Date.now(), { cache: 'no-store' }).then(r => r.ok ? r.json() : null).then(j => {
+  if (!j || !Array.isArray(j.designs)) return;
+  DESIGNS = j.designs.filter(d => d && d.name && !d.hidden); PRICE = { base: j.basePrice || PRICE.base, rsvp: j.rsvpPrice || PRICE.rsvp };
+  setPlans(); render();
+  const f = document.querySelector('#filters button.on'); if (f && f.dataset.f !== 'all') f.click();
+}).catch(() => {});
 
 /* filters */
 document.getElementById('filters').onclick = e => {
