@@ -399,7 +399,7 @@ ${allService ? `<h2>How these videos work</h2>
 }
 
 // ---------- sitemap ----------
-const STATIC = [['/', '1.0', 'weekly'], ['/wedding-cards.html', '0.8', 'monthly'],
+const STATIC = [['/', '1.0', 'weekly'], ['/invitations.html', '0.9', 'weekly'], ['/wedding-cards.html', '0.8', 'monthly'],
   ['/fonts.html', '0.7', 'monthly'], ['/about.html', '0.5', 'yearly'],
   ['/terms.html', '0.3', 'yearly'], ['/privacy.html', '0.3', 'yearly']];
 
