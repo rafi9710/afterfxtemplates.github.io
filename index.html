@@ -1381,12 +1381,7 @@ function renderTabs(){
     pills.innerHTML=opts.map(c=>
       `<button class="tabp ${c.id===active?'on':''}${c.id===PREM_CAT?' prem':''}" onclick="setFilter('${c.id}')"${c.id===active?' aria-current="true"':''}>${catLabel(c)}${c.id===PREM_CAT?'<span class="tg">NEW</span>':''}</button>`
     ).join('');
-    // banner to the full showcase while the premium category is open
-    let pb=document.getElementById('prembar');
-    if(active===PREM_CAT){
-      if(!pb){ pb=document.createElement('div'); pb.id='prembar'; pb.className='prembar'; pills.insertAdjacentElement('afterend',pb); }
-      pb.innerHTML='<div><b>Premium Web Invitations</b><span>Scrolling invitation websites — see every design live, with prices</span></div><a href="invitations.html">View all designs &amp; live demos →</a>';
-    }else if(pb){ pb.remove(); }
+
   }
   const csb=document.getElementById('catshare');
   if(csb){
@@ -1433,10 +1428,12 @@ function readFilterParams(){
   const o=sp.get('orient'); const c=sp.get('cat');
   if(o==='h'||o==='v') orient=o;
   const lg=sp.get('lang'); if(LANG_LABEL[lg]) lang=lg;
+  if(c===PREM_CAT){ location.replace('invitations.html'); return; }   // old shared ?cat= links land on the showcase
   if(c && videos.some(v=>v.cat===c)) filter=c;
 }
 
 function setFilter(f){
+  if(f===PREM_CAT){ location.href='invitations.html'; return; }   // premium chip opens the scrolling-invitations showcase
   filter=f; curPage=1;
   const cd=document.getElementById('catdd'); if(cd) cd.classList.remove('open');
   // switching category clears any active search
