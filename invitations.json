@@ -1,6 +1,6 @@
 {
- "basePrice": 1500,
- "rsvpPrice": 2000,
+ "basePrice": 2500,
+ "rsvpPrice": 3000,
  "designs": [
   {
    "name": "Editorial Chapters",
@@ -8,13 +8,13 @@
    "faith": "hindu",
    "badge": "New",
    "url": "https://invites.afterfxtemplates.com/chapters/",
-   "price": 1500,
    "feats": [
     "Per-event chapters",
     "Dress code",
     "Photo gallery",
     "Countdown"
-   ]
+   ],
+   "price": 2500
   },
   {
    "name": "Nikah Floral",
@@ -22,13 +22,13 @@
    "faith": "muslim",
    "badge": "New",
    "url": "https://invites.afterfxtemplates.com/ishrath-salman/",
-   "price": 1500,
    "feats": [
     "Cover opens like doors",
     "Bismillah",
     "Urdu card",
     "Hijri date"
    ],
+   "price": 1500,
    "watch": true
   },
   {
@@ -37,13 +37,13 @@
    "faith": "hindu",
    "badge": "Bestseller",
    "url": "https://invites.afterfxtemplates.com/sandeep-swetha/",
-   "price": 1500,
    "feats": [
     "Temple doors open",
     "Rising gopuram",
     "Meet the couple",
     "RSVP"
    ],
+   "price": 2000,
    "watch": true
   },
   {
@@ -52,13 +52,13 @@
    "faith": "hindu",
    "badge": "",
    "url": "https://invites.afterfxtemplates.com/test/",
-   "price": 1500,
    "feats": [
     "Curtain opening",
     "Peacock events",
     "Timeline",
     "Polaroid gallery"
-   ]
+   ],
+   "price": 1500
   },
   {
    "name": "Chettinad",
@@ -66,13 +66,13 @@
    "faith": "hindu",
    "badge": "",
    "url": "https://invites.afterfxtemplates.com/seetha-rama/",
-   "price": 1500,
    "feats": [
     "Mansion entry",
     "Living scenes",
     "Venue map",
     "Countdown"
    ],
+   "price": 1800,
    "watch": true
   },
   {
@@ -81,13 +81,13 @@
    "faith": "all",
    "badge": "",
    "url": "https://invites.afterfxtemplates.com/yathika-vinay/",
-   "price": 1500,
    "feats": [
     "Seal opening",
     "Scratch to reveal",
     "Per-event RSVP",
     "Rings finale"
    ],
+   "price": 1500,
    "watch": true
   },
   {
@@ -96,13 +96,13 @@
    "faith": "muslim",
    "badge": "",
    "url": "",
-   "price": 1500,
    "feats": [
     "Bismillah",
     "Per-event chapters",
     "Gallery",
     "Countdown"
    ],
+   "price": 1500,
    "hidden": true
   },
   {
@@ -111,13 +111,13 @@
    "faith": "christian",
    "badge": "",
    "url": "",
-   "price": 1500,
    "feats": [
     "Bible verse",
     "Per-event chapters",
     "Gallery",
     "Countdown"
    ],
+   "price": 1500,
    "hidden": true
   }
  ]
