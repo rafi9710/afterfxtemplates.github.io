@@ -117,6 +117,7 @@ function render(){
       <div><label>Filter</label><select data-f="faith">${FAITHS.map(([v, t]) => `<option value="${v}"${d.faith === v ? ' selected' : ''}>${t}</option>`).join('')}</select></div>
     </div>
     <label>Demo link (a DEMO invite with sample names — never a real client's invite)</label><input data-f="url" placeholder="https://invites.afterfxtemplates.com/your-demo/" value="${esc(d.url)}">
+    <label style="display:flex;gap:8px;align-items:center;font-size:13px;color:var(--tx)"><input type="checkbox" data-c="watch" style="width:auto"${d.watch ? ' checked' : ''}> Watch-only preview (tick this when the link is a REAL client's invite — visitors only see it auto-scroll and cannot tap RSVP or buttons)</label>
     <label>Features (comma separated, 3-4 short ones)</label><input data-f="feats" value="${esc((d.feats || []).join(', '))}">
   </div>`).join('');
   document.querySelectorAll('.card').forEach(c => {
@@ -129,6 +130,7 @@ function render(){
       save();
       if (f === 'name' || f === 'url') { const h = c.querySelector('.ch > div'); h.innerHTML = `<b>${esc(d.name || 'New design')}</b>${d.url ? '<span class="pill ok">demo live</span>' : '<span class="pill">no demo yet</span>'}${d.hidden ? '<span class="pill">hidden</span>' : ''}`; }
     });
+    c.querySelectorAll('[data-c]').forEach(cb => cb.onchange = () => { if (cb.checked) d[cb.dataset.c] = true; else delete d[cb.dataset.c]; save(); });
     c.querySelectorAll('[data-a]').forEach(b => b.onclick = () => {
       const a = b.dataset.a, L = D.designs;
       if (a === 'up' && i > 0) [L[i - 1], L[i]] = [L[i], L[i - 1]];
@@ -143,7 +145,7 @@ function addDesign(){ D.designs.push({ name: 'New design', sub: '', faith: 'hind
 function exportJson(){
   const bad = D.designs.filter(d => d.url && !/^https:\/\//.test(d.url)); if (bad.length){ toast('Fix demo link: ' + bad[0].name); return; }
   const out = { basePrice: D.basePrice, rsvpPrice: D.rsvpPrice, designs: D.designs.map(d => { const o = { name: d.name, sub: d.sub || '', faith: d.faith || 'all', badge: d.badge || '', url: d.url || '', feats: d.feats || [] };
-    if (d.price) o.price = d.price; if (d.hidden) o.hidden = true; return o; }) };
+    if (d.price) o.price = d.price; if (d.watch) o.watch = true; if (d.hidden) o.hidden = true; return o; }) };
   const blob = new Blob([JSON.stringify(out, null, 1)], { type: 'application/json' });
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'invitations.json'; a.click(); URL.revokeObjectURL(a.href);
   $('#msg').textContent = 'Downloaded — now upload invitations.json to GitHub (Commit directly to main)'; toast('invitations.json downloaded');

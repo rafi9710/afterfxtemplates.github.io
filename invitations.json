@@ -21,14 +21,15 @@
    "sub": "Your card, as a website",
    "faith": "muslim",
    "badge": "New",
-   "url": "",
+   "url": "https://invites.afterfxtemplates.com/ishrath-salman/",
    "price": 1500,
    "feats": [
     "Cover opens like doors",
     "Bismillah",
     "Urdu card",
     "Hijri date"
-   ]
+   ],
+   "watch": true
   },
   {
    "name": "Temple Gopuram",
@@ -63,28 +64,30 @@
    "sub": "Heritage mansion & courtyard",
    "faith": "hindu",
    "badge": "",
-   "url": "",
+   "url": "https://invites.afterfxtemplates.com/seetha-rama/",
    "price": 1500,
    "feats": [
     "Mansion entry",
     "Living scenes",
     "Venue map",
     "Countdown"
-   ]
+   ],
+   "watch": true
   },
   {
    "name": "Wax Seal",
    "sub": "Elegant green envelope",
    "faith": "all",
    "badge": "",
-   "url": "",
+   "url": "https://invites.afterfxtemplates.com/yathika-vinay/",
    "price": 1500,
    "feats": [
     "Seal opening",
     "Scratch to reveal",
     "Per-event RSVP",
     "Rings finale"
-   ]
+   ],
+   "watch": true
   },
   {
    "name": "Editorial · Muslim",
@@ -98,7 +101,8 @@
     "Per-event chapters",
     "Gallery",
     "Countdown"
-   ]
+   ],
+   "hidden": true
   },
   {
    "name": "Editorial · Christian",
@@ -112,7 +116,8 @@
     "Per-event chapters",
     "Gallery",
     "Countdown"
-   ]
+   ],
+   "hidden": true
   }
  ]
 }
