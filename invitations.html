@@ -230,6 +230,7 @@ var io = new IntersectionObserver(es => es.forEach(e => {
   if (!e.isIntersecting) return; io.unobserve(e.target);
   const d = DESIGNS[+e.target.dataset.i]; if (!d.url) return;
   const f = document.createElement('iframe'); f.loading = 'lazy'; f.title = d.name; f.src = demo(d.url); f.setAttribute('tabindex', '-1');
+  f.setAttribute('allow', "autoplay 'none'");   // small previews stay silent — music only in the Live demo popup
   f.onload = () => { const p = e.target.querySelector('.ph'); if (p) p.remove(); };
   e.target.prepend(f);
 }), { rootMargin: '200px' });
