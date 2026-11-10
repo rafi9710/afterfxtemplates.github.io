@@ -82,7 +82,20 @@ a{color:inherit;text-decoration:none}
 .card .sub{text-align:center;color:var(--mut);font-size:13.5px;margin-top:2px}
 .feat{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:12px 0 16px}
 .feat span{font-size:12px;border:1px solid var(--gb);border-radius:20px;padding:4px 10px;color:#d6d0c2}
-.price{text-align:center;font-size:14px;color:var(--mut);margin-bottom:12px}
+.price{position:relative;text-align:center;font-size:14px;color:var(--mut);margin-bottom:12px;min-height:30px;display:flex;align-items:center;justify-content:center;gap:6px}
+.shr{position:absolute;right:0;top:50%;transform:translateY(-50%);display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:13px;font-weight:600;color:var(--gold);background:rgba(201,168,76,.08);border:1px solid var(--gb);border-radius:30px;padding:7px 12px;cursor:pointer;transition:.2s}
+.shr:hover{background:rgba(201,168,76,.18);border-color:var(--gold)}
+.shr svg{width:15px;height:15px}
+.card.flash{animation:flash 2.4s ease}
+@keyframes flash{0%,60%{box-shadow:0 0 0 3px var(--gold),0 0 40px rgba(201,168,76,.45)}100%{box-shadow:none}}
+#shm{position:fixed;inset:0;z-index:120;background:rgba(4,4,10,.75);display:none;align-items:flex-end;justify-content:center;padding:16px}
+#shm.on{display:flex}
+#shm .sb{width:min(420px,100%);background:var(--bg2);border:1px solid var(--gb);border-radius:20px;padding:20px;margin-bottom:max(10px,env(safe-area-inset-bottom))}
+#shm h4{font-family:'Cinzel',serif;font-size:17px;margin-bottom:4px}
+#shm p{color:var(--mut);font-size:13px;word-break:break-all;margin-bottom:14px}
+#shm .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#shm .x2{width:100%;margin-top:10px;background:transparent;border:0;color:var(--mut);font:inherit;cursor:pointer;padding:8px}
+@media(min-width:700px){#shm{align-items:center}}
 .price b{color:var(--gold);font-size:20px;font-family:'Cinzel',serif}
 .btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:auto}
 .btn{display:flex;align-items:center;justify-content:center;gap:6px;font:inherit;font-size:14px;font-weight:600;padding:11px 10px;border-radius:12px;cursor:pointer;border:1px solid var(--gb);background:var(--bg3);color:var(--tx);transition:.2s}
@@ -202,6 +215,7 @@ const WA = '918971738710';
 const wa = t => `https://wa.me/${WA}?text=${encodeURIComponent(t)}`;
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const demo = u => u + (u.includes('?') ? '&' : '?') + 'demo&autoplay';
+const slug = n => String(n || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const inr = n => '₹' + Number(n || 0).toLocaleString('en-IN');
 document.getElementById('yr').textContent = new Date().getFullYear();
 function setPlans(){
@@ -214,13 +228,13 @@ document.getElementById('finalWa').href = wa('Hi, please send me the demo links 
 const grid = document.getElementById('grid');
 function render(){
 grid.innerHTML = DESIGNS.map((d, i) => `
-  <div class="card" data-faith="${d.faith}">
+  <div class="card" data-faith="${d.faith}" id="${slug(d.name)}">
     <div class="phone">${d.badge ? `<span class="badge">${esc(d.badge)}</span>` : ''}<div class="screen" data-i="${i}">
       ${d.url ? `<div class="ph"><i>⏳</i>Loading demo…</div><div class="tapc" data-open="${i}"></div>` : `<div class="ph"><i>📱</i>Demo coming soon<br>Ask us on WhatsApp</div>`}
     </div></div>
     <h3>${esc(d.name)}</h3><p class="sub">${esc(d.sub)}</p>
     <div class="feat">${d.feats.map(f => `<span>${esc(f)}</span>`).join('')}</div>
-    <p class="price">from <b>${inr(d.price || PRICE.base)}</b></p>
+    <p class="price"><span>from <b>${inr(d.price || PRICE.base)}</b></span><button class="shr" type="button" data-share="${i}" aria-label="Share this design"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>Share</button></p>
     <div class="btns">
       <button class="btn" data-open="${i}" ${d.url ? '' : 'disabled'}>▶ Live demo</button>
       <a class="btn wa" target="_blank" rel="noopener" href="${wa(`Hi, I want the "${d.name}" scrolling wedding invitation.`)}">💬 I want this</a>
@@ -245,7 +259,37 @@ fetch('invitations.json?v=' + Date.now(), { cache: 'no-store' }).then(r => r.ok 
   DESIGNS = j.designs.filter(d => d && d.name && !d.hidden); PRICE = { base: j.basePrice || PRICE.base, rsvp: j.rsvpPrice || PRICE.rsvp };
   setPlans(); render();
   const f = document.querySelector('#filters button.on'); if (f && f.dataset.f !== 'all') f.click();
-}).catch(() => {});
+}).catch(() => {}).finally(openFromHash);
+
+/* shared link: invitations.html#design-name scrolls to that design and opens its live demo */
+function openFromHash(){
+  const h = decodeURIComponent(location.hash.slice(1)); if (!h) return;
+  const i = DESIGNS.findIndex(d => slug(d.name) === h); if (i < 0) return;
+  const card = document.getElementById(h); if (!card) return;
+  setTimeout(() => { card.scrollIntoView({ behavior: 'smooth', block: 'center' }); card.classList.add('flash');
+    setTimeout(() => openDemo(i), 900); }, 300);
+}
+addEventListener('hashchange', openFromHash);
+
+/* share button */
+const shm = document.createElement('div'); shm.id = 'shm';
+shm.innerHTML = '<div class="sb"><h4 id="shT"></h4><p id="shU"></p><div class="row"><a class="btn wa" id="shWa" target="_blank" rel="noopener">💬 WhatsApp</a><button class="btn" id="shCp" type="button">🔗 Copy link</button></div><button class="x2" id="shX" type="button">Close</button></div>';
+document.body.appendChild(shm);
+const closeShare = () => shm.classList.remove('on');
+shm.onclick = e => { if (e.target === shm) closeShare(); };
+document.getElementById('shX').onclick = closeShare;
+async function shareDesign(i){
+  const d = DESIGNS[i], url = location.origin + location.pathname + '#' + slug(d.name);
+  const text = `${d.name} — Scrolling Wedding Invitation Website by AfterFX Templates. See the live demo:`;
+  if (window.gtag) gtag('event', 'invite_share', { design: d.name });
+  if (navigator.share && matchMedia('(pointer:coarse)').matches){ try { await navigator.share({ title: d.name + ' — Web Invitation', text, url }); return; } catch (e) { if (e && e.name === 'AbortError') return; } }
+  document.getElementById('shT').textContent = 'Share "' + d.name + '"';
+  document.getElementById('shU').textContent = url;
+  document.getElementById('shWa').href = 'https://wa.me/?text=' + encodeURIComponent(text + ' ' + url);
+  const cp = document.getElementById('shCp'); cp.textContent = '🔗 Copy link';
+  cp.onclick = async () => { try { await navigator.clipboard.writeText(url); } catch (e) { const t = document.createElement('textarea'); t.value = url; document.body.appendChild(t); t.select(); try { document.execCommand('copy'); } catch (x) {} t.remove(); } cp.textContent = '✓ Copied'; };
+  shm.classList.add('on');
+}
 
 /* filters */
 document.getElementById('filters').onclick = e => {
@@ -266,10 +310,10 @@ function openDemo(i){
   if (window.gtag) gtag('event', 'invite_demo_open', { design: d.name });
 }
 function closeDemo(){ pv.classList.remove('on'); pvF.src = 'about:blank'; document.body.style.overflow = ''; }
-grid.addEventListener('click', e => { const t = e.target.closest('[data-open]'); if (t) openDemo(+t.dataset.open); });
+grid.addEventListener('click', e => { const s = e.target.closest('[data-share]'); if (s){ shareDesign(+s.dataset.share); return; } const t = e.target.closest('[data-open]'); if (t) openDemo(+t.dataset.open); });
 document.getElementById('pvX').onclick = closeDemo;
 pv.onclick = e => { if (e.target === pv) closeDemo(); };
-addEventListener('keydown', e => { if (e.key === 'Escape') closeDemo(); });
+addEventListener('keydown', e => { if (e.key === 'Escape'){ closeDemo(); closeShare(); } });
 document.querySelectorAll('a.wa, .btn.wa').forEach(a => a.addEventListener('click', () => { if (window.gtag) gtag('event', 'invite_whatsapp', { from: a.id || 'card' }); }));
 </script>
 </body>
