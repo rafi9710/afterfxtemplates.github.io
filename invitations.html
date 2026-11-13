@@ -83,7 +83,7 @@ a{color:inherit;text-decoration:none}
 .feat{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:12px 0 16px}
 .feat span{font-size:12px;border:1px solid var(--gb);border-radius:20px;padding:4px 10px;color:#d6d0c2}
 .price{position:relative;text-align:center;font-size:14px;color:var(--mut);margin-bottom:12px;min-height:30px;display:flex;align-items:center;justify-content:center;gap:6px}
-.shr{position:absolute;right:0;top:50%;transform:translateY(-50%);display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:13px;font-weight:600;color:var(--gold);background:rgba(201,168,76,.08);border:1px solid var(--gb);border-radius:30px;padding:7px 12px;cursor:pointer;transition:.2s}
+.shr{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:13px;font-weight:600;color:var(--gold);background:rgba(201,168,76,.08);border:1px solid var(--gb);border-radius:30px;padding:7px 12px;cursor:pointer;transition:.2s}
 .shr:hover{background:rgba(201,168,76,.18);border-color:var(--gold)}
 .shr svg{width:15px;height:15px}
 .card.flash{animation:flash 2.4s ease}
@@ -105,6 +105,7 @@ a{color:inherit;text-decoration:none}
 .btn[disabled]{opacity:.45;cursor:not-allowed}
 
 /* pricing */
+.plan .amt.ask{font-size:20px}
 .plans{display:grid;grid-template-columns:repeat(2,minmax(0,360px));gap:20px;justify-content:center}
 .plan{background:var(--bg2);border:1px solid var(--gb);border-radius:20px;padding:26px;position:relative}
 .plan.best{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}
@@ -175,15 +176,15 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:30px 0 50px;bor
 </div></section>
 
 <section id="pricing"><div class="wrap">
-  <div class="sh"><h2>Simple <span class="gold">pricing</span></h2><p>One-time price. No per-guest charge, share with as many people as you like.</p></div>
+  <div class="sh"><h2>Choose your <span class="gold">plan</span></h2><p>No per-guest charge, share with as many people as you like. Message us on WhatsApp for the price.</p></div>
   <div class="plans">
     <div class="plan">
-      <h3>Invitation Website</h3><div class="amt" id="amtA">₹1,500</div>
+      <h3>Invitation Website</h3><div class="amt ask">Price on WhatsApp</div>
       <ul><li>Any design from above</li><li>Your names, events, venue &amp; photos</li><li>Google Maps + countdown + music</li><li>One link, opens on any phone</li><li>Delivered in 2 days</li></ul>
       <a class="cta wa" id="planA" target="_blank" rel="noopener">Order on WhatsApp</a>
     </div>
     <div class="plan best"><span class="pop">Most popular</span>
-      <h3>With RSVP</h3><div class="amt" id="amtB">₹2,000</div>
+      <h3>With RSVP</h3><div class="amt ask">Price on WhatsApp</div>
       <ul><li>Everything in Invitation Website</li><li>Guests tap Attending / Not Attending</li><li>Live guest list &amp; exact headcount</li><li>Private family link to see responses</li><li>No need to call every guest</li></ul>
       <a class="cta wa" id="planB" target="_blank" rel="noopener">Order on WhatsApp</a>
     </div>
@@ -208,7 +209,7 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:30px 0 50px;bor
   <div class="bar"><a class="btn wa" id="pvWa" target="_blank" rel="noopener">💬 I want this design</a><a class="btn" id="pvNew" target="_blank" rel="noopener">↗ Open full screen</a></div></div></div>
 
 <script>
-/* Designs and prices come from invitations.json — edit them in invitations-admin.html, export, upload. */
+/* Prices are NOT shown on this page (2026-11-13) — customers ask on WhatsApp. Designs come from invitations.json — edit them in invitations-admin.html, export, upload. */
 const FALLBACK = {"basePrice": 1500, "rsvpPrice": 2000, "designs": [{"name": "Editorial Chapters", "sub": "Magazine-style photo story", "faith": "hindu", "badge": "New", "url": "https://invites.afterfxtemplates.com/chapters/", "price": 1500, "feats": ["Per-event chapters", "Dress code", "Photo gallery", "Countdown"]}, {"name": "Nikah Floral", "sub": "Your card, as a website", "faith": "muslim", "badge": "New", "url": "", "price": 1500, "feats": ["Cover opens like doors", "Bismillah", "Urdu card", "Hijri date"]}, {"name": "Temple Gopuram", "sub": "South Indian temple story", "faith": "hindu", "badge": "Bestseller", "url": "https://invites.afterfxtemplates.com/sandeep-swetha/", "watch": true, "price": 1500, "feats": ["Temple doors open", "Rising gopuram", "Meet the couple", "RSVP"]}, {"name": "Royal Mandir", "sub": "North Indian palace & temple", "faith": "hindu", "badge": "", "url": "https://invites.afterfxtemplates.com/test/", "price": 1500, "feats": ["Curtain opening", "Peacock events", "Timeline", "Polaroid gallery"]}, {"name": "Chettinad", "sub": "Heritage mansion & courtyard", "faith": "hindu", "badge": "", "url": "", "price": 1500, "feats": ["Mansion entry", "Living scenes", "Venue map", "Countdown"]}, {"name": "Wax Seal", "sub": "Elegant green envelope", "faith": "all", "badge": "", "url": "", "price": 1500, "feats": ["Seal opening", "Scratch to reveal", "Per-event RSVP", "Rings finale"]}, {"name": "Editorial · Muslim", "sub": "Mehendi · Manjha · Nikah · Walima", "faith": "muslim", "badge": "", "url": "", "price": 1500, "feats": ["Bismillah", "Per-event chapters", "Gallery", "Countdown"]}, {"name": "Editorial · Christian", "sub": "Betrothal · Holy Matrimony · Reception", "faith": "christian", "badge": "", "url": "", "price": 1500, "feats": ["Bible verse", "Per-event chapters", "Gallery", "Countdown"]}]};
 let DESIGNS = FALLBACK.designs, PRICE = { base: FALLBACK.basePrice, rsvp: FALLBACK.rsvpPrice };
 const WA = '918971738710';
@@ -219,9 +220,8 @@ const slug = n => String(n || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').repl
 const inr = n => '₹' + Number(n || 0).toLocaleString('en-IN');
 document.getElementById('yr').textContent = new Date().getFullYear();
 function setPlans(){
-  document.getElementById('amtA').textContent = inr(PRICE.base); document.getElementById('amtB').textContent = inr(PRICE.rsvp);
-  document.getElementById('planA').href = wa(`Hi, I want a scrolling wedding invitation website (${inr(PRICE.base)} plan).`);
-  document.getElementById('planB').href = wa(`Hi, I want a scrolling wedding invitation website with RSVP (${inr(PRICE.rsvp)} plan).`);
+  document.getElementById('planA').href = wa('Hi, I want a scrolling wedding invitation website. Please share the price.');
+  document.getElementById('planB').href = wa('Hi, I want a scrolling wedding invitation website with RSVP. Please share the price.');
 }
 document.getElementById('finalWa').href = wa('Hi, please send me the demo links for your scrolling wedding invitations.');
 
@@ -234,7 +234,7 @@ grid.innerHTML = DESIGNS.map((d, i) => `
     </div></div>
     <h3>${esc(d.name)}</h3><p class="sub">${esc(d.sub)}</p>
     <div class="feat">${d.feats.map(f => `<span>${esc(f)}</span>`).join('')}</div>
-    <p class="price"><span>from <b>${inr(d.price || PRICE.base)}</b></span><button class="shr" type="button" data-share="${i}" aria-label="Share this design"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>Share</button></p>
+    <p class="price"><button class="shr" type="button" data-share="${i}" aria-label="Share this design"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>Share</button></p>
     <div class="btns">
       <button class="btn" data-open="${i}" ${d.url ? '' : 'disabled'}>▶ Live demo</button>
       <a class="btn wa" target="_blank" rel="noopener" href="${wa(`Hi, I want the "${d.name}" scrolling wedding invitation.`)}">💬 I want this</a>
