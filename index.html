@@ -214,6 +214,22 @@ text-transform:uppercase;white-space:nowrap;transition:transform .18s,box-shadow
 .megasearch.ms-hero .ms-searchbox::placeholder{color:var(--gold);opacity:.75;}
 .ms-hint{max-width:900px;font-size:12.5px;color:var(--mt);margin:0 0 30px;line-height:1.6;}
 .ms-hint b{color:var(--gold);}
+/* Paste button + 3-step "how to find" strip (2026-11-16) */
+.ms-paste{position:absolute;right:8px;top:50%;transform:translateY(-50%);display:flex;align-items:center;gap:6px;background:var(--gold);color:#14100a;border:none;border-radius:7px;font:700 13px 'DM Sans',sans-serif;padding:0 14px;height:40px;cursor:pointer;white-space:nowrap;transition:background .2s,transform .15s;}
+.ms-paste:hover{background:var(--gold-l);}
+.ms-paste:active{transform:translateY(-50%) scale(.96);}
+.ms-paste svg{width:15px;height:15px;fill:currentColor;flex:none;}
+.ms-searchwrap.has-paste .ms-searchbox{padding-right:128px;}
+.ms-tip{position:absolute;right:6px;top:calc(100% + 8px);z-index:30;background:var(--bg4);border:1px solid var(--gold);color:var(--tx);font-size:12.5px;line-height:1.5;padding:9px 12px;border-radius:8px;max-width:270px;box-shadow:0 10px 28px rgba(0,0,0,.35);}
+.ms-steps{max-width:900px;display:flex;align-items:stretch;gap:8px;margin:0 0 10px;}
+.ms-step{flex:1;display:flex;align-items:center;gap:10px;background:var(--bg2);border:1px solid var(--gb);border-radius:9px;padding:10px 12px;min-width:0;}
+.ms-step .n{flex:none;width:26px;height:26px;border-radius:50%;background:var(--gold-dim);border:1px solid var(--gold);color:var(--gold);font:700 13px 'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;}
+.ms-step .t{font-size:12.5px;color:var(--tx);line-height:1.35;min-width:0;}
+.ms-step .t small{display:block;color:var(--mt);font-size:11.5px;}
+.ms-arrow{flex:none;align-self:center;color:var(--gold);font-size:16px;}
+.ms-step.on{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.13);}
+.ms-step.on .n{background:var(--gold);color:#14100a;}
+@media(max-width:640px){.ms-steps{gap:5px;}.ms-step{flex-direction:column;text-align:center;gap:6px;padding:9px 5px;}.ms-step .t{font-size:11.5px;}.ms-step .t small{display:none;}.ms-arrow{font-size:13px;}.ms-paste{padding:0 10px;height:38px;font-size:12px;}.ms-paste .lg{display:none;}.ms-searchwrap.has-paste .ms-searchbox{padding-right:86px;}}
 @keyframes msGlow{0%,100%{box-shadow:0 0 0 4px rgba(201,168,76,.12),0 10px 34px rgba(201,168,76,.14);}50%{box-shadow:0 0 0 7px rgba(201,168,76,.25),0 10px 40px rgba(201,168,76,.28);}}
 @media(prefers-reduced-motion:reduce){.megasearch.ms-hero{animation:none;}}
 @media(max-width:560px){.megasearch.ms-hero .ms-catbtn,.megasearch.ms-hero .ms-searchbox{height:54px;}.megasearch.ms-hero .ms-searchbox{font-size:14px;padding-left:40px;}.megasearch.ms-hero .si{left:12px;width:17px;height:17px;}}
@@ -738,21 +754,29 @@ footer p{font-size:12px;color:var(--mt);letter-spacing:.5px;margin-bottom:4px;}
     <button class="backall" onclick="exitFocus()">← View all templates</button>
     <div style="color:var(--mt);font-size:13px;margin-top:10px;">You're viewing a single template shared with you.</div>
   </div>
+  <div class="ms-steps" id="msSteps" aria-label="How to find your template">
+    <div class="ms-step" data-s="1"><span class="n">1</span><span class="t">Copy the video link<small>YouTube → Share → Copy link</small></span></div>
+    <span class="ms-arrow">→</span>
+    <div class="ms-step" data-s="2"><span class="n">2</span><span class="t">Tap <b style="color:var(--gold)">Paste</b> here<small>or type the Template No.</small></span></div>
+    <span class="ms-arrow">→</span>
+    <div class="ms-step" data-s="3"><span class="n">3</span><span class="t">Your template opens<small>buy &amp; download instantly</small></span></div>
+  </div>
   <div class="megasearch ms-hero">
     <div class="sortdd catdd" id="catdd">
       <button class="ms-catbtn" id="catbtn" onclick="toggleCat(event)"><span class="ms-catpre">Category:</span> <b id="catlabel">All Templates</b><svg class="sortcaret" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg></button>
       <div class="sortmenu" id="catmenu"></div>
     </div>
     <div class="ms-divider"></div>
-    <div class="ms-searchwrap">
+    <div class="ms-searchwrap has-paste" id="mswrap">
       <svg class="si" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/></svg>
       <input type="text" id="searchbox" class="ms-searchbox" placeholder="Paste YouTube link or type Template No. (e.g. 145)" oninput="onSearch(this.value)" autocomplete="off">
       <button class="searchclear" id="searchclear" onclick="clearSearch()" aria-label="Clear search">&times;</button>
+      <button type="button" class="ms-paste" id="mspaste" onclick="pasteLink()" aria-label="Paste YouTube link"><svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm-7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 16H5V5h2v3h10V5h2v14z"/></svg>Paste<span class="lg">&nbsp;link</span></button>
       <div class="searchsug" id="searchsug"></div>
     </div>
   </div>
   <script>try{if(innerWidth<560)document.getElementById('searchbox').placeholder='Paste link or No.';}catch(e){}</script>
-  <div class="ms-hint">🔎 Saw a video on YouTube? <b>Paste its link here</b> and that exact template opens. Or type the Template No. or a name like wedding, barasala.</div>
+  <div class="ms-hint">You can also type a name like <b>wedding</b>, <b>barasala</b> or <b>half saree</b>.</div>
   <div id="recentSection" style="display:none;margin-bottom:34px;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
       <div>
@@ -1462,9 +1486,56 @@ function tplDirectMatch(q){
   return null;
 }
 
+/* PASTE BUTTON + animated "how to find" demo (2026-11-16) */
+function syncPaste(){
+  const sb=document.getElementById('searchbox'), w=document.getElementById('mswrap'), b=document.getElementById('mspaste');
+  if(!sb||!w||!b) return;
+  const empty=!sb.value; b.style.display=empty?'flex':'none'; w.classList.toggle('has-paste',empty);
+}
+function msTip(msg){
+  const w=document.getElementById('mswrap'); if(!w) return;
+  let t=document.getElementById('mstip'); if(!t){ t=document.createElement('div'); t.id='mstip'; t.className='ms-tip'; w.appendChild(t); }
+  t.textContent=msg; clearTimeout(msTip._t); msTip._t=setTimeout(function(){ if(t.parentNode) t.remove(); },6000);
+}
+async function pasteLink(){
+  const sb=document.getElementById('searchbox'); if(!sb) return;
+  let txt='';
+  try{ if(navigator.clipboard && navigator.clipboard.readText) txt=(await navigator.clipboard.readText()||'').trim(); }catch(e){ txt=''; }
+  if(typeof gtag==='function'){ try{ gtag('event','search_paste_click',{got:txt?'yes':'no'}); }catch(e){} }
+  if(!txt){ sb.focus(); msTip('Press and hold inside the box, then tap Paste. (Copy the video link on YouTube first: Share → Copy link.)'); return; }
+  txt=txt.slice(0,200); sb.value=txt; onSearch(txt); closeSuggestions();
+  const hit=tplDirectMatch(txt);
+  if(!hit && /youtu\.?be|^https?:/i.test(txt)) msTip('This link is not one of our template videos. Copy the link of an AfterFX Templates video, or type the Template No.');
+  try{ window.scrollTo({top:Math.max(0,sb.getBoundingClientRect().top+window.pageYOffset-96),behavior:'smooth'}); }catch(e){}
+}
+(function(){
+  function start(){
+    const sb=document.getElementById('searchbox'), steps=document.querySelectorAll('#msSteps .ms-step'); if(!sb) return;
+    syncPaste(); sb.addEventListener('input',syncPaste);
+    const small=innerWidth<560, base=sb.placeholder;
+    if(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const demo=small?['youtu.be/BNnsKb-5nr8','145']:['https://youtu.be/BNnsKb-5nr8','Template No. 145'];
+    let di=0, ci=0, hold=0, stop=false;
+    function mark(n){ steps.forEach(function(s){ s.classList.toggle('on', +s.dataset.s===n); }); }
+    sb.addEventListener('focus',function(){ stop=true; sb.placeholder=base; mark(0); });
+    sb.addEventListener('blur',function(){ if(!sb.value){ stop=false; ci=0; hold=0; } });
+    setInterval(function(){
+      if(stop||sb.value||document.hidden) return;
+      const txt=demo[di];
+      if(hold>0){ hold--; if(hold===0){ ci=0; di=(di+1)%demo.length; sb.placeholder=base; mark(1); } return; }
+      if(ci===0) mark(1);
+      ci++; sb.placeholder=txt.slice(0,ci)+(ci<txt.length?'|':'');
+      if(ci>=3) mark(2);
+      if(ci>=txt.length){ mark(3); hold=28; }
+    },85);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start); else start();
+})();
+
 function onSearch(val){
   search=val; curPage=1;
   document.getElementById('searchclear').style.display = val ? 'block' : 'none';
+  syncPaste();
   renderTabs(); renderGrid();
   updateSuggestions(val);
 }
@@ -1472,7 +1543,7 @@ function onSearch(val){
 function clearSearch(){
   search='';
   const sb=document.getElementById('searchbox'); if(sb) sb.value='';
-  document.getElementById('searchclear').style.display='none';
+  document.getElementById('searchclear').style.display='none'; syncPaste();
   curPage=1;
   renderTabs(); renderGrid();
   closeSuggestions();
