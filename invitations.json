@@ -119,6 +119,19 @@
    ],
    "price": 1500,
    "hidden": true
+  },
+  {
+   "name": "Christian Wedding",
+   "sub": "Wedding Invitation",
+   "faith": "christian",
+   "badge": "New",
+   "url": "https://invites.afterfxtemplates.com/joseph-sakshi/",
+   "feats": [
+    "Paper cover opening",
+    "Our Story collage",
+    "Event cards",
+    "Vows & venue map"
+   ]
   }
  ]
 }
